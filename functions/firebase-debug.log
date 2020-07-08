@@ -1,0 +1,17 @@
+[debug] [2020-07-07T19:52:13.636Z] ----------------------------------------------------------------------
+[debug] [2020-07-07T19:52:13.639Z] Command:       /home/yakir/.nvm/versions/node/v12.10.0/bin/node /home/yakir/.nvm/versions/node/v12.10.0/bin/firebase serve --only functions
+[debug] [2020-07-07T19:52:13.639Z] CLI Version:   8.4.3
+[debug] [2020-07-07T19:52:13.639Z] Platform:      linux
+[debug] [2020-07-07T19:52:13.639Z] Node Version:  v12.10.0
+[debug] [2020-07-07T19:52:13.639Z] Time:          Tue Jul 07 2020 22:52:13 GMT+0300 (Israel Daylight Time)
+[debug] [2020-07-07T19:52:13.640Z] ----------------------------------------------------------------------
+[debug] [2020-07-07T19:52:13.640Z] 
+[debug] [2020-07-07T19:52:13.647Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2020-07-07T19:52:13.648Z] > authorizing via signed-in user
+[debug] [2020-07-07T19:52:13.648Z] [iam] checking project ivern-app for permissions ["firebase.projects.get"]
+[debug] [2020-07-07T19:52:13.651Z] > refreshing access token with scopes: ["email","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","openid"]
+[debug] [2020-07-07T19:52:13.651Z] >>> HTTP REQUEST POST https://www.googleapis.com/oauth2/v3/token  
+ <request body omitted>
+[debug] [2020-07-07T19:52:14.961Z] <<< HTTP RESPONSE 200 {"content-type":"application/json; charset=utf-8","vary":"X-Origin, Referer, Origin,Accept-Encoding","date":"Tue, 07 Jul 2020 19:52:14 GMT","server":"scaffolding on HTTPServer2","cache-control":"private","x-xss-protection":"0","x-frame-options":"SAMEORIGIN","x-content-type-options":"nosniff","alt-svc":"h3-29=\":443\"; ma=2592000,h3-27=\":443\"; ma=2592000,h3-25=\":443\"; ma=2592000,h3-T050=\":443\"; ma=2592000,h3-Q050=\":443\"; ma=2592000,h3-Q046=\":443\"; ma=2592000,h3-Q043=\":443\"; ma=2592000,quic=\":443\"; ma=2592000; v=\"46,43\"","accept-ranges":"none","transfer-encoding":"chunked"}
+[debug] [2020-07-07T19:52:14.971Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/ivern-app:testIamPermissions  
+ {"permissions":["firebase.projects.get"]}

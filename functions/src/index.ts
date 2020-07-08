@@ -1,0 +1,13 @@
+import { FBAuth, login, signup } from './utils/sign_methods';
+import { addProject } from './utils/project_methods';
+import { changeProfileImage } from './utils/file_upload';
+import functions = require('firebase-functions');
+import admin = require('firebase-admin');
+import express = require('express');
+const app = express();
+export const database = admin.firestore();
+app.post('/projects', FBAuth, addProject);
+app.post('/login', login);
+app.post('/signup', signup);
+app.post('/users/image', FBAuth, changeProfileImage);
+exports.api = functions.region('europe-west1').https.onRequest(app);
