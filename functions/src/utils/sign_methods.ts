@@ -1,5 +1,4 @@
 import { firebase } from '../firebase';
-import { RequestCustom } from './project_methods';
 import admin = require('firebase-admin');
 admin.initializeApp();
 const database = admin.firestore();
@@ -96,27 +95,5 @@ export const signup = async (req, res) => {
         .status(500)
         .json({ general: 'Something went wrong, please try again.' });
     }
-  }
-};
-export const userUpdate = async (request, res) => {
-  const req = request as RequestCustom;
-  const userDetails = {
-    fullName: req.body.fullName,
-    location: req.body.location,
-  };
-  const reducedDetails: { fullName: any; location: any } = {
-    fullName: null,
-    location: null,
-  };
-  if (!isEmpty(userDetails.fullName.trim()))
-    reducedDetails.fullName = userDetails.fullName;
-  if (!isEmpty(userDetails.location.trim()))
-    reducedDetails.location = userDetails.location;
-  try {
-    await database.doc(`users/${req.user.handle}`).update(reducedDetails);
-    return res.status(201).json({ message: 'Details added sucessesfuly.' });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: error.code });
   }
 };
