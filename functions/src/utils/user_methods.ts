@@ -1,5 +1,6 @@
 import { RequestCustom } from './project_methods';
 import { database } from '../index';
+import functions = require('firebase-functions');
 export const userUpdate = async (request, res) => {
   const req = request as RequestCustom;
   const userDetails = {
@@ -33,3 +34,44 @@ export const getUser = async (req, res) => {
     return res.status(500).json({ error: error.code });
   }
 };
+export const userUpdateListener = functions
+  .region('europe-west3')
+  .firestore.document('/users/{uid}')
+  .onUpdate(async (change) => {
+    const batch = database.batch();
+    let docs = await database
+      .collection('/projects')
+      .where('users', 'array-contains', change.before.data())
+      .get();
+    docs.forEach(async (doc) => {
+      const data = await database.doc(`/projects/${doc.id}`).get();
+      const users: any[] = data.data()?.users;
+
+      const index = users.findIndex(
+        (item) => item.uid === change.before.data().uid
+      );
+      users.splice(index, 1);
+      users.splice(index, 0, change.after.data());
+      const project = database.doc(`projects/${doc.id}`);
+      batch.update(project, {
+        users,
+      });
+    });
+    docs = await database
+      .collection('/missions')
+      .where('user.uid', '==', change.before.data().uid)
+      .get();
+    docs.forEach((doc) => {
+      const mission = database.doc(`/missions/${doc.id}`);
+      batch.update(mission, { user: change.after.data() });
+    });
+    docs = await database
+      .collection('/comments')
+      .where('user.uid', '==', change.before.data().uid)
+      .get();
+    docs.forEach((doc) => {
+      const comment = database.doc(`/comments/${doc.id}`);
+      batch.update(comment, { user: change.after.data() });
+    });
+    return batch.commit();
+  });

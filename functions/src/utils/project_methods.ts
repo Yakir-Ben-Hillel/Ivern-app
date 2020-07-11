@@ -30,11 +30,12 @@ export const addProject = async (request, res) => {
     return res.status(500).json({ error: 'something went wrong!' });
   }
 };
-export const addUserToProject = async (req, res) => {
+export const addUserToProject = async (request, res) => {
   try {
+    const req = request as RequestCustom;
     const data = await database
       .collection('users')
-      .where('email', '==', req.body.email)
+      .where('uid', '==', req.user.uid)
       .limit(1)
       .get();
     if (data.empty)

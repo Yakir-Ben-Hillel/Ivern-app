@@ -1,1 +1,8 @@
 node_modules
+firebase.json
+firebase-debug.log
+firebase-export-metadata.json
+firestore.rules
+firebase.indexes.json
+storage.rules
+firestore_export
