@@ -3,6 +3,14 @@ import { RequestCustom } from './project_methods';
 export const addMission = async (request, res) => {
   try {
     const req = request as RequestCustom;
+    const pid = req.body.pid;
+    const project = await database.collection('/projects').doc(pid).get();
+    const users: any[] = project.data()?.users;
+    const index = users.findIndex(
+      (userIndex) => userIndex.uid === req.user.uid
+    );
+    if (index === -1) return res.status(403).json({ error: 'Unauthorized' });
+
     const user = await database.doc(`/users/${req.user.uid}`).get();
     const mission = {
       pid: req.body.pid,
@@ -38,6 +46,27 @@ export const getMission = async (req, res) => {
     return res.status(500).json({ error: error.code });
   }
 };
+export const isUserInProjectAuth = async (req, res, next) => {
+  try {
+    const mission = await database
+      .collection('/missions')
+      .doc(req.params.missionID)
+      .get();
+    if (!mission.exists)
+      return res.status(404).json({ error: 'Mission not found.' });
+    //Only users associated with the project can delete missions in it.
+    const pid = mission.data()?.pid;
+    const project = await database.collection('/projects').doc(pid).get();
+    const users: any[] = project.data()?.users;
+    const index = users.findIndex((user) => user.uid === req.user.uid);
+    if (index === -1) return res.status(403).json({ error: 'Unauthorized' });
+    else return next();
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.code });
+  }
+};
+
 export const deleteMission = async (req, res) => {
   try {
     const missionRef = database
@@ -46,11 +75,21 @@ export const deleteMission = async (req, res) => {
     const mission = await missionRef.get();
     if (!mission.exists)
       return res.status(404).json({ error: 'Mission not found.' });
-    if (mission.data()?.uid !== req.user.uid)
-      //only the User can delete is own missions.
-      return res.status(403).json({ error: 'Unauthorized.' });
-    await missionRef.delete();
-    return res.status(200).json({ message: 'Mission deleted successfully.' });
+    const batch = database.batch();
+    const comments = await database
+      .collection('/comments')
+      .where('missionID', '==', req.params.missionID)
+      .get();
+    comments.forEach((comment) => {
+      batch.delete(comment.ref);
+    });
+    batch.delete(missionRef);
+    await batch.commit();
+    return res
+      .status(200)
+      .json({
+        message: 'Mission and all his comments has been deleted successfully.',
+      });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error.code });
@@ -58,10 +97,18 @@ export const deleteMission = async (req, res) => {
 };
 export const getAllMissionsInProject = async (req, res) => {
   try {
+    const pid = req.body.pid;
+    const project = await database.collection('/projects').doc(pid).get();
+    const users: any[] = project.data()?.users;
+    const index = users.findIndex(
+      (userIndex) => userIndex.uid === req.user.uid
+    );
+    if (index === -1) return res.status(403).json({ error: 'Unauthorized' });
+
     const missions: any[] = [];
     const data = await database
       .collection('/missions')
-      .where('pid', '==', req.body.pid)
+      .where('pid', '==', pid)
       .get();
     data.docs.forEach((doc) => {
       const actuallyData = doc.data();
@@ -86,17 +133,18 @@ export const addCommentToMission = async (request, res) => {
     if (req.body.comment.trim() === '')
       return res.status(400).json({ error: 'Comment can not be empty.' });
     const userWhoCommented = await database.doc(`/users/${req.user.uid}`).get();
-    const comment = {
-      comment: req.body.comment,
-      missionID: req.params.missionID,
-      userWhoCommented: userWhoCommented.data(),
-      createdAt: new Date().toISOString(),
-    };
     const mission = await database
       .doc(`/missions/${req.params.missionID}`)
       .get();
     if (!mission.exists)
       return res.status(404).json({ error: 'Mission does not exists.' });
+    const comment = {
+      comment: req.body.comment,
+      missionID: req.params.missionID,
+      pid: mission.data()?.pid,
+      user: userWhoCommented.data(),
+      createdAt: new Date().toISOString(),
+    };
     const doc = await database.collection('/comments').add(comment);
     await database.doc(`/comments/${doc.id}`).update({ commentID: doc.id });
     return res
@@ -148,10 +196,6 @@ export const deleteComment = async (request, res) => {
       return res.status(400).json({
         error: 'Trying to delete a comment from a different mission.',
       });
-
-    if (comment.data()?.userWhoCommented.uid !== req.user.uid)
-      //only the User can delete is own comments.
-      return res.status(403).json({ error: 'Unauthorized.' });
     await commentRef.delete();
     return res.status(200).json({ message: 'Comment deleted successfully.' });
   } catch (error) {

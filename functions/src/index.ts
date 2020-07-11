@@ -2,6 +2,7 @@ import { FBAuth, login, signup } from './utils/sign_methods';
 import { getUser, userUpdate, userUpdateListener } from './utils/user_methods';
 import { addProject, addUserToProject } from './utils/project_methods';
 import {
+  isUserInProjectAuth,
   addMission,
   getAllMissionsInProject,
   getMission,
@@ -20,15 +21,23 @@ export const database = admin.firestore();
 app.post('/projects', FBAuth, addProject);
 app.post('/projects/user', FBAuth, addUserToProject);
 //missions handlers.
-//TODO: only users associated with the project can do any action on it.
 app.post('/missions', FBAuth, addMission);
-app.post('/missions/:missionID/comment', FBAuth, addCommentToMission);
+app.post(
+  '/missions/:missionID/comment',
+  FBAuth,
+  isUserInProjectAuth,
+  addCommentToMission
+);
 app.get('/missions/:missionID/comment', getAllCommentsInMission);
-app.delete('/missions/:missionID/comment/:commentID', FBAuth, deleteComment);
-app.get('/missions', getAllMissionsInProject);
+app.delete(
+  '/missions/:missionID/comment/:commentID',
+  FBAuth,
+  isUserInProjectAuth,
+  deleteComment
+);
+app.get('/missions', FBAuth, getAllMissionsInProject);
 app.get('/missions/:missionID', getMission);
-// TODO: delete all comments of the mission with the mission deletion.
-app.delete('/missions/:missionID', FBAuth, deleteMission);
+app.delete('/missions/:missionID', FBAuth, isUserInProjectAuth, deleteMission);
 //user handlers.
 app.post('/login', login);
 app.post('/signup', signup);
