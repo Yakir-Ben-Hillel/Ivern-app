@@ -1,6 +1,7 @@
 import { FBAuth, login, signup } from './utils/sign_methods';
 import { getUser, userUpdate, userUpdateListener } from './utils/user_methods';
 import { addProject, addUserToProject } from './utils/project_methods';
+import { postAllPS4games } from './utils/playground';
 import {
   isUserInProjectAuth,
   addMission,
@@ -44,6 +45,10 @@ app.post('/signup', signup);
 app.post('/user', FBAuth, userUpdate);
 app.get('/user/:uid', getUser);
 app.post('/users/image', FBAuth, changeProfileImage);
-exports.api = functions.region('europe-west3').https.onRequest(app);
+app.post('/games', postAllPS4games);
+exports.api = functions
+  .region('europe-west3')
+  .runWith({ timeoutSeconds: 300 })
+  .https.onRequest(app);
 
 exports.onUserUpdate = userUpdateListener;
