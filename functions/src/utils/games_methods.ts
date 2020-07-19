@@ -45,7 +45,7 @@ export const searchGameInDatabase = async (req, res) => {
         gamesData.push(game.data());
       });
       return res.status(200).json({ games: gamesData });
-    } else return res.status(500).json({ message: 'No games has been found.' });
+    } else return res.status(400).json({ message: 'No games has been found.' });
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
