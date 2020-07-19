@@ -5,6 +5,7 @@ import {
   postAllPS4games,
   searchUnfoundGame,
   searchGameInDatabase,
+  addGameToDatabase,
 } from './utils/games_methods';
 import {
   isUserInProjectAuth,
@@ -16,7 +17,7 @@ import {
   getAllCommentsInMission,
   deleteComment,
 } from './utils/missions_methods';
-import { changeProfileImage } from './utils/file_upload';
+import { changeProfileImage, uploadImage } from './utils/file_upload';
 import functions = require('firebase-functions');
 import admin = require('firebase-admin');
 import express = require('express');
@@ -48,8 +49,10 @@ app.post('/login', login);
 app.post('/signup', signup);
 app.post('/user', FBAuth, userUpdate);
 app.get('/user/:uid', getUser);
+app.post('/image', uploadImage);
 app.post('/users/image', FBAuth, changeProfileImage);
 app.post('/games', postAllPS4games);
+app.post('/games/add', addGameToDatabase);
 app.get('/games/:gameName', searchGameInDatabase);
 app.get('/games/api/:gameName', searchUnfoundGame);
 exports.api = functions.region('europe-west3').https.onRequest(app);

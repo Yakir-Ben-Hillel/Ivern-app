@@ -73,3 +73,29 @@ export const searchUnfoundGame = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+export const addGameToDatabase = async (req, res) => {
+  try {
+    const game = {
+      id: req.body.id,
+      cover: req.body.cover,
+      name: req.body.name,
+      popularity: req.body.popularity,
+      rating: req.body.rating,
+      slug: req.body.slug,
+    };
+    const doc = await database.doc(`/games/${game.id}`).get();
+    if (doc.exists)
+      return res
+        .status(400)
+        .json({ message: 'The game already exists in the database!' });
+    else {
+      const madeGame = await database.collection('/games').add(game);
+      return res
+        .status(200)
+        .json({ message: `Game ${madeGame.id} has been added successfully.` });
+    }
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
