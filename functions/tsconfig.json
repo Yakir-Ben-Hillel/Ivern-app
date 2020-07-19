@@ -3,6 +3,7 @@
     "module": "commonjs",
     "noImplicitAny": false,
     "noImplicitReturns": true,
+    "typeRoots": ["node_modules/@types"],
     "noUnusedLocals": true,
     "outDir": "lib",
     "sourceMap": true,
@@ -10,7 +11,5 @@
     "target": "es2017"
   },
   "compileOnSave": true,
-  "include": [
-    "src"
-  ]
+  "include": ["src"]
 }

@@ -1,7 +1,11 @@
 import { FBAuth, login, signup } from './utils/sign_methods';
 import { getUser, userUpdate, userUpdateListener } from './utils/user_methods';
 import { addProject, addUserToProject } from './utils/project_methods';
-import { postAllPS4games } from './utils/playground';
+import {
+  postAllPS4games,
+  searchUnfoundGame,
+  searchGameInDatabase,
+} from './utils/games_methods';
 import {
   isUserInProjectAuth,
   addMission,
@@ -46,9 +50,7 @@ app.post('/user', FBAuth, userUpdate);
 app.get('/user/:uid', getUser);
 app.post('/users/image', FBAuth, changeProfileImage);
 app.post('/games', postAllPS4games);
-exports.api = functions
-  .region('europe-west3')
-  .runWith({ timeoutSeconds: 300 })
-  .https.onRequest(app);
-
+app.get('/games/:gameName', searchGameInDatabase);
+app.get('/games/api/:gameName', searchUnfoundGame);
+exports.api = functions.region('europe-west3').https.onRequest(app);
 exports.onUserUpdate = userUpdateListener;
