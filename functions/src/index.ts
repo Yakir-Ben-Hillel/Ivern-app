@@ -6,6 +6,11 @@ import {
   searchUnfoundGame,
   searchGameInDatabase,
   addGameToDatabase,
+  addPost,
+  getPost,
+  editPost,
+  deletePost,
+  getAllGamePosts,
 } from './utils/games_methods';
 import {
   isUserInProjectAuth,
@@ -55,5 +60,11 @@ app.post('/games', postAllPS4games);
 app.post('/games/add', addGameToDatabase);
 app.get('/games/:gameName', searchGameInDatabase);
 app.get('/games/api/:gameName', searchUnfoundGame);
+//Posts endpoints
+app.post('/posts/add', FBAuth, addPost);
+app.post('/posts/edit/:pid', FBAuth, editPost);
+app.delete('/posts/delete/"pid', FBAuth, deletePost);
+app.get('/posts/get/:pid', getPost);
+app.get('/posts/get/:gid', getAllGamePosts);
 exports.api = functions.region('europe-west3').https.onRequest(app);
 exports.onUserUpdate = userUpdateListener;
