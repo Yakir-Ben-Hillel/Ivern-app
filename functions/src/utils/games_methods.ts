@@ -1,5 +1,4 @@
 import { IGDB_API_KEY } from '../firebase';
-import { RequestCustom } from './project_methods';
 import admin = require('firebase-admin');
 export const database = admin.firestore();
 
@@ -100,104 +99,32 @@ export const addGameToDatabase = async (req, res) => {
     return res.status(500).json(error);
   }
 };
-export const getPost = async (req, res) => {
+export const updateGames = async (context) => {
   try {
-    const post = await database.doc(`/posts/${req.params.pid}`).get();
-    if (!post.exists)
-      return res.status(404).json({ error: 'Post did not found' });
-    else return res.status(200).json({ post: post.data() });
+    const doc = await axios({
+      url: 'https://api-v3.igdb.com/games',
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'user-key': IGDB_API_KEY,
+      },
+      data:
+        'fields name,cover,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
+    });
+    const batch = database.batch();
+    let counter = 0;
+    doc.data.forEach(async (game) => {
+      const gameDoc = await database.doc(`/games/${game.id}`).get();
+      if (gameDoc.exists) batch.update(database.doc(`/games/${game.id}`), game);
+      else {
+        batch.set(database.collection('/games').doc(), game);
+        counter++;
+      }
+    });
+    console.log('Games updated successfully, ' + counter + ' games added.');
+    return await batch.commit();
   } catch (error) {
     console.log(error);
-    return res.status(500).json(error);
-  }
-};
-export const addPost = async (request, res) => {
-  try {
-    const req = request as RequestCustom;
-    let post = {
-      gid: req.body.gid,
-      uid: req.user.uid,
-      platform: req.body.platform,
-      exchange: req.body.exchange,
-      sell: req.body.sell,
-      price: req.body.price,
-      imageURL: req.body.imageURL,
-      createdAt: new Date().toISOString(),
-    };
-    if (post.imageURL === null) {
-      const image = await axios({
-        url: 'https://api-v3.igdb.com/games',
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'user-key': IGDB_API_KEY,
-        },
-        data: `fields url;where id=${req.body.gid};`,
-      });
-      const imageURL = image.url.replace('thumb', 'logo_med');
-      post.imageURL = imageURL;
-    }
-    const doc = await database.collection('/posts').add(post);
-    await database.doc(`/posts/${doc.id}`).update({ pid: doc.id });
-    return res
-      .status(200)
-      .json({ message: `Post ${doc.id} added successfully.` });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
-  }
-};
-export const deletePost = async (request, res) => {
-  try {
-    const req = request as RequestCustom;
-    const post = await database.doc(`/posts/${req.body.pid}`).get();
-    if (!post.exists)
-      return res.status(404).json({ error: 'Post did not found.' });
-    else if (post.data()?.uid !== req.user.uid)
-      return res.status(403).json({ error: 'Unauthorized.' });
-    else {
-      await post.ref.delete();
-      return res.status(200).json({ message: 'Post deleted successfully.' });
-    }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
-  }
-};
-export const editPost = async (request, res) => {
-  try {
-    const req = request as RequestCustom;
-    const updateData = {
-      exchange: req.body.exchange,
-      sell: req.body.sell,
-      price: req.body.price,
-      imageURL: req.body.imageURL,
-    };
-    const post = await database.doc(`/posts/${req.body.pid}`).get();
-    if (!post.exists)
-      return res.status(404).json({ error: 'Post did not found.' });
-    else if (post.data()?.uid !== req.user.uid)
-      return res.status(403).json({ error: 'Unauthorized.' });
-    else {
-      await post.ref.update(updateData);
-      return res.status(200).json({ message: 'Post updated successfully.' });
-    }
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
-  }
-};
-export const getAllGamePosts = async (req, res) => {
-  try {
-    const posts = await database
-      .collection('/posts')
-      .where('gid', '==', req.params.gid)
-      .get();
-    if (posts.empty)
-      return res.status(404).json({ message: 'The game has no posts' });
-    return res.status(200).json({ posts: posts.docs });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json(error);
+    return new Error(error);
   }
 };

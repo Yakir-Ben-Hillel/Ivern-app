@@ -12,5 +12,6 @@ const firebaseConfig = {
 };
 firebase.initializeApp(firebaseConfig);
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
+const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 firebase.auth().useDeviceLanguage();
-export { firebase, googleAuthProvider,IGDB_API_KEY};
+export { firebase, googleAuthProvider, facebookAuthProvider, IGDB_API_KEY };

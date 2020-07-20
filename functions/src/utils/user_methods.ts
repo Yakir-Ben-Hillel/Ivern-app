@@ -1,6 +1,17 @@
-import { RequestCustom } from './project_methods';
 import { database } from '../index';
 import functions = require('firebase-functions');
+import express = require('express');
+import admin = require('firebase-admin');
+export interface RequestCustom extends express.Request {
+  rawBody: Function | undefined;
+  user: {
+    email: string;
+    createdAt: admin.firestore.Timestamp;
+    handle: string;
+    uid: string;
+  };
+}
+
 export const userUpdate = async (request, res) => {
   const req = request as RequestCustom;
   const userDetails = {

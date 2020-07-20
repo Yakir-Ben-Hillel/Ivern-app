@@ -1,4 +1,4 @@
-import { RequestCustom } from './project_methods';
+import { RequestCustom } from './user_methods';
 import { database } from '../index';
 import Busboy = require('busboy');
 import path = require('path');
@@ -18,6 +18,10 @@ export const changeProfileImage = async (request, res) => {
       const imageURL = doc.imageURL;
       await database.doc(`users/${req.user.uid}`).update({ imageURL });
       return res.status(201).json({ message: 'Image uploaded successfully.' });
+    } else {
+      return res
+        .status(500)
+        .json({ error: 'File upload was corrupted, please try again.' });
     }
   } catch (error) {
     console.log(error);
@@ -25,16 +29,13 @@ export const changeProfileImage = async (request, res) => {
   }
 };
 export const uploadImage = async (request, res) => {
-  console.log('im here 1');
   const req = request as RequestCustom;
   let isValid = true;
   let imageFileName;
-  console.log('im here before that');
   let imageToBeUploaded: { filepath: string; mimetype: string };
-  console.log('im here after that!');
   const busboy = new Busboy({ headers: req.headers });
+
   busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-    console.log('im here 2');
     if (mimetype === 'image/jpeg' || mimetype === 'image/png') {
       const imageExtension = filename.split('.')[
         filename.split('.').length - 1
@@ -42,10 +43,7 @@ export const uploadImage = async (request, res) => {
       imageFileName = `${Math.round(
         Math.random() * 100000000000
       )}.${imageExtension}`;
-      console.log('im here 3');
-      console.log(os.tmpdir());
       const filepath = path.join(os.tmpdir(), imageFileName);
-      console.log(filepath);
       imageToBeUploaded = { filepath, mimetype };
       file.pipe(fs.createWriteStream(filepath));
     } else isValid = false;
@@ -77,5 +75,5 @@ export const uploadImage = async (request, res) => {
     }
   });
 
-  busboy.end(() => req.rawBody);
+  busboy.end(req.rawBody);
 };
