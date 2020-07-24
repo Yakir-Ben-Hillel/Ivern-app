@@ -16,10 +16,10 @@
     left: calc(50% - 720px);
     height: 263px;
     width: 1440px;
-    background-image: url('../../components/images/cta-illustration-light.svg');
+    background-image: url('../../components/dist/images/cta-illustration-light.svg');
 
     .lights-off & {
-      background-image: url('../../components/images/cta-illustration-dark.svg');
+      background-image: url('../../components/dist/images/cta-illustration-dark.svg');
     }
   }
 }

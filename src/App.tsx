@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Dashboard } from './components/dashboard';
 import { Login } from './components/login';
 import { Signup } from './components/signup';
-import PrimarySearchAppBar from './components/navbar';
+// import PrimarySearchAppBar from './components/navbar';
 
 const App: React.FC = () => {
   return (

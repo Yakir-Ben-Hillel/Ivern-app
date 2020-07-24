@@ -59,7 +59,7 @@ dd {
   margin-bottom: 24px;
 }
 
-img {
+svg {
   height: auto; /* Make sure images are scaled correctly. */
   max-width: 100%; /* Adhere to container width. */
   vertical-align: middle;
@@ -74,7 +74,6 @@ figcaption {
   padding: 8px 0;
 }
 
-img,
 svg {
   display: block;
 }

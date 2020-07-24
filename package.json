@@ -21,6 +21,7 @@
     "firebase-admin": "^9.0.0",
     "firebase-functions": "^3.8.0",
     "install": "^0.13.0",
+    "is-mobile": "^2.2.2",
     "mdi-material-ui": "^6.16.0",
     "node-sass": "^4.14.1",
     "normalize.css": "^8.0.1",
