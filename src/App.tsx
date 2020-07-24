@@ -8,7 +8,6 @@ import PrimarySearchAppBar from './components/navbar';
 const App: React.FC = () => {
   return (
     <Router>
-      <PrimarySearchAppBar />
       <Switch>
         <Route exact path='/' component={Dashboard} />
         <Route exact path='/signup' component={Signup} />

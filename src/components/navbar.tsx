@@ -193,7 +193,13 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button color='primary' startIcon={<SonyPlaystation />}>
+            <Button
+              color='primary'
+              startIcon={<SonyPlaystation />}
+              onClick={() =>
+                console.log('I clicked on the playstation button!')
+              }
+            >
               Playstation
             </Button>
             <Button color='primary' startIcon={<MicrosoftXbox />}>
