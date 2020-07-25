@@ -6,6 +6,7 @@ import {
   searchGameInDatabase,
   addGameToDatabase,
   updateGames,
+  getAllGames,
 } from './utils/games_methods';
 import {
   addPost,
@@ -20,10 +21,12 @@ import { changeProfileImage, uploadImage } from './utils/file_upload';
 import functions = require('firebase-functions');
 import admin = require('firebase-admin');
 import express = require('express');
+import cors = require('cors');
 const app = express();
 export const database = admin.firestore();
 //projects handlers.
 //user handlers.
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.post('/login', login);
 app.post('/signup', signup);
 app.post('/user', FBAuth, userUpdate);
@@ -32,6 +35,7 @@ app.post('/image', uploadImage);
 app.post('/users/image', FBAuth, changeProfileImage);
 app.post('/games', postAllPS4games);
 app.post('/games/add', addGameToDatabase);
+app.get('/games', getAllGames);
 app.get('/games/:gameName', searchGameInDatabase);
 app.get('/games/api/:gameName', searchUnfoundGame);
 //Posts endpoints

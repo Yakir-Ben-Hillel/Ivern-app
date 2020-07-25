@@ -8,43 +8,51 @@ interface IProps {
   lights: boolean;
 }
 const HeroSection: React.FC = () => {
-  const [lights, SwitchLights] = React.useState(true);
+  let choice = true;
+  const localLights = localStorage.getItem('lights');
+  if (localLights === 'false') {
+    choice = false;
+    document.body.classList.add('lights-off');
+  }
+  const [lights, SwitchLights] = React.useState(choice);
 
   return (
-    <section className="hero">
-      <div className="container">
-        <div className="hero-inner">
-          <div className="hero-copy">
-            <h1 className="hero-title mt-0">Play. Swap. Sell</h1>
-            <p className="hero-paragraph">
+    <section className='hero'>
+      <div className='container'>
+        <div className='hero-inner'>
+          <div className='hero-copy'>
+            <h1 className='hero-title mt-0'>Play. Swap. Sell</h1>
+            <p className='hero-paragraph'>
               Explore new games while switching or selling the games you already
               finished! Click on the button below to start exploring.
             </p>
-            <div className="hero-cta">
-              <a className="button button-primary" href="#">
+            <div className='hero-cta'>
+              <a className='button button-primary' href='#'>
                 Explore
               </a>
-              <div className="lights-toggle">
+              <div className='lights-toggle'>
                 <input
                   onChange={() => {
                     if (lights) {
                       document.body.classList.add('lights-off');
+                      localStorage.setItem('lights', 'false');
                       SwitchLights(false);
                     } else {
                       document.body.classList.remove('lights-off');
+                      localStorage.setItem('lights', 'true');
                       SwitchLights(true);
                     }
                   }}
-                  id="lights-toggle"
-                  type="checkbox"
-                  name="lights-toggle"
-                  className="switch"
+                  id='lights-toggle'
+                  type='checkbox'
+                  name='lights-toggle'
+                  className='switch'
                   checked={lights}
                 />
-                <label htmlFor="lights-toggle" className="text-xs">
+                <label htmlFor='lights-toggle' className='text-xs'>
                   <span>
                     Turn me{' '}
-                    <span className="label-text">
+                    <span className='label-text'>
                       {lights ? 'dark' : 'light'}
                     </span>
                   </span>
@@ -52,34 +60,38 @@ const HeroSection: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="hero-media">
-            <div className="header-illustration">
+          <div className='hero-media'>
+            <div className='header-illustration'>
               {/* <Svg
               src={require('./dist/images/header-illustration-light.svg')}
               className="header-illustration-image asset-light"
             /> */}
               {!lights && (
                 <Svg
-                  className="header-illustration-image asset-dark"
+                  className='header-illustration-image asset-dark'
                   src={require('./dist/images/header-illustration-dark.svg')}
                 />
               )}
             </div>
-            <div className="hero-media-illustration">
+            <div className='hero-media-illustration'>
               {lights ? (
                 <Svg
                   src={require('./dist/images/hero-media-illustration-light.svg')}
-                  className="hero-media-illustration-image asset-light"
+                  className='hero-media-illustration-image asset-light'
                 />
               ) : (
                 <Svg
                   src={require('./dist/images/hero-media-illustration-dark.svg')}
-                  className="hero-media-illustration-image asset-dark"
+                  className='hero-media-illustration-image asset-dark'
                 />
               )}
             </div>
-            <div className="hero-media-container">
-              {mobile() ? <MobilePic lights={lights} /> : <DesktopPic lights={lights} />}
+            <div className='hero-media-container'>
+              {mobile() ? (
+                <MobilePic lights={lights} />
+              ) : (
+                <DesktopPic lights={lights} />
+              )}
             </div>
           </div>
         </div>
@@ -91,14 +103,14 @@ const MobilePic: React.FC<IProps> = ({ lights }) => {
   if (lights)
     return (
       <Svg
-        className="hero-media-image asset-light"
+        className='hero-media-image asset-light'
         src={require('./dist/images/box-pic-light.svg')}
       />
     );
   else
     return (
       <Svg
-        className="hero-media-image asset-dark"
+        className='hero-media-image asset-dark'
         src={require('./dist/images/3773314.svg')}
       />
     );
@@ -107,21 +119,21 @@ const DesktopPic: React.FC<IProps> = ({ lights }) => {
   if (lights)
     return (
       <img
-        className="hero-media-image asset-light"
-        height="380"
-        width="538"
+        className='hero-media-image asset-light'
+        height='380'
+        width='538'
         src={require('./dist/images/box-pic-light.jpg')}
-        alt="playing video games"
+        alt='playing video games'
       />
     );
   else
     return (
       <img
-        className="hero-media-image asset-dark"
-        height="380"
-        width="538"
+        className='hero-media-image asset-dark'
+        height='380'
+        width='538'
         src={require('./dist/images/3773314.jpg')}
-        alt="playing video games"
+        alt='playing video games'
       />
     );
 };

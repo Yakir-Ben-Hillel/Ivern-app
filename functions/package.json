@@ -19,6 +19,7 @@
     "@types/testing-library__dom": "^7.5.0",
     "axios": "^0.19.2",
     "busboy": "^0.3.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "firebase": "^7.15.5",
     "firebase-admin": "^8.6.0",

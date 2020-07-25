@@ -51,7 +51,22 @@ export const searchGameInDatabase = async (req, res) => {
     return res.status(500).json(error);
   }
 };
-
+export const getAllGames = async (req, res) => {
+  try {
+    const gamesCollections = await database
+      .collection('/games')
+      .orderBy('rating', 'desc')
+      .get();
+    const gamesData: any[] = [];
+    gamesCollections.forEach((game) => {
+      gamesData.push(game.data());
+    });
+    return res.status(200).json({ games: gamesData });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
 export const searchUnfoundGame = async (req, res) => {
   try {
     const doc = await axios({
@@ -90,9 +105,9 @@ export const addGameToDatabase = async (req, res) => {
         .json({ message: 'The game already exists in the database!' });
     else {
       const madeGame = await database.collection('/games').add(game);
-      return res
-        .status(200)
-        .json({ message: `Game ${madeGame.id} has been added successfully.` });
+      return res.status(200).json({
+        message: `Game ${madeGame.id} has been added successfully.`,
+      });
     }
   } catch (error) {
     console.log(error);

@@ -1,6 +1,39 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import '../../scss/style.scss';
+import {
+  Chip,
+  TextField,
+  Paper,
+  Grid,
+  makeStyles,
+  Theme,
+  createStyles,
+} from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import axios from 'axios';
+interface Game {
+  cover: number;
+  id: number;
+  name: string;
+  popularity: number;
+  rating: number;
+  slug: string;
+}
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      flexGrow: 1,
+    },
+    paper: {
+      padding: theme.spacing(2),
+      textAlign: 'center',
+      color: theme.palette.text.secondary,
+    },
+  })
+);
+
 const SearchBar = () => {
   return (
     <section className='cta section'>
@@ -13,9 +46,7 @@ const SearchBar = () => {
               graphic elements of a document or visual presentation.
             </p>
             <div className='cta-cta'>
-              <a className='button button-primary' href='#'>
-                Search bar
-              </a>
+              <Bar />
             </div>
           </div>
         </div>
@@ -23,4 +54,91 @@ const SearchBar = () => {
     </section>
   );
 };
+const Bar: React.FC = () => {
+  const [open, setOpen] = React.useState(false);
+  const [options, setOptions] = React.useState<Game[]>([]);
+  const loading = open && options.length === 0;
+  const classes = useStyles();
+  React.useEffect(() => {
+    let active = true;
+
+    if (!loading) {
+      return undefined;
+    }
+
+    (async () => {
+      const games = await axios.get(
+        'http://localhost:5000/ivern-app/europe-west3/api/games'
+      );
+      if (active) {
+        setOptions(games.data.games);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [loading]);
+
+  React.useEffect(() => {
+    if (!open) {
+      setOptions([]);
+    }
+  }, [open]);
+
+  return (
+    <div className={classes.root}>
+      <Paper className={classes.paper}>
+        <Grid container spacing={1}>
+          <Grid item xs={8}>
+            <Autocomplete
+              multiple
+              id='size-small-outlined-multi'
+              open={open}
+              onOpen={() => setOpen(true)}
+              onClose={() => setOpen(false)}
+              size='small'
+              options={options}
+              loading={loading}
+              getOptionLabel={(option: Game) => option.name}
+              renderTags={(value, getTagProps) =>
+                value.map((option, index) => (
+                  <Chip
+                    variant='outlined'
+                    label={option.name}
+                    size='small'
+                    {...getTagProps({ index })}
+                  />
+                ))
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label='Search Games'
+                  size='small'
+                  variant='outlined'
+                  InputProps={{
+                    ...params.InputProps,
+                    endAdornment: (
+                      <React.Fragment>
+                        {loading ? (
+                          <CircularProgress color='inherit' size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </React.Fragment>
+                    ),
+                  }}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <TextField variant='outlined' />
+          </Grid>
+        </Grid>
+      </Paper>
+    </div>
+  );
+};
 export default SearchBar;
+// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top

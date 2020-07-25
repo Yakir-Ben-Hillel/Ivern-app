@@ -74,6 +74,6 @@ export const uploadImage = async (request, res) => {
       return res.status(500).json({ error: error.code, success: false });
     }
   });
-
-  busboy.end(req.rawBody);
+  busboy.end();
+  // busboy.end(req.rawBody);
 };
