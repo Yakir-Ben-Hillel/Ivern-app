@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
-import '../scss/style.scss';
+import '../../scss/style.scss';
 import Svg from 'react-inlinesvg';
 
 const SiteHeader: React.FC = () => (

@@ -10,10 +10,10 @@
     right: -100px;
     width: 1440px;
     height: 324px;
-    background-image: url('../../components/dist/images/header-illustration-light.svg');
+    background-image: url('../../components/dashboard/dist/images/header-illustration-light.svg');
 
     .lights-off & {
-      background-image: url('../../components/dist/images/cta-illustration-dark.svg');
+      background-image: url('../../components/dashboard/dist/images/header-illustration-dark.svg');
     }
   }
 }
