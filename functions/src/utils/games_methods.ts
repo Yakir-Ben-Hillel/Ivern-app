@@ -129,10 +129,25 @@ export const updateGames = async (context) => {
     const batch = database.batch();
     let counter = 0;
     doc.data.forEach(async (game) => {
+      const image = await axios({
+        //Getting cover url and making it logo_med.
+        url: 'https://api-v3.igdb.com/covers',
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'user-key': IGDB_API_KEY,
+        },
+        data: `fields url;where id=${game.cover};`,
+      });
+      const imageURL: string = image.data[0].url
+        .replace('thumb', 'logo_med')
+        .substring(2);
+
       const gameDoc = await database.doc(`/games/${game.id}`).get();
-      if (gameDoc.exists) batch.update(database.doc(`/games/${game.id}`), game);
+      if (gameDoc.exists)
+        batch.update(database.doc(`/games/${game.id}`), { ...game, imageURL });
       else {
-        batch.set(database.collection('/games').doc(), game);
+        batch.set(database.collection('/games').doc(), { ...game, imageURL });
         counter++;
       }
     });
@@ -141,5 +156,56 @@ export const updateGames = async (context) => {
   } catch (error) {
     console.log(error);
     return new Error(error);
+  }
+};
+export const updateGamesFunc = async (req, res) => {
+  try {
+    const doc = await axios({
+      url: 'https://api-v3.igdb.com/games',
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'user-key': IGDB_API_KEY,
+      },
+      data:
+        'fields name,cover,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
+    });
+    doc.data.forEach(async (game) => {
+      const image = await axios({
+        //Getting cover url and making it logo_med.
+        url: 'https://api-v3.igdb.com/covers',
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'user-key': IGDB_API_KEY,
+        },
+        data: `fields url;where id=${game.cover};`,
+      });
+      const imageURL: string = image.data[0].url
+        .replace('thumb', 'logo_med')
+        .substring(2);
+
+      const gameDoc = await database
+        .collection('/games')
+        .where('id', '==', game.id)
+        .limit(1)
+        .get();
+      if (!gameDoc.empty) {
+        await database
+          .doc(`/games/${gameDoc.docs[0].id}`)
+          .update({ ...game, imageURL });
+      } else {
+        await database
+          .collection('/games')
+          .doc()
+          .set({ ...game, imageURL });
+      }
+    });
+    return res
+      .status(200)
+      .json({ message: 'update has been made successfully.' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error });
   }
 };

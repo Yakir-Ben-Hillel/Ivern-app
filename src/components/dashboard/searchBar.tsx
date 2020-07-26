@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import '../../scss/style.scss';
@@ -20,6 +21,7 @@ interface Game {
   popularity: number;
   rating: number;
   slug: string;
+  imageURL: string;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -36,16 +38,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const SearchBar = () => {
   return (
-    <section className='cta section'>
-      <div className='container-sm'>
-        <div className='cta-inner section-inner'>
-          <div className='cta-header text-center'>
-            <h2 className='section-title mt-0'>Get it and Switch</h2>
-            <p className='section-paragraph'>
+    <section className="cta section">
+      <div className="container-sm">
+        <div className="cta-inner section-inner">
+          <div className="cta-header text-center">
+            <h2 className="section-title mt-0">Get it and Switch</h2>
+            <p className="section-paragraph">
               Lorem ipsum is common placeholder text used to demonstrate the
               graphic elements of a document or visual presentation.
             </p>
-            <div className='cta-cta'>
+            <div className="cta-cta">
               <Bar />
             </div>
           </div>
@@ -74,18 +76,13 @@ const Bar: React.FC = () => {
         setOptions(games.data.games);
       }
     })();
-
     return () => {
       active = false;
     };
   }, [loading]);
-
   React.useEffect(() => {
-    if (!open) {
-      setOptions([]);
-    }
-  }, [open]);
-
+    console.log(options);
+  }, [options]);
   return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
@@ -93,20 +90,32 @@ const Bar: React.FC = () => {
           <Grid item xs={8}>
             <Autocomplete
               multiple
-              id='size-small-outlined-multi'
+              id="size-small-outlined-multi"
               open={open}
               onOpen={() => setOpen(true)}
               onClose={() => setOpen(false)}
-              size='small'
+              size="small"
               options={options}
               loading={loading}
               getOptionLabel={(option: Game) => option.name}
+              renderOption={(option) => (
+                <React.Fragment>
+                  <img
+                    src={'https://' + option.imageURL}
+                    style={{
+                      width: '45px',
+                      marginRight: '7px',
+                    }}
+                  />
+                  {option.name}
+                </React.Fragment>
+              )}
               renderTags={(value, getTagProps) =>
                 value.map((option, index) => (
                   <Chip
-                    variant='outlined'
+                    variant="outlined"
                     label={option.name}
-                    size='small'
+                    size="small"
                     {...getTagProps({ index })}
                   />
                 ))
@@ -114,15 +123,15 @@ const Bar: React.FC = () => {
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label='Search Games'
-                  size='small'
-                  variant='outlined'
+                  label="Search Games"
+                  size="small"
+                  variant="outlined"
                   InputProps={{
                     ...params.InputProps,
                     endAdornment: (
                       <React.Fragment>
                         {loading ? (
-                          <CircularProgress color='inherit' size={20} />
+                          <CircularProgress color="inherit" size={20} />
                         ) : null}
                         {params.InputProps.endAdornment}
                       </React.Fragment>
@@ -133,7 +142,7 @@ const Bar: React.FC = () => {
             />
           </Grid>
           <Grid item xs={4}>
-            <TextField variant='outlined' />
+            <TextField variant="outlined" />
           </Grid>
         </Grid>
       </Paper>
@@ -141,4 +150,3 @@ const Bar: React.FC = () => {
   );
 };
 export default SearchBar;
-// Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
