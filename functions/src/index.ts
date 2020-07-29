@@ -27,7 +27,9 @@ const app = express();
 export const database = admin.firestore();
 //projects handlers.
 //user endpoints.
+
 app.use(cors({ origin: '*' }));
+
 app.post('/login', login);
 app.post('/signup', signup);
 app.post('/user', FBAuth, userUpdate);
@@ -49,6 +51,7 @@ app.get('/posts/get/:pid', getPost);
 app.get('/posts/get/:gid', getAllGamePosts);
 app.get('/posts/get/:uid', getAllUserPosts);
 app.get('/posts/get', getAllPosts);
+
 exports.api = functions.region('europe-west3').https.onRequest(app);
 exports.updateGamesEachDay = functions
   .region('europe-west3')

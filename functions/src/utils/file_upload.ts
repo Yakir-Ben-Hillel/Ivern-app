@@ -10,10 +10,11 @@ export const changeProfileImage = async (request, res) => {
   try {
     const req = request as RequestCustom;
     const doc = await axios({
-      url: 'http://localhost:5000/ivern-app/europe-west3/api/image',
+      url: 'https://europe-west3-ivern-app.cloudfunctions.net/api/image',
       method: 'POST',
       headers: req.headers,
     });
+    
     if (doc.success === true) {
       const imageURL = doc.imageURL;
       await database.doc(`users/${req.user.uid}`).update({ imageURL });
