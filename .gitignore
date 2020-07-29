@@ -3,6 +3,8 @@ firebase.json
 firebase-debug.log
 firebase-export-metadata.json
 firestore.rules
-firebase.indexes.json
+database.rules.json
+firestore.indexes.json
 storage.rules
 firestore_export
+.firebaserc
