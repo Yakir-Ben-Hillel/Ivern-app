@@ -3,7 +3,6 @@
 import React from 'react';
 import '../../scss/style.scss';
 import {
-  Chip,
   TextField,
   Paper,
   Grid,
@@ -15,7 +14,6 @@ import {
   IconButton,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import SearchIcon from '@material-ui/icons/Search';
@@ -24,7 +22,8 @@ import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
 import PlatformSelect from './searchBar/bootstrapInput';
-interface Game {
+import GamesOptions from './searchBar/gameOptions';
+export interface Game {
   cover: number;
   id: number;
   name: string;
@@ -33,7 +32,7 @@ interface Game {
   slug: string;
   imageURL: string;
 }
-interface Area {
+export interface Area {
   name: string;
   area: string;
   id: number;
@@ -56,16 +55,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const SearchBar: React.FC = () => {
   return (
-    <section className='cta section'>
-      <div className='container-sm'>
-        <div className='cta-inner section-inner'>
-          <div className='cta-header text-center'>
-            <h2 className='section-title mt-0'>Get it and Switch</h2>
-            <p className='section-paragraph'>
+    <section className="cta section">
+      <div className="container-sm">
+        <div className="cta-inner section-inner">
+          <div className="cta-header text-center">
+            <h2 className="section-title mt-0">Get it and Switch</h2>
+            <p className="section-paragraph">
               Lorem ipsum is common placeholder text used to demonstrate the
               graphic elements of a document or visual presentation.
             </p>
-            <div className='cta-cta'>
+            <div className="cta-cta">
               <Bar />
             </div>
           </div>
@@ -75,15 +74,15 @@ const SearchBar: React.FC = () => {
   );
 };
 const Bar: React.FC = () => {
-  const [open, setOpen] = React.useState(false);
   const [gameError, setGameError] = React.useState(false);
   const [areaError, setAreaError] = React.useState(false);
   const [platform, setPlatform] = React.useState('playstation');
   const [options, setOptions] = React.useState<Game[]>([]);
   const [games, setGames] = React.useState<Game[]>([]);
   const [areas, setAreas] = React.useState<Area[]>([]);
-  const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
-  const checkedIcon = <CheckBoxIcon fontSize='small' />;
+  const [open, setOpen] = React.useState(false);
+  const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
+  const checkedIcon = <CheckBoxIcon fontSize="small" />;
   const loading = open && options.length === 0;
   const classes = useStyles();
   const history = useHistory();
@@ -106,9 +105,7 @@ const Bar: React.FC = () => {
       active = false;
     };
   }, [loading]);
-  React.useEffect(() => {
-    setGameError(false);
-  }, [games]);
+
   React.useEffect(() => {
     setAreaError(false);
   }, [areas]);
@@ -116,7 +113,7 @@ const Bar: React.FC = () => {
   return (
     <div className={classes.root}>
       <form
-        id='search-form'
+        id="search-form"
         onSubmit={(event) => {
           event.preventDefault();
           if (games.length > 0 && areas.length > 0) {
@@ -139,70 +136,23 @@ const Bar: React.FC = () => {
               <PlatformSelect platform={platform} setPlatform={setPlatform} />
             </Grid>
             <Grid item sm={5} style={{ paddingBottom: '5px' }}>
-              <Autocomplete
-                multiple
-                onChange={(event, games) => setGames(games)}
-                id='size-small-outlined-multi'
-                open={open}
-                onOpen={() => setOpen(true)}
-                onClose={() => setOpen(false)}
-                size='medium'
+              <GamesOptions
                 options={options}
-                loading={loading}
-                getOptionLabel={(option: Game) => option.name}
-                renderOption={(option) => (
-                  <React.Fragment>
-                    <img
-                      src={'https://' + option.imageURL}
-                      style={{
-                        width: '45px',
-                        marginRight: '7px',
-                      }}
-                    />
-                    <Typography>{option.name}</Typography>
-                  </React.Fragment>
-                )}
-                renderTags={(value, getTagProps) =>
-                  value.map((option, index) => (
-                    <Chip
-                      variant='outlined'
-                      label={option.name}
-                      size='small'
-                      {...getTagProps({ index })}
-                    />
-                  ))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    error={gameError}
-                    helperText={gameError ? 'Please choose some games.' : ''}
-                    label='Search Games'
-                    size='small'
-                    variant='outlined'
-                    InputProps={{
-                      ...params.InputProps,
-                      endAdornment: (
-                        <React.Fragment>
-                          {loading ? (
-                            <CircularProgress color='inherit' size={20} />
-                          ) : null}
-                          {params.InputProps.endAdornment}
-                        </React.Fragment>
-                      ),
-                    }}
-                  />
-                )}
+                setOptions={setOptions}
+                open={open}
+                setOpen={setOpen}
+                setGames={setGames}
+                gameError={gameError}
               />
             </Grid>
             <Grid item xs={4}>
               <Autocomplete
                 multiple
-                id='checkboxes-tags-demo'
+                id="checkboxes-tags-demo"
                 onChange={(event, areas) => setAreas(areas)}
                 options={israelAreas}
                 disableCloseOnSelect
-                size='small'
+                size="small"
                 groupBy={(option) => option.area}
                 getOptionLabel={(option) => option.name}
                 renderOption={(option, { selected }) => (
@@ -221,13 +171,13 @@ const Bar: React.FC = () => {
                     {...params}
                     error={areaError}
                     helperText={areaError ? 'Please choose some areas.' : ''}
-                    variant='outlined'
-                    label='Search Area'
+                    variant="outlined"
+                    label="Search Area"
                   />
                 )}
               />
             </Grid>
-            <IconButton type='submit'>
+            <IconButton type="submit">
               <SearchIcon />
             </IconButton>
           </Grid>
