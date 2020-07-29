@@ -12,11 +12,7 @@ import {
   createStyles,
   Checkbox,
   Typography,
-  withStyles,
-  FormControl,
   IconButton,
-  MenuItem,
-  Select,
 } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -24,15 +20,10 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import SearchIcon from '@material-ui/icons/Search';
 
-import InputBase from '@material-ui/core/InputBase';
-import {
-  SonyPlaystation,
-  MicrosoftXbox,
-  NintendoSwitch,
-} from 'mdi-material-ui';
 import { useHistory } from 'react-router-dom';
 
 import axios from 'axios';
+import PlatformSelect from './searchBar/bootstrapInput';
 interface Game {
   cover: number;
   id: number;
@@ -87,49 +78,12 @@ const Bar: React.FC = () => {
   const [open, setOpen] = React.useState(false);
   const [gameError, setGameError] = React.useState(false);
   const [areaError, setAreaError] = React.useState(false);
+  const [platform, setPlatform] = React.useState('playstation');
   const [options, setOptions] = React.useState<Game[]>([]);
   const [games, setGames] = React.useState<Game[]>([]);
   const [areas, setAreas] = React.useState<Area[]>([]);
-  const [platform, setPlatform] = React.useState('playstation');
   const icon = <CheckBoxOutlineBlankIcon fontSize='small' />;
   const checkedIcon = <CheckBoxIcon fontSize='small' />;
-  const handleChange = (event: any) => {
-    setPlatform(event.target.value);
-  };
-  const BootstrapInput = withStyles((theme) => ({
-    root: {
-      'label + &': {
-        marginTop: theme.spacing(3),
-      },
-    },
-    input: {
-      borderRadius: 4,
-      position: 'relative',
-      backgroundColor: theme.palette.background.paper,
-      border: '1px solid #ced4da',
-      fontSize: 16,
-      padding: '10px 26px 10px 12px',
-      transition: theme.transitions.create(['border-color', 'box-shadow']),
-      // Use the system font instead of the default Roboto font.
-      fontFamily: [
-        '-apple-system',
-        'BlinkMacSystemFont',
-        '"Segoe UI"',
-        'Roboto',
-        '"Helvetica Neue"',
-        'Arial',
-        'sans-serif',
-        '"Apple Color Emoji"',
-        '"Segoe UI Emoji"',
-        '"Segoe UI Symbol"',
-      ].join(','),
-      '&:focus': {
-        borderRadius: 4,
-        borderColor: '#80bdff',
-        boxShadow: '0 0 0 0.2rem rgba(0,123,255,.25)',
-      },
-    },
-  }))(InputBase);
   const loading = open && options.length === 0;
   const classes = useStyles();
   const history = useHistory();
@@ -182,30 +136,7 @@ const Bar: React.FC = () => {
         <Paper className={classes.paper}>
           <Grid container spacing={1}>
             <Grid item xs={2}>
-              <FormControl size='medium'>
-                <Select
-                  labelId='demo-customized-select-label'
-                  id='demo-customized-select'
-                  label='Platform'
-                  value={platform}
-                  onChange={handleChange}
-                  defaultValue='playstation'
-                  input={<BootstrapInput />}
-                >
-                  <MenuItem value={'playstation'}>
-                    <SonyPlaystation fontSize='inherit' />
-                    Playstation
-                  </MenuItem>
-                  <MenuItem value={'xbox'}>
-                    <MicrosoftXbox fontSize='inherit' />
-                    Xbox
-                  </MenuItem>
-                  <MenuItem value={'switch'}>
-                    <NintendoSwitch fontSize='inherit' />
-                    Switch
-                  </MenuItem>
-                </Select>
-              </FormControl>
+              <PlatformSelect platform={platform} setPlatform={setPlatform} />
             </Grid>
             <Grid item sm={5} style={{ paddingBottom: '5px' }}>
               <Autocomplete
