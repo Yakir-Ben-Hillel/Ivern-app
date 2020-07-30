@@ -4,7 +4,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Chip, Typography, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { Game } from '../searchBar';
-interface IProps {
+export interface IGameOptions {
   options: Game[];
   setOptions: React.Dispatch<React.SetStateAction<Game[]>>;
   setGames: React.Dispatch<React.SetStateAction<Game[]>>;
@@ -12,7 +12,7 @@ interface IProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   gameError: boolean;
 }
-const GamesOptions: React.FC<IProps> = ({
+const GamesOptions: React.FC<IGameOptions> = ({
   options,
   setOptions,
   open,
@@ -26,11 +26,11 @@ const GamesOptions: React.FC<IProps> = ({
     <Autocomplete
       multiple
       onChange={(event, games) => setGames(games)}
-      id="size-small-outlined-multi"
+      id='size-small-outlined-multi'
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      size="medium"
+      size='medium'
       options={options}
       loading={loading}
       getOptionLabel={(option: Game) => option.name}
@@ -49,9 +49,9 @@ const GamesOptions: React.FC<IProps> = ({
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
           <Chip
-            variant="outlined"
+            variant='outlined'
             label={option.name}
-            size="small"
+            size='small'
             {...getTagProps({ index })}
           />
         ))
@@ -61,15 +61,15 @@ const GamesOptions: React.FC<IProps> = ({
           {...params}
           error={gameError}
           helperText={gameError ? 'Please choose some games.' : ''}
-          label="Search Games"
-          size="small"
-          variant="outlined"
+          label='Search Games'
+          size='small'
+          variant='outlined'
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <React.Fragment>
                 {loading ? (
-                  <CircularProgress color="inherit" size={20} />
+                  <CircularProgress color='inherit' size={20} />
                 ) : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>

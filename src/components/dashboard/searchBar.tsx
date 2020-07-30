@@ -16,6 +16,8 @@ import axios from 'axios';
 import PlatformSelect from './searchBar/bootstrapInput';
 import GamesOptions from './searchBar/gameOptions';
 import AreaOptions from './searchBar/areaOptions';
+import MobileSearch from './searchBar/mobileSearch';
+import isMobile from 'is-mobile';
 export interface Game {
   cover: number;
   id: number;
@@ -48,16 +50,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const SearchBar: React.FC = () => {
   return (
-    <section className="cta section">
-      <div className="container-sm">
-        <div className="cta-inner section-inner">
-          <div className="cta-header text-center">
-            <h2 className="section-title mt-0">Get it and Switch</h2>
-            <p className="section-paragraph">
+    <section className='cta section'>
+      <div className='container-sm'>
+        <div className='cta-inner section-inner'>
+          <div className='cta-header text-center'>
+            <h2 className='section-title mt-0'>Get it and Switch</h2>
+            <p className='section-paragraph'>
               Lorem ipsum is common placeholder text used to demonstrate the
               graphic elements of a document or visual presentation.
             </p>
-            <div className="cta-cta">
+            <div className='cta-cta'>
               <Bar />
             </div>
           </div>
@@ -118,31 +120,42 @@ const Bar: React.FC = () => {
 
   return (
     <div className={classes.root}>
-      <form id="search-form" onSubmit={onSubmit}>
-        <Paper className={classes.paper}>
-          <Grid container spacing={1}>
-            <Grid item xs={2}>
-              <PlatformSelect platform={platform} setPlatform={setPlatform} />
+      {!isMobile() ? (
+        <form id='search-form' onSubmit={onSubmit}>
+          <Paper className={classes.paper}>
+            <Grid container spacing={1}>
+              <Grid item xs={2}>
+                <PlatformSelect platform={platform} setPlatform={setPlatform} />
+              </Grid>
+              <Grid item sm={5} style={{ paddingBottom: '5px' }}>
+                <GamesOptions
+                  options={options}
+                  setOptions={setOptions}
+                  open={open}
+                  setOpen={setOpen}
+                  setGames={setGames}
+                  gameError={gameError}
+                />
+              </Grid>
+              <Grid item xs={4}>
+                <AreaOptions setAreas={setAreas} areaError={areaError} />
+              </Grid>
+              <IconButton type='submit'>
+                <SearchIcon />
+              </IconButton>
             </Grid>
-            <Grid item sm={5} style={{ paddingBottom: '5px' }}>
-              <GamesOptions
-                options={options}
-                setOptions={setOptions}
-                open={open}
-                setOpen={setOpen}
-                setGames={setGames}
-                gameError={gameError}
-              />
-            </Grid>
-            <Grid item xs={4}>
-              <AreaOptions setAreas={setAreas} areaError={areaError} />
-            </Grid>
-            <IconButton type="submit">
-              <SearchIcon />
-            </IconButton>
-          </Grid>
-        </Paper>
-      </form>
+          </Paper>
+        </form>
+      ) : (
+        <MobileSearch
+          options={options}
+          setOptions={setOptions}
+          open={open}
+          setOpen={setOpen}
+          setGames={setGames}
+          gameError={gameError}
+        />
+      )}
     </div>
   );
 };

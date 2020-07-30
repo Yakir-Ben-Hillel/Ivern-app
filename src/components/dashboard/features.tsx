@@ -1,6 +1,7 @@
 import React from 'react';
 import '../../scss/style.scss';
 import Svg from 'react-inlinesvg';
+import isMobile from 'is-mobile';
 
 const Features: React.FC = () => {
   return (
@@ -14,25 +15,27 @@ const Features: React.FC = () => {
                 Bro ipsum dolor sit amet wacky bowl switch, dope doodle hot
                 dogging back country doin 420.
               </p>
-              <div className='features-image'>
-                <Svg
-                  className='features-illustration asset-dark'
-                  src={require('./dist/images/features-illustration-dark.svg')}
-                />
-                <Svg
-                  className='features-illustration asset-dark'
-                  src={require('./dist/images/features-illustration-top-dark.svg')}
-                />
+              {!isMobile() && (
+                <div className='features-image'>
+                  <Svg
+                    className='features-illustration asset-dark'
+                    src={require('./dist/images/features-illustration-dark.svg')}
+                  />
+                  <Svg
+                    className='features-illustration asset-dark'
+                    src={require('./dist/images/features-illustration-top-dark.svg')}
+                  />
 
-                <Svg
-                  className='features-illustration asset-light'
-                  src={require('./dist/images/features-illustration-light.svg')}
-                />
-                <Svg
-                  className='features-illustration asset-light'
-                  src={require('./dist/images/features-illustration-top-light.svg')}
-                />
-              </div>
+                  <Svg
+                    className='features-illustration asset-light'
+                    src={require('./dist/images/features-illustration-light.svg')}
+                  />
+                  <Svg
+                    className='features-illustration asset-light'
+                    src={require('./dist/images/features-illustration-top-light.svg')}
+                  />
+                </div>
+              )}
             </div>
           </div>
           <div className='features-wrap'>

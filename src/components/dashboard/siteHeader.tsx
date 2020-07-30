@@ -2,19 +2,19 @@
 import React from 'react';
 import '../../scss/style.scss';
 import Svg from 'react-inlinesvg';
-
 const SiteHeader: React.FC = () => (
-  <header className="site-header">
+  <header>
     <div className="container">
       <div className="site-header-inner">
         <div className="brand header-brand">
           <h1 className="m-0">
             <a href="/">
-              <header className="site-header">
+              <header>
                 <div className="container">
                   <div className="site-header-inner">
                     <div className="brand header-brand">
                       <h1 className="m-0">
+
                         <a href="#">
                           <Svg
                             className="header-logo-image asset-light"
