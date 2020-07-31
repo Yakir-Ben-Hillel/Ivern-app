@@ -152,6 +152,7 @@ const Bar: React.FC = () => {
           setOptions={setOptions}
           open={open}
           setOpen={setOpen}
+          games={games}
           setGames={setGames}
           gameError={gameError}
         />

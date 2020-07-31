@@ -9,6 +9,7 @@ export interface IGameOptions {
   setOptions: React.Dispatch<React.SetStateAction<Game[]>>;
   setGames: React.Dispatch<React.SetStateAction<Game[]>>;
   open: boolean;
+  games?: Game[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   gameError: boolean;
 }
@@ -25,14 +26,18 @@ const GamesOptions: React.FC<IGameOptions> = ({
   return (
     <Autocomplete
       multiple
-      onChange={(event, games) => setGames(games)}
-      id='size-small-outlined-multi'
+      onChange={(event, games) => {
+        console.log(games);
+        setGames(games);
+      }}
+      id="size-small-outlined-multi"
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      size='medium'
+      size="medium"
       options={options}
       loading={loading}
+      disableCloseOnSelect
       getOptionLabel={(option: Game) => option.name}
       renderOption={(option) => (
         <React.Fragment>
@@ -49,9 +54,9 @@ const GamesOptions: React.FC<IGameOptions> = ({
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
           <Chip
-            variant='outlined'
+            variant="outlined"
             label={option.name}
-            size='small'
+            size="small"
             {...getTagProps({ index })}
           />
         ))
@@ -61,15 +66,15 @@ const GamesOptions: React.FC<IGameOptions> = ({
           {...params}
           error={gameError}
           helperText={gameError ? 'Please choose some games.' : ''}
-          label='Search Games'
-          size='small'
-          variant='outlined'
+          label="Search Games"
+          size="small"
+          variant="outlined"
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <React.Fragment>
                 {loading ? (
-                  <CircularProgress color='inherit' size={20} />
+                  <CircularProgress color="inherit" size={20} />
                 ) : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>

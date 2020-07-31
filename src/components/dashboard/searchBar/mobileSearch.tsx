@@ -2,7 +2,6 @@
 import React from 'react';
 import {
   Dialog,
-  DialogTitle,
   DialogContentText,
   DialogContent,
   DialogActions,
@@ -11,8 +10,16 @@ import {
   Theme,
   makeStyles,
   Typography,
+  AppBar,
+  List,
+  ListItem,
+  ListItemText,
+  Divider,
+  Toolbar,
+  IconButton,
   ButtonGroup,
 } from '@material-ui/core';
+import CloseIcon from '@material-ui/icons/Close';
 import {
   SonyPlaystation,
   MicrosoftXbox,
@@ -34,6 +41,13 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
       color: theme.palette.text.secondary,
     },
+    appBar: {
+      position: 'relative',
+    },
+    title: {
+      marginLeft: theme.spacing(2),
+      flex: 1,
+    },
   })
 );
 
@@ -42,16 +56,56 @@ const MobileSearch: React.FC<IGameOptions> = ({
   setOptions,
   open,
   setOpen,
+  games,
   setGames,
   gameError,
 }) => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [gamesDialogOpen, setGamesDialogOpen] = React.useState(false);
+  const [names, setNames] = React.useState<string>('');
   const [platform, setPlatform] = React.useState<string>('');
+  const handleClose = () => {
+    setOpen(false);
+    setDialogOpen(false);
+    setPlatform('');
+  };
+  React.useEffect(() => {
+    const arr = games?.map((game) => {
+      return game.name;
+    });
+    let gamesNames: string = '';
+    arr?.forEach((game) => (gamesNames = gamesNames + game));
+    console.log(gamesNames);
+    setNames((names) => {
+      if (games?.length === 0) return '';
+      else if (names === '') return gamesNames;
+      else return names + ', ' + gamesNames;
+    });
+  }, [games]);
+  const GamesDialog: React.FC = () => (
+    <Dialog
+      open={gamesDialogOpen}
+      fullWidth={true}
+      onClose={() => {
+        setOpen(false);
+        setGamesDialogOpen(false);
+      }}
+    >
+      <GameOptions
+        open={open}
+        setOpen={setOpen}
+        options={options}
+        setOptions={setOptions}
+        setGames={setGames}
+        gameError={gameError}
+      />
+    </Dialog>
+  );
   const classes = useStyles();
   return (
     <div className={classes.root}>
       <a
-        className='button button-primary'
+        className="button button-primary"
         onClick={() => {
           setDialogOpen(true);
           setOpen(true);
@@ -61,78 +115,85 @@ const MobileSearch: React.FC<IGameOptions> = ({
       </a>
       <Dialog
         open={dialogOpen}
-        onClose={() => {
-          setOpen(false);
-          setDialogOpen(false);
-          setPlatform('');
-        }}
-        aria-labelledby='form-dialog-title'
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
         fullScreen={true}
       >
-        <DialogTitle id='form-dialog-title'>Search</DialogTitle>
+        <AppBar className={classes.appBar}>
+          <Toolbar>
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleClose}
+              aria-label="close"
+            >
+              <CloseIcon />
+            </IconButton>
+            <Typography variant="h6" className={classes.title}>
+              Search
+            </Typography>
+            <Button autoFocus color="inherit" onClick={handleClose}>
+              Search
+            </Button>
+          </Toolbar>
+        </AppBar>
         <DialogContent>
           <DialogContentText>
             Choose the games you want to search for:
           </DialogContentText>
+          <List>
+            <ListItem button>
+              <ListItemText primary="Platform" secondary={platform} />
+            </ListItem>
+            <Divider />
+            <ListItem
+              button
+              onClick={() => {
+                setGamesDialogOpen(true);
+                setOpen(true);
+              }}
+            >
+              <ListItemText primary="Video Games" secondary={names} />
+            </ListItem>
+          </List>
           <ButtonGroup
             className={classes.margin}
-            size='medium'
-            aria-label='medium outlined button group'
+            size="medium"
+            aria-label="medium outlined button group"
           >
             <Button
               onClick={() => setPlatform('playstation')}
               variant={platform === 'playstation' ? 'contained' : undefined}
             >
-              <SonyPlaystation color='primary' />
-              <Typography color='primary'>Plays..</Typography>
+              <SonyPlaystation color="primary" />
+              <Typography color="primary">Plays..</Typography>
             </Button>
             <Button
               onClick={() => setPlatform('xbox')}
               variant={platform === 'xbox' ? 'contained' : undefined}
             >
-              <MicrosoftXbox color='primary' />
-              <Typography color='primary'>Xbox</Typography>
+              <MicrosoftXbox color="primary" />
+              <Typography color="primary">Xbox</Typography>
             </Button>
             <Button
               onClick={() => setPlatform('switch')}
               variant={platform === 'switch' ? 'contained' : undefined}
             >
-              <NintendoSwitch color='primary' />
-              <Typography color='primary'>Switch</Typography>
+              <NintendoSwitch color="primary" />
+              <Typography color="primary">Switch</Typography>
             </Button>
           </ButtonGroup>
-          <GameOptions
-            open={open}
-            setOpen={setOpen}
-            options={options}
-            setOptions={setOptions}
-            setGames={setGames}
-            gameError={gameError}
-          />
         </DialogContent>
         <DialogActions className={classes.margin}>
-          <Button
-            onClick={() => {
-              setOpen(false);
-              setDialogOpen(false);
-              setPlatform('');
-            }}
-            color='primary'
-          >
+          <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button
-            onClick={() => {
-              setOpen(false);
-              setDialogOpen(false);
-              setPlatform('');
-            }}
-            color='primary'
-          >
+          <Button onClick={handleClose} color="primary">
             Search
           </Button>
         </DialogActions>
       </Dialog>
+      <GamesDialog />
     </div>
   );
 };
