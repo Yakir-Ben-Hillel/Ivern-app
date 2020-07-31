@@ -25,8 +25,18 @@ import {
   MicrosoftXbox,
   NintendoSwitch,
 } from 'mdi-material-ui';
-import { IGameOptions } from './gameOptions';
-import GameOptions from './gameOptions';
+import GameOptionsMobile from './gameOptionsMobile';
+import { Game } from '../searchBar';
+interface IGameOptions {
+  options: Game[];
+  setOptions: React.Dispatch<React.SetStateAction<Game[]>>;
+  setGames: React.Dispatch<React.SetStateAction<Game[]>>;
+  open: boolean;
+  games: Game[];
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  gameError: boolean;
+}
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -69,35 +79,28 @@ const MobileSearch: React.FC<IGameOptions> = ({
     setDialogOpen(false);
     setPlatform('');
   };
-  React.useEffect(() => {
-    const arr = games?.map((game) => {
-      return game.name;
-    });
-    let gamesNames: string = '';
-    arr?.forEach((game) => (gamesNames = gamesNames + game));
-    console.log(gamesNames);
-    setNames((names) => {
-      if (games?.length === 0) return '';
-      else if (names === '') return gamesNames;
-      else return names + ', ' + gamesNames;
-    });
-  }, [games]);
+  // React.useEffect(() => {
+  //   const arr = games.map((game) => {
+  //     return game.name;
+  //   });
+  //   let gamesNames: string = '';
+  //   arr?.forEach((game) => (gamesNames = gamesNames + game));
+  //   console.log(gamesNames);
+  //   setNames((names) => {
+  //     if (games.length === 0) return '';
+  //     else if (names === '') return gamesNames;
+  //     else return names + ', ' + gamesNames;
+  //   });
+  // }, [games]);
   const GamesDialog: React.FC = () => (
-    <Dialog
-      open={gamesDialogOpen}
-      fullWidth={true}
-      onClose={() => {
-        setOpen(false);
-        setGamesDialogOpen(false);
-      }}
-    >
-      <GameOptions
+    <Dialog open={gamesDialogOpen} fullWidth={true} fullScreen>
+      <GameOptionsMobile
+        options={options}
         open={open}
         setOpen={setOpen}
-        options={options}
-        setOptions={setOptions}
+        games={games}
         setGames={setGames}
-        gameError={gameError}
+        setGamesDialogOpen={setGamesDialogOpen}
       />
     </Dialog>
   );
@@ -108,7 +111,6 @@ const MobileSearch: React.FC<IGameOptions> = ({
         className="button button-primary"
         onClick={() => {
           setDialogOpen(true);
-          setOpen(true);
         }}
       >
         Explore

@@ -4,12 +4,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import { Chip, Typography, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import { Game } from '../searchBar';
-export interface IGameOptions {
+interface IGameOptions {
   options: Game[];
   setOptions: React.Dispatch<React.SetStateAction<Game[]>>;
   setGames: React.Dispatch<React.SetStateAction<Game[]>>;
   open: boolean;
-  games?: Game[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   gameError: boolean;
 }

@@ -14,7 +14,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import PlatformSelect from './searchBar/bootstrapInput';
-import GamesOptions from './searchBar/gameOptions';
+import GamesOptions from './searchBar/gameOptionsDesktop';
 import AreaOptions from './searchBar/areaOptions';
 import MobileSearch from './searchBar/mobileSearch';
 import isMobile from 'is-mobile';
@@ -102,6 +102,7 @@ const Bar: React.FC = () => {
     }
 
     (async () => {
+      console.log('im here');
       const games = await axios.get(
         'https://europe-west3-ivern-app.cloudfunctions.net/api/games'
       );
