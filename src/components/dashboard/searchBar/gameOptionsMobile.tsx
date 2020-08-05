@@ -3,19 +3,20 @@ import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import {
   Typography,
-  List,
   ListItem,
-  ListItemSecondaryAction,
   Checkbox,
   ListItemIcon,
   makeStyles,
   AppBar,
+  Paper,
   Toolbar,
+  InputBase,
   IconButton,
   Button,
+  Container,
 } from '@material-ui/core';
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
-
+import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
 import { Game } from '../searchBar';
 interface IGameOptions {
@@ -28,8 +29,8 @@ interface IGameOptions {
 }
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '100%',
-    maxWidth: 360,
+    width: '90%',
+    alignItems: 'center',
     backgroundColor: theme.palette.background.paper,
   },
   appBar: {
@@ -41,6 +42,27 @@ const useStyles = makeStyles((theme) => ({
   },
   inline: {
     display: 'inline',
+  },
+  searchRoot: {
+    margin: '5px 0 2px 2px',
+    padding: '2px 4px',
+    display: 'flex',
+    alignItems: 'center',
+    width: '100%',
+  },
+  input: {
+    marginLeft: theme.spacing(1),
+    flex: 1,
+  },
+  iconButton: {
+    padding: 10,
+  },
+  progress: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: 'auto',
+    marginTop: theme.spacing(30),
   },
 }));
 
@@ -55,88 +77,145 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
   const loading = open && options.length === 0;
   const classes = useStyles();
   const [checked, setChecked] = React.useState<number[]>([]);
-
+  const [search, setSearch] = React.useState<string>('');
+  const [filteredOptions, setFilteredOptions] = React.useState<Game[]>(options);
   const handleClose = () => {
     setOpen(false);
     setGamesDialogOpen(false);
   };
   function renderRow(props: ListChildComponentProps) {
     const { index, style, data } = props;
-    const game = data[index];
-    const labelId = `checkbox-list-secondary-label-${game.id}`;
+    const game: Game = data[index];
+    const gameIndex = options.indexOf(game);
+    const handleCheck = () => {
+      const currentIndex = checked.indexOf(gameIndex);
+      const newChecked = [...checked];
+
+      if (currentIndex === -1) {
+        newChecked.push(gameIndex);
+      } else {
+        newChecked.splice(currentIndex, 1);
+      }
+
+      setChecked(newChecked);
+    };
+
     return (
-      <ListItem alignItems="flex-start" key={index} style={style} button>
-        <ListItemIcon>
-          <React.Fragment>
-            <img
-              src={'https://' + game.imageURL}
+      <div>
+        {game && (
+          <ListItem
+            alignItems='center'
+            key={gameIndex}
+            style={style}
+            onClick={handleCheck}
+            button
+          >
+            <ListItemIcon>
+              <React.Fragment>
+                <img
+                  src={'https://' + game.imageURL}
+                  style={{
+                    width: '45px',
+                    height: '45px',
+                    marginRight: '7px',
+                  }}
+                />
+              </React.Fragment>
+            </ListItemIcon>
+            <Typography variant='inherit'>{game.name}</Typography>
+            {/* <ListItemSecondaryAction> */}
+            <Checkbox
               style={{
-                width: '45px',
-                marginRight: '7px',
+                position: 'absolute',
+                right: 0,
               }}
+              edge='end'
+              onChange={handleCheck}
+              checked={checked.includes(gameIndex) ? true : false}
+              // inputProps={{ 'aria-labelledby': labelId }}
             />
-          </React.Fragment>
-        </ListItemIcon>
-        <Typography>{game.name}</Typography>
-        {/* <ListItemSecondaryAction> */}
-        <Checkbox
-          style={{ alignItems: 'right', marginLeft: '8px' }}
-          edge="end"
-          onChange={(event, checkedIndex) => {
-            console.log(checkedIndex);
-            const currentIndex = checked.indexOf(index);
-            const newChecked = [...checked];
-
-            if (currentIndex === -1) {
-              newChecked.push(index);
-            } else {
-              newChecked.splice(currentIndex, 1);
-            }
-
-            setChecked(newChecked);
-          }}
-          checked={checked.indexOf(index) !== -1 ? true : false}
-          inputProps={{ 'aria-labelledby': labelId }}
-        />
-        {/* </ListItemSecondaryAction> */}
-      </ListItem>
+            {/* </ListItemSecondaryAction> */}
+          </ListItem>
+        )}
+      </div>
     );
   }
   return (
     <div>
       {loading ? (
-        <CircularProgress />
+        <CircularProgress className={classes.progress} />
       ) : (
         <div>
           <AppBar className={classes.appBar}>
             <Toolbar>
               <IconButton
-                edge="start"
-                color="inherit"
+                edge='start'
+                color='inherit'
                 onClick={handleClose}
-                aria-label="close"
+                aria-label='close'
               >
                 <CloseIcon />
               </IconButton>
-              <Typography variant="h6" className={classes.title}>
-                Search
+              <Typography
+                color='inherit'
+                variant='h6'
+                className={classes.title}
+              >
+                Game Picker
               </Typography>
-              <Button autoFocus color="inherit" onClick={handleClose}>
-                Search
+              <Button color='inherit' onClick={handleClose}>
+                Save
               </Button>
             </Toolbar>
           </AppBar>
-
-          <FixedSizeList
-            height={600}
-            width="100%"
-            itemData={options}
-            itemCount={options.length}
-            itemSize={80}
-            className={classes.root}
-          >
-            {renderRow}
-          </FixedSizeList>
+          <Container maxWidth='xs'>
+            <Paper component='form' className={classes.searchRoot}>
+              <IconButton
+                className={classes.iconButton}
+                disabled={search === ''}
+                aria-label='menu'
+                onClick={() => {
+                  setSearch('');
+                  setFilteredOptions(options);
+                }}
+              >
+                <CloseIcon />
+              </IconButton>
+              <InputBase
+                value={search}
+                onChange={(event: any) => {
+                  setSearch(event.target.value);
+                  if (event.target.value === '') setFilteredOptions(options);
+                  else
+                    setFilteredOptions(
+                      options.filter((game) =>
+                        game.name.toLowerCase().includes(search.toLowerCase())
+                      )
+                    );
+                }}
+                className={classes.input}
+                placeholder='Search Games'
+                inputProps={{ 'aria-label': 'search games' }}
+              />
+              <IconButton
+                type='submit'
+                className={classes.iconButton}
+                aria-label='search'
+              >
+                <SearchIcon />
+              </IconButton>
+            </Paper>
+            <FixedSizeList
+              height={600}
+              width='100%'
+              itemData={filteredOptions}
+              itemCount={options.length}
+              itemSize={80}
+              className={classes.root}
+            >
+              {renderRow}
+            </FixedSizeList>
+          </Container>
         </div>
       )}
     </div>

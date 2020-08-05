@@ -72,6 +72,7 @@ const MobileSearch: React.FC<IGameOptions> = ({
 }) => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [gamesDialogOpen, setGamesDialogOpen] = React.useState(false);
+  // eslint-disable-next-line
   const [names, setNames] = React.useState<string>('');
   const [platform, setPlatform] = React.useState<string>('');
   const handleClose = () => {
