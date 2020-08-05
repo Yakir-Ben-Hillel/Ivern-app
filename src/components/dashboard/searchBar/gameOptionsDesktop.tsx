@@ -26,7 +26,6 @@ const GamesOptions: React.FC<IGameOptions> = ({
     <Autocomplete
       multiple
       onChange={(event, games) => {
-        console.log(games);
         setGames(games);
       }}
       id="size-small-outlined-multi"

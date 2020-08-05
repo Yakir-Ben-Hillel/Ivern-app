@@ -12,12 +12,14 @@ import {
   Typography,
   AppBar,
   List,
+  Menu,
+  MenuItem,
   ListItem,
   ListItemText,
+  ListItemIcon,
   Divider,
   Toolbar,
   IconButton,
-  ButtonGroup,
 } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import {
@@ -26,15 +28,18 @@ import {
   NintendoSwitch,
 } from 'mdi-material-ui';
 import GameOptionsMobile from './gameOptionsMobile';
-import { Game } from '../searchBar';
+import MobileArea from './mobileArea';
+import { Game, Area } from '../searchBar';
 interface IGameOptions {
   options: Game[];
+  games: Game[];
+  areas: Area[];
   setOptions: React.Dispatch<React.SetStateAction<Game[]>>;
   setGames: React.Dispatch<React.SetStateAction<Game[]>>;
-  open: boolean;
-  games: Game[];
+  setAreas: React.Dispatch<React.SetStateAction<Area[]>>;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   gameError: boolean;
+  open: boolean;
 }
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -67,41 +72,59 @@ const MobileSearch: React.FC<IGameOptions> = ({
   open,
   setOpen,
   games,
+  areas,
+  setAreas,
   setGames,
   gameError,
 }) => {
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [gamesDialogOpen, setGamesDialogOpen] = React.useState(false);
-  // eslint-disable-next-line
-  const [names, setNames] = React.useState<string>('');
+  const [areasDialogOpen, setAreasDialogOpen] = React.useState(false);
+  const [names, setNames] = React.useState<string[]>([]);
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [stringOfNames, setStringOfNames] = React.useState<string>();
   const [platform, setPlatform] = React.useState<string>('');
   const handleClose = () => {
     setOpen(false);
     setDialogOpen(false);
     setPlatform('');
   };
-  // React.useEffect(() => {
-  //   const arr = games.map((game) => {
-  //     return game.name;
-  //   });
-  //   let gamesNames: string = '';
-  //   arr?.forEach((game) => (gamesNames = gamesNames + game));
-  //   console.log(gamesNames);
-  //   setNames((names) => {
-  //     if (games.length === 0) return '';
-  //     else if (names === '') return gamesNames;
-  //     else return names + ', ' + gamesNames;
-  //   });
-  // }, [games]);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (anchorEl === null) setAnchorEl(event.currentTarget);
+  };
+  React.useEffect(() => {
+    let namesString: string = '';
+    const promise = new Promise((resolve, reject) => {
+      let counter = 1;
+      const length = names.length;
+      names.forEach((name) => {
+        if (counter !== length) namesString = namesString + `${name}, `;
+        else namesString = `${namesString + name}.`;
+        counter++;
+      });
+      resolve();
+    });
+    
+    promise.then(() => setStringOfNames(namesString));
+  }, [names]);
   const GamesDialog: React.FC = () => (
     <Dialog open={gamesDialogOpen} fullWidth={true} fullScreen>
       <GameOptionsMobile
         options={options}
         open={open}
+        setNames={setNames}
         setOpen={setOpen}
-        games={games}
         setGames={setGames}
         setGamesDialogOpen={setGamesDialogOpen}
+      />
+    </Dialog>
+  );
+  const AreasDialog: React.FC = () => (
+    <Dialog open={areasDialogOpen} fullScreen>
+      <MobileArea
+        areas={areas}
+        setAreas={setAreas}
+        setAreasDialogOpen={setAreasDialogOpen}
       />
     </Dialog>
   );
@@ -132,10 +155,10 @@ const MobileSearch: React.FC<IGameOptions> = ({
             >
               <CloseIcon />
             </IconButton>
-            <Typography variant="h6" className={classes.title}>
-              Search
+            <Typography variant="h6" color="inherit" className={classes.title}>
+              Search Form
             </Typography>
-            <Button autoFocus color="inherit" onClick={handleClose}>
+            <Button color="inherit" onClick={handleClose}>
               Search
             </Button>
           </Toolbar>
@@ -144,9 +167,61 @@ const MobileSearch: React.FC<IGameOptions> = ({
           <DialogContentText>
             Choose the games you want to search for:
           </DialogContentText>
-          <List>
-            <ListItem button>
+          <List component="nav">
+            <ListItem
+              button
+              aria-haspopup="true"
+              aria-controls="lock-menu"
+              onClick={handleClick}
+            >
               <ListItemText primary="Platform" secondary={platform} />
+              <Menu
+                id="lock-menu"
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
+              >
+                <MenuItem
+                  button
+                  key="playstation"
+                  selected={platform === 'Playstation'}
+                  onClick={(event: React.MouseEvent<HTMLElement>) => {
+                    setPlatform('Playstation');
+                    setAnchorEl(null);
+                  }}
+                >
+                  <ListItemIcon>
+                    <SonyPlaystation color="primary" />
+                    <ListItemText primary="Playstation" />
+                  </ListItemIcon>
+                </MenuItem>
+                <MenuItem
+                  key="xbox"
+                  selected={platform === 'Xbox'}
+                  onClick={() => {
+                    setPlatform('Xbox');
+                    setAnchorEl(null);
+                  }}
+                >
+                  <ListItemIcon>
+                    <MicrosoftXbox color="primary" />
+                    <ListItemText primary="Xbox" />
+                  </ListItemIcon>
+                </MenuItem>
+                <MenuItem
+                  key="switch"
+                  selected={platform === 'Switch'}
+                  onClick={() => {
+                    setPlatform('Switch');
+                    setAnchorEl(null);
+                  }}
+                >
+                  <ListItemIcon>
+                    <NintendoSwitch color="primary" />
+                    <ListItemText primary="Switch" />
+                  </ListItemIcon>
+                </MenuItem>
+              </Menu>
             </ListItem>
             <Divider />
             <ListItem
@@ -156,36 +231,12 @@ const MobileSearch: React.FC<IGameOptions> = ({
                 setOpen(true);
               }}
             >
-              <ListItemText primary="Video Games" secondary={names} />
+              <ListItemText primary="Video Games" secondary={stringOfNames} />
+            </ListItem>
+            <ListItem button onClick={() => setAreasDialogOpen(true)}>
+              <ListItemText primary="Areas" />
             </ListItem>
           </List>
-          <ButtonGroup
-            className={classes.margin}
-            size="medium"
-            aria-label="medium outlined button group"
-          >
-            <Button
-              onClick={() => setPlatform('playstation')}
-              variant={platform === 'playstation' ? 'contained' : undefined}
-            >
-              <SonyPlaystation color="primary" />
-              <Typography color="primary">Plays..</Typography>
-            </Button>
-            <Button
-              onClick={() => setPlatform('xbox')}
-              variant={platform === 'xbox' ? 'contained' : undefined}
-            >
-              <MicrosoftXbox color="primary" />
-              <Typography color="primary">Xbox</Typography>
-            </Button>
-            <Button
-              onClick={() => setPlatform('switch')}
-              variant={platform === 'switch' ? 'contained' : undefined}
-            >
-              <NintendoSwitch color="primary" />
-              <Typography color="primary">Switch</Typography>
-            </Button>
-          </ButtonGroup>
         </DialogContent>
         <DialogActions className={classes.margin}>
           <Button onClick={handleClose} color="primary">
@@ -197,6 +248,7 @@ const MobileSearch: React.FC<IGameOptions> = ({
         </DialogActions>
       </Dialog>
       <GamesDialog />
+      <AreasDialog />
     </div>
   );
 };

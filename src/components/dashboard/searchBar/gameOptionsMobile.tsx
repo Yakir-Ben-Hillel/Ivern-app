@@ -21,10 +21,10 @@ import CloseIcon from '@material-ui/icons/Close';
 import { Game } from '../searchBar';
 interface IGameOptions {
   options: Game[];
+  setNames: React.Dispatch<React.SetStateAction<string[]>>;
   setGames: React.Dispatch<React.SetStateAction<Game[]>>;
   open: boolean;
   setGamesDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  games: Game[];
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 const useStyles = makeStyles((theme) => ({
@@ -70,7 +70,7 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
   options,
   open,
   setOpen,
-  games,
+  setNames,
   setGamesDialogOpen,
   setGames,
 }) => {
@@ -82,6 +82,16 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
   const handleClose = () => {
     setOpen(false);
     setGamesDialogOpen(false);
+    setNames(
+      checked.map((index) => {
+        return options[index].name;
+      })
+    );
+    setGames(
+      checked.map((index) => {
+        return options[index];
+      })
+    );
   };
   function renderRow(props: ListChildComponentProps) {
     const { index, style, data } = props;
@@ -99,12 +109,11 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
 
       setChecked(newChecked);
     };
-
     return (
       <div>
         {game && (
           <ListItem
-            alignItems='center'
+            alignItems="center"
             key={gameIndex}
             style={style}
             onClick={handleCheck}
@@ -122,19 +131,17 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
                 />
               </React.Fragment>
             </ListItemIcon>
-            <Typography variant='inherit'>{game.name}</Typography>
+            <Typography variant="inherit">{game.name}</Typography>
             {/* <ListItemSecondaryAction> */}
             <Checkbox
               style={{
                 position: 'absolute',
                 right: 0,
               }}
-              edge='end'
+              edge="end"
               onChange={handleCheck}
               checked={checked.includes(gameIndex) ? true : false}
-              // inputProps={{ 'aria-labelledby': labelId }}
             />
-            {/* </ListItemSecondaryAction> */}
           </ListItem>
         )}
       </div>
@@ -149,31 +156,31 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
           <AppBar className={classes.appBar}>
             <Toolbar>
               <IconButton
-                edge='start'
-                color='inherit'
+                edge="start"
+                color="inherit"
                 onClick={handleClose}
-                aria-label='close'
+                aria-label="close"
               >
                 <CloseIcon />
               </IconButton>
               <Typography
-                color='inherit'
-                variant='h6'
+                color="inherit"
+                variant="h6"
                 className={classes.title}
               >
                 Game Picker
               </Typography>
-              <Button color='inherit' onClick={handleClose}>
+              <Button color="inherit" onClick={handleClose}>
                 Save
               </Button>
             </Toolbar>
           </AppBar>
-          <Container maxWidth='xs'>
-            <Paper component='form' className={classes.searchRoot}>
+          <Container maxWidth="xs">
+            <Paper component="form" className={classes.searchRoot}>
               <IconButton
                 className={classes.iconButton}
                 disabled={search === ''}
-                aria-label='menu'
+                aria-label="menu"
                 onClick={() => {
                   setSearch('');
                   setFilteredOptions(options);
@@ -194,20 +201,20 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
                     );
                 }}
                 className={classes.input}
-                placeholder='Search Games'
+                placeholder="Search Games"
                 inputProps={{ 'aria-label': 'search games' }}
               />
               <IconButton
-                type='submit'
+                type="submit"
                 className={classes.iconButton}
-                aria-label='search'
+                aria-label="search"
               >
                 <SearchIcon />
               </IconButton>
             </Paper>
             <FixedSizeList
               height={600}
-              width='100%'
+              width="100%"
               itemData={filteredOptions}
               itemCount={options.length}
               itemSize={80}

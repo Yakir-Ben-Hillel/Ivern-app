@@ -152,6 +152,8 @@ const Bar: React.FC = () => {
           options={options}
           setOptions={setOptions}
           open={open}
+          areas={areas}
+          setAreas={setAreas}
           setOpen={setOpen}
           games={games}
           setGames={setGames}

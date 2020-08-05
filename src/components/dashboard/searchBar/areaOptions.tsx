@@ -45,7 +45,7 @@ const AreaOptions: React.FC<IProps> = ({ setAreas, areaError }) => {
     />
   );
 };
-const israelAreas: Area[] = [
+export const israelAreas: Area[] = [
   { name: 'תל אביב', area: 'מרכז', id: 1 },
   { name: 'ראשון לציון והסביבה', area: 'מרכז', id: 2 },
   { name: 'חולון- בת ים', area: 'מרכז', id: 3 },
