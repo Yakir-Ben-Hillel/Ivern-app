@@ -8,3 +8,4 @@ firestore.indexes.json
 storage.rules
 firestore_export
 .firebaserc
+build
