@@ -47,9 +47,38 @@ app.get('/games/api/:gameName', searchUnfoundGame);
 app.post('/posts/add', FBAuth, addPost);
 app.post('/posts/edit/:pid', FBAuth, editPost);
 app.delete('/posts/delete/:pid', FBAuth, deletePost);
-app.get('/posts/get/:pid', getPost);
-app.get('/posts/get/:gid', getAllGamePosts);
-app.get('/posts/get/:uid', getAllUserPosts);
+app.get('/posts/get/one/:pid', getPost);
+app.get('/posts/get/game/:gid', getAllGamePosts);
+app.get('/posts/get/custom', async (req, res) => {
+  try {
+    const requestedGames = req.query.games;
+    const requestedArea = req.query.areas;
+    if (requestedGames && requestedArea) {
+      let docsRef: any;
+      if (Array.isArray(requestedGames)) {
+        docsRef = database
+          .collection('/posts')
+          .where('gid', 'in', requestedGames)
+          .where('area', '==', requestedArea);
+      } else {
+        docsRef = database
+          .collection('/posts')
+          .where('gid', '==', requestedGames)
+          .where('area', '==', requestedArea);
+      }
+      const postsRef = await docsRef.get();
+      const posts: any[] = [];
+      postsRef.docs.forEach((post) => {
+        posts.push(post.data());
+      });
+      return res.status(200).json({ posts });
+    } else return res.status(400).json(req.query);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+});
+app.get('/posts/get/user/:uid', getAllUserPosts);
 app.get('/posts/get', getAllPosts);
 
 exports.api = functions.region('europe-west3').https.onRequest(app);

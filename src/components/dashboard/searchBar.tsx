@@ -13,10 +13,10 @@ import {
 import SearchIcon from '@material-ui/icons/Search';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
-import PlatformSelect from './searchBar/bootstrapInput';
-import GamesOptions from './searchBar/gameOptionsDesktop';
-import AreaOptions from './searchBar/areaOptions';
-import MobileSearch from './searchBar/mobileSearch';
+import PlatformSelect from './searchBar/desktop/bootstrapInput';
+import GamesOptions from './searchBar/desktop/gameOptionsDesktop';
+import AreaOptions from './searchBar/desktop/areaOptions';
+import MobileSearch from './searchBar/mobile/mobileSearch';
 import isMobile from 'is-mobile';
 export interface Game {
   cover: number;
@@ -68,30 +68,30 @@ const SearchBar: React.FC = () => {
     </section>
   );
 };
-const Bar: React.FC = () => {
+export const Bar: React.FC = () => {
   const [gameError, setGameError] = React.useState(false);
   const [areaError, setAreaError] = React.useState(false);
   const [platform, setPlatform] = React.useState('playstation');
   const [options, setOptions] = React.useState<Game[]>([]);
   const [games, setGames] = React.useState<Game[]>([]);
-  const [areas, setAreas] = React.useState<Area[]>([]);
+  const [area, setArea] = React.useState<Area>();
   const [open, setOpen] = React.useState(false);
   const loading = open && options.length === 0;
   const classes = useStyles();
   const history = useHistory();
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (games.length > 0 && areas.length > 0) {
+    if (games.length > 0 && area) {
       const queryParams = new URLSearchParams();
       games.forEach((game) => queryParams.append('game', `${game.id}`));
-      areas.forEach((area) => queryParams.append('area', `${area.id}`));
+      queryParams.append('area', `${area.id}`);
       history.push({
         pathname: '/search',
         search: '?' + queryParams,
       });
     } else {
       if (games.length === 0) setGameError(true);
-      if (areas.length === 0) setAreaError(true);
+      if (area) setAreaError(true);
     }
   };
   React.useEffect(() => {
@@ -102,7 +102,6 @@ const Bar: React.FC = () => {
     }
 
     (async () => {
-      console.log('im here');
       const games = await axios.get(
         'https://europe-west3-ivern-app.cloudfunctions.net/api/games'
       );
@@ -117,7 +116,7 @@ const Bar: React.FC = () => {
 
   React.useEffect(() => {
     setAreaError(false);
-  }, [areas]);
+  }, [area]);
 
   return (
     <div className={classes.root}>
@@ -139,7 +138,7 @@ const Bar: React.FC = () => {
                 />
               </Grid>
               <Grid item xs={4}>
-                <AreaOptions setAreas={setAreas} areaError={areaError} />
+                <AreaOptions setArea={setArea} areaError={areaError} />
               </Grid>
               <IconButton type='submit'>
                 <SearchIcon />
@@ -152,8 +151,8 @@ const Bar: React.FC = () => {
           options={options}
           setOptions={setOptions}
           open={open}
-          areas={areas}
-          setAreas={setAreas}
+          area={area}
+          setArea={setArea}
           setOpen={setOpen}
           games={games}
           setGames={setGames}

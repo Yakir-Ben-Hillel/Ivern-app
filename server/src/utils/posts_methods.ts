@@ -24,6 +24,7 @@ export const addPost = async (request, res) => {
       sell: req.body.sell,
       price: req.body.price,
       imageURL: req.body.imageURL,
+      area: req.body.area,
       createdAt: new Date().toISOString(),
       gameName: null,
     };
