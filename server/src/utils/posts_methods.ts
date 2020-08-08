@@ -164,3 +164,35 @@ export const getAllPosts = async (req, res) => {
     return res.status(500).json({ error });
   }
 };
+export const getCustomPostsRequest = async (req, res) => {
+  try {
+    const requestedGames = req.query.games;
+    const requestedArea = req.query.areas;
+    if (requestedGames && requestedArea) {
+      let docsRef: any;
+      if (Array.isArray(requestedGames)) {
+        docsRef = database
+          .collection('/posts')
+          .where('gid', 'in', requestedGames)
+          .where('area', '==', requestedArea);
+      } else {
+        docsRef = database
+          .collection('/posts')
+          .where('gid', '==', requestedGames)
+          .where('area', '==', requestedArea);
+      }
+      const postsRef = await docsRef.get();
+      const posts: any[] = [];
+      postsRef.docs.forEach((post) => {
+        posts.push(post.data());
+      });
+      return res.status(200).json({ posts });
+    } else
+      return res
+        .status(400)
+        .json({ error: 'Games or Area are not specified.' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
