@@ -9,3 +9,5 @@ storage.rules
 firestore_export
 .firebaserc
 build
+.vscode/launch.json
+*.cache
