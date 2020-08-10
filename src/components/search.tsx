@@ -6,9 +6,24 @@ import { Bar } from './dashboard/searchBar';
 import SiteHeader from './dashboard/siteHeader';
 import Footer from './dashboard/footer';
 import axios from 'axios';
+import PostsList from './search/posts_list';
+
+export interface Post {
+  area: string;
+  gid: string;
+  pid: string;
+  uid: string;
+  gameName:string;
+  imageURL: string;
+  platform: string;
+  price: number;
+  exchange: boolean;
+  sell: boolean;
+  createdAt: Date;
+}
 
 export const Search: React.FC = (props: any) => {
-  const [posts, setPosts] = React.useState();
+  const [posts, setPosts] = React.useState<Post[]>();
 
   React.useEffect(() => {
     let active = true;
@@ -24,6 +39,7 @@ export const Search: React.FC = (props: any) => {
           },
         }
       );
+      console.log(res.data.posts);
       if (active) {
         setPosts(res.data.posts);
       }
@@ -44,6 +60,7 @@ export const Search: React.FC = (props: any) => {
               <Bar />
             </div>
           </section>
+          <PostsList posts={posts}/>
           <Footer />
         </div>
       </div>
