@@ -54,6 +54,33 @@ export const login = async (req, res) => {
     } else return res.status(500).json({ general: 'Something went wrong!' });
   }
 };
+export const signupWithGoogle = async (req, res) => {
+  const newUser = {
+    email: req.body.email,
+    displayName: req.body.displayName,
+    phoneNumber: req.body.phoneNumber,
+    imageURL: req.body.imageURL,
+    uid: req.body.uid,
+    provider: 'Google',
+    createdAt: admin.firestore.Timestamp.fromDate(new Date()),
+  };
+  try {
+    const doc = await database.doc(`/users/${newUser.uid}`).get();
+    if (doc.exists) {
+      await database.doc(`/users/${newUser.uid}`).update({
+        displayName: newUser.displayName,
+        imageURL: newUser.imageURL,
+        phoneNumber: newUser.phoneNumber,
+      });
+      return res.status(200).json({ newUser });
+    } else {
+      await database.doc(`/users/${newUser.uid}`).set(newUser);
+      return res.status(201).json({ newUser });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 export const signup = async (req, res) => {
   const newUser = {
     email: req.body.email,
@@ -75,7 +102,7 @@ export const signup = async (req, res) => {
       createdAt: newUser.createdAt,
       imageURL:
         'https://firebasestorage.googleapis.com/v0/b/ivern-app.appspot.com/o/no-img.png?alt=media',
-      handle: uid,
+      provider: 'EmailAndPassword',
       uid,
     };
     await database.doc(`/users/${uid}`).set(userCredentials);

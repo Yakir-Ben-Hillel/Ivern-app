@@ -1,4 +1,4 @@
-import { FBAuth, login, signup } from './utils/sign_methods';
+import { FBAuth, login, signup, signupWithGoogle } from './utils/sign_methods';
 import { getUser, userUpdate } from './utils/user_methods';
 import {
   postAllPS4games,
@@ -33,6 +33,7 @@ app.use(cors({ origin: '*' }));
 
 app.post('/login', login);
 app.post('/signup', signup);
+app.post('/signup/google', signupWithGoogle);
 app.post('/user', FBAuth, userUpdate);
 app.get('/user/:uid', getUser);
 app.post('/image', uploadImage);

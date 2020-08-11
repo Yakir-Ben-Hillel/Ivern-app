@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Dashboard } from './components/dashboard';
-import { Login } from './components/login';
+import Login from './components/authPages/loginPage';
 import { Signup } from './components/signup';
 import { Search } from './components/search';
 // import PrimarySearchAppBar from './components/navbar';

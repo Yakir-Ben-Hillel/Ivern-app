@@ -19,7 +19,8 @@ import {
   HeartOutline,
   History,
 } from 'mdi-material-ui';
-
+import { firebase } from '../firebase';
+import { useHistory } from 'react-router';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grow: {
@@ -89,6 +90,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 export default function PrimarySearchAppBar() {
   const classes = useStyles();
+  const history = useHistory();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
     mobileMoreAnchorEl,
@@ -116,7 +118,7 @@ export default function PrimarySearchAppBar() {
   };
 
   const menuId = 'primary-search-account-menu';
-  const renderMenu = (
+  const renderMenuSigned = (
     <Menu
       anchorEl={anchorEl}
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
@@ -128,6 +130,21 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem onClick={handleMenuClose}>המשחקים שלי</MenuItem>
       <MenuItem onClick={handleMenuClose}>המשתמש שלי</MenuItem>
+    </Menu>
+  );
+  const renderMenuUnsigned = (
+    <Menu
+      anchorEl={anchorEl}
+      anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+      id={menuId}
+      keepMounted
+      transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+      open={isMenuOpen}
+      onClose={handleMenuClose}
+    >
+      <MenuItem onClick={() => history.push({ pathname: '/login' })}>
+        התחבר
+      </MenuItem>
     </Menu>
   );
 
@@ -262,7 +279,7 @@ export default function PrimarySearchAppBar() {
         </Toolbar>
       </AppBar>
       {renderMobileMenu}
-      {renderMenu}
+      {firebase.auth().currentUser ? renderMenuSigned : renderMenuUnsigned}
     </div>
   );
 }

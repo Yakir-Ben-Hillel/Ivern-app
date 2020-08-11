@@ -13,9 +13,10 @@ export interface Post {
   gid: string;
   pid: string;
   uid: string;
-  gameName:string;
+  gameName: string;
   imageURL: string;
   platform: string;
+  description: string;
   price: number;
   exchange: boolean;
   sell: boolean;
@@ -23,8 +24,16 @@ export interface Post {
 }
 
 export const Search: React.FC = (props: any) => {
+  const localLights = localStorage.getItem('lights');
+  if (localLights === 'false') {
+    document.body.classList.add('lights-off');
+  }
   const [posts, setPosts] = React.useState<Post[]>();
-
+  React.useEffect(() => {
+    document.documentElement.classList.remove('no-js');
+    document.documentElement.classList.add('js');
+    document.body.classList.add('is-loaded');
+  });
   React.useEffect(() => {
     let active = true;
     if (posts !== undefined) return undefined;
@@ -54,13 +63,14 @@ export const Search: React.FC = (props: any) => {
       <div className='is-boxed has-animations'>
         <div className='body-wrap boxed-container'>
           <SiteHeader />
+          <div className='container-sm cta-inner'>
+            <h1>Search</h1>
+            <Bar />
+          </div>
           <section className='cta section'>
-            <div className='container-sm cta-inner'>
-              <h1>Search</h1>
-              <Bar />
-            </div>
+            <PostsList posts={posts} />
           </section>
-          <PostsList posts={posts}/>
+
           <Footer />
         </div>
       </div>
