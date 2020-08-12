@@ -11,7 +11,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import { Button } from '@material-ui/core';
+import { Button, Avatar } from '@material-ui/core';
 import {
   SonyPlaystation,
   MicrosoftXbox,
@@ -89,8 +89,13 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 export default function PrimarySearchAppBar() {
+  const signedInUser = firebase.auth().currentUser;
+  React.useEffect(() => {
+    if (signedInUser) setPhotoURL(signedInUser.photoURL);
+  }, [signedInUser]);
   const classes = useStyles();
   const history = useHistory();
+  const [photoURL, setPhotoURL] = React.useState<string | null>('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
     mobileMoreAnchorEl,
@@ -130,6 +135,15 @@ export default function PrimarySearchAppBar() {
     >
       <MenuItem onClick={handleMenuClose}>המשחקים שלי</MenuItem>
       <MenuItem onClick={handleMenuClose}>המשתמש שלי</MenuItem>
+      <MenuItem
+        onClick={async () => {
+          await firebase.auth().signOut();
+          // eslint-disable-next-line no-restricted-globals
+          location.reload();
+        }}
+      >
+        התנתק
+      </MenuItem>
     </Menu>
   );
   const renderMenuUnsigned = (
@@ -174,7 +188,11 @@ export default function PrimarySearchAppBar() {
           aria-haspopup='true'
           color='primary'
         >
-          <AccountCircle />
+          {photoURL ? (
+            <Avatar src={photoURL} alt={'google photo'} />
+          ) : (
+            <AccountCircle />
+          )}
         </IconButton>
         <p>הפרופיל שלי</p>
       </MenuItem>
@@ -239,7 +257,11 @@ export default function PrimarySearchAppBar() {
               onClick={handleProfileMenuOpen}
               color='primary'
             >
-              <AccountCircle />
+              {photoURL ? (
+                <Avatar src={photoURL} alt={'google photo'} />
+              ) : (
+                <AccountCircle />
+              )}
             </IconButton>
           </div>
           <div className={classes.sectionMobile}>

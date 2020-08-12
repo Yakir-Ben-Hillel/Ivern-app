@@ -5,8 +5,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Grid from '@material-ui/core/Grid';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
@@ -14,7 +12,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { firebase, googleAuthProvider } from '../../firebase';
 import React from 'react';
 import { useHistory } from 'react-router';
-import GoogleSignInButton from './buttons/googleSignIn';
+import MaskedInput from 'react-text-mask';
 import axios from 'axios';
 function Copyright() {
   return (
@@ -65,9 +63,12 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(3, 0, 2),
   },
 }));
-const Login: React.FC = () => {
-  const [email, setEmail] = React.useState('');
-  const [password, setPassword] = React.useState('');
+interface IProps {
+  user: firebase.auth.UserCredential;
+}
+const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
+  const [displayName, setDisplayName] = React.useState(user.user?.displayName);
+  const [phoneNumber, setPhoneNumber] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
   const whichMessageToShow = (errorCode: string) => {
     switch (errorCode) {
@@ -86,15 +87,19 @@ const Login: React.FC = () => {
   };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .catch((error) => {
-        whichMessageToShow(error.code);
-      });
+    // firebase
+    //   .auth()
+    //   .signInWithEmailAndPassword(email, password)
+    //   .catch((error) => {
+    //     whichMessageToShow(error.code);
+    //   });
   };
   const classes = useStyles();
   const history = useHistory();
+  React.useEffect(() => {
+    if (user === undefined) history.replace('/');
+  });
+
   const googleSignIn = async () => {
     try {
       const data = await firebase.auth().signInWithPopup(googleAuthProvider);
@@ -105,12 +110,11 @@ const Login: React.FC = () => {
         imageURL: data.user?.photoURL,
         uid: data.user?.uid,
       };
-      const res = await axios.post(
+      await axios.post(
         'https://europe-west3-ivern-app.cloudfunctions.net/api/signup/google',
         userInfo
       );
-      if (res.data.isNew){
-      } history.goBack();
+      history.goBack();
     } catch (error) {
       console.error(error);
     }
@@ -119,11 +123,16 @@ const Login: React.FC = () => {
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
+        {user.user?.photoURL ? (
+          <Avatar className={classes.avatar} src={user.user?.photoURL} />
+        ) : (
+          <Avatar className={classes.avatar}>
+            <LockOutlinedIcon />
+          </Avatar>
+        )}
+
         <Typography component='h1' variant='h5'>
-          Sign in
+          Complete the Signup Process
         </Typography>
         <form onSubmit={onSubmit}>
           <TextField
@@ -131,29 +140,58 @@ const Login: React.FC = () => {
             margin='normal'
             required
             fullWidth
-            id='email'
-            value={email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setEmail(e.target.value)
-            }
-            label='Email Address'
-            name='email'
-            autoComplete='email'
+            id='displayName'
+            disabled
+            value={user.user?.email}
           />
           <TextField
             variant='outlined'
             margin='normal'
             required
             fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            id='password'
-            value={password}
+            id='displayName'
+            value={displayName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setPassword(e.target.value)
+              setDisplayName(e.target.value)
             }
-            autoComplete='current-password'
+            label='Display Name'
+            name='displayName'
+            autoComplete='DisplayName'
+          />
+          <MaskedInput
+            mask={[
+              '(',
+              /[1-9]/,
+              /\d/,
+              /\d/,
+              ')',
+              ' ',
+              /\d/,
+              /\d/,
+              /\d/,
+              '-',
+              /\d/,
+              /\d/,
+              /\d/,
+              /\d/,
+            ]}
+          />
+          <TextField
+            variant='outlined'
+            margin='normal'
+            placeholder='05 -'
+            required
+            fullWidth
+            itemType='number'
+            name='phone Number'
+            label='phone Number'
+            type='Phone Number'
+            id='phone'
+            value={phoneNumber}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setPhoneNumber(e.target.value)
+            }
+            autoComplete='Phone Number'
           />
           <FormControlLabel
             control={<Checkbox value='remember' color='primary' />}
@@ -172,20 +210,6 @@ const Login: React.FC = () => {
             Sign In
           </Button>
         </form>
-        <Button
-          className={classes.googleButton}
-          onClick={googleSignIn}
-          fullWidth
-        >
-          <GoogleSignInButton />
-        </Button>
-        <Grid container>
-          <Grid item>
-            <Link href='/signup' variant='body2'>
-              {"Don't have an account? Sign Up"}
-            </Link>
-          </Grid>
-        </Grid>
       </div>
       <Box mt={8}>
         <Copyright />
@@ -193,4 +217,4 @@ const Login: React.FC = () => {
     </Container>
   );
 };
-export default Login;
+export default FirstTimeLogin;

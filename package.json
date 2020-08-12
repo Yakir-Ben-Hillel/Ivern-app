@@ -7,6 +7,8 @@
     "@material-ui/icons": "^4.9.1",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "@types/query-string": "^6.3.0",
+    "@types/react-redux": "^7.1.9",
+    "@types/react-text-mask": "^5.4.6",
     "@types/react-window": "^1.8.2",
     "axios": "^0.19.2",
     "clsx": "^1.1.1",
@@ -25,8 +27,13 @@
     "react-alice-carousel": "^1.19.3",
     "react-dom": "^16.13.1",
     "react-inlinesvg": "^2.0.0",
+    "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
+    "react-text-mask": "^5.4.3",
     "react-window": "^1.8.5",
+    "redux": "^4.0.5",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-thunk": "^2.3.0",
     "scrollreveal": "^4.0.7",
     "styled-components": "^5.1.1"
   },
@@ -52,9 +59,6 @@
     ]
   },
   "devDependencies": {
-    "react-scripts": "3.4.1",
-    "typescript": "~3.7.2",
-    "@types/scrollreveal": "0.0.6",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -65,6 +69,9 @@
     "@types/react-autosuggest": "^9.3.14",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.5",
-    "@types/testing-library__dom": "^7.5.0"
+    "@types/scrollreveal": "0.0.6",
+    "@types/testing-library__dom": "^7.5.0",
+    "react-scripts": "3.4.1",
+    "typescript": "~3.7.2"
   }
 }

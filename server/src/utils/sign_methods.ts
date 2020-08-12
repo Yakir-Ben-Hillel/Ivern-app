@@ -72,10 +72,10 @@ export const signupWithGoogle = async (req, res) => {
         imageURL: newUser.imageURL,
         phoneNumber: newUser.phoneNumber,
       });
-      return res.status(200).json({ newUser });
+      return res.status(200).json({ isNew: false });
     } else {
       await database.doc(`/users/${newUser.uid}`).set(newUser);
-      return res.status(201).json({ newUser });
+      return res.status(201).json({ isNew: true });
     }
   } catch (error) {
     console.error(error);
