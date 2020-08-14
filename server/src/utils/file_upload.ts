@@ -14,7 +14,7 @@ export const changeProfileImage = async (request, res) => {
       method: 'POST',
       headers: req.headers,
     });
-    
+
     if (doc.success === true) {
       const imageURL = doc.imageURL;
       await database.doc(`users/${req.user.uid}`).update({ imageURL });
@@ -72,9 +72,11 @@ export const uploadImage = async (request, res) => {
       });
     } catch (error) {
       console.log(error);
-      return res.status(500).json({ error: error.code, success: false });
+      return res
+        .status(500)
+        .json({ error, success: false, rawBody: req.rawBody });
     }
   });
-  busboy.end();
-  // busboy.end(req.rawBody);
+  if (req.rawBody) busboy.end(req.rawBody);
+  else busboy.end();
 };

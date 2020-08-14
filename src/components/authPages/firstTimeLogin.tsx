@@ -12,9 +12,11 @@ import React from 'react';
 import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
 import { AppState } from '../@types/types';
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import axios from 'axios';
 function Copyright() {
   return (
-    <Typography variant='body2' color='textSecondary' align='center'>
+    <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       Yakir Ben Hillel 2020
       {'.'}
@@ -43,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '14px',
     fontWeight: 'bold',
   },
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
   paper: {
     marginTop: theme.spacing(1),
     display: 'flex',
@@ -64,6 +70,14 @@ const useStyles = makeStyles((theme) => ({
   submit: {
     margin: theme.spacing(3, 0, 2),
   },
+  badge: {
+    width: 22,
+    height: 22,
+    alignSelf: 'flex-end',
+  },
+  input: {
+    display: 'none',
+  },
 }));
 interface IProps {
   user: firebase.User;
@@ -72,10 +86,34 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
   const [displayName, setDisplayName] = React.useState(user.displayName);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
+  const [file, setFile] = React.useState<string>('');
+  function isNumber(n: any) {
+    return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
+  }
+  React.useEffect(() => {
+    console.log(file);
+  }, [file]);
+  const imageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const formData = new FormData();
+      const newFile = event.target.files[0];
+      formData.append('image', newFile);
+      const res = await axios.post(
+        'https://europe-west3-ivern-app.cloudfunctions.net/api/image',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+    }
+  };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (displayName === '' || phoneNumber === '')
       setErrorMessage('Please fill the required fields.');
+    else setErrorMessage('');
   };
   const classes = useStyles();
   const history = useHistory();
@@ -84,14 +122,29 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
   });
 
   return (
-    <Container component='main' maxWidth='xs'>
+    <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
-        <Typography component='h1' variant='h5'>
+        <Typography component="h1" variant="h5">
           fill the information
         </Typography>
         {user.photoURL ? (
-          <Avatar className={classes.userAvatar} src={user.photoURL} />
+          <div className={classes.root}>
+            <input
+              accept="image/*"
+              className={classes.input}
+              id="contained-button-file"
+              multiple
+              type="file"
+              onChange={imageUpload}
+            />
+            <label htmlFor="contained-button-file">
+              <Button disableRipple component="span">
+                <Avatar className={classes.userAvatar} src={user.photoURL} />
+                <AddAPhotoIcon className={classes.badge} />
+              </Button>
+            </label>
+          </div>
         ) : (
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
@@ -100,50 +153,54 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
 
         <form onSubmit={onSubmit}>
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             fullWidth
-            id='displayName'
+            id="displayName"
             disabled
             value={user.email}
           />
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             fullWidth
-            id='displayName'
+            id="displayName"
             value={displayName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setDisplayName(e.target.value)
             }
-            label='Display Name'
-            name='displayName'
-            autoComplete='DisplayName'
+            label="Display Name"
+            name="displayName"
+            autoComplete="DisplayName"
           />
           <TextField
-            variant='outlined'
-            margin='normal'
-            placeholder='05 -'
+            variant="outlined"
+            margin="normal"
+            placeholder="05 -"
             fullWidth
-            itemType='number'
-            name='phone Number'
-            label='phone Number'
-            type='Phone Number'
-            id='phone'
+            itemType="number"
+            name="Phone Number"
+            label="Phone Number"
+            type="Phone Number"
+            id="phone"
             value={phoneNumber}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setPhoneNumber(e.target.value)
-            }
-            autoComplete='Phone Number'
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              if (
+                (isNumber(e.target.value) || e.target.value === '') &&
+                e.target.value.length <= 10
+              )
+                setPhoneNumber(e.target.value);
+            }}
+            autoComplete="Phone Number"
           />
           {errorMessage && (
-            <Typography color='secondary'>{errorMessage}</Typography>
+            <Typography color="secondary">{errorMessage}</Typography>
           )}
           <Button
-            type='submit'
+            type="submit"
             fullWidth
-            variant='contained'
-            color='primary'
+            variant="contained"
+            color="primary"
             className={classes.submit}
           >
             Submit
