@@ -62,6 +62,7 @@ export const signupWithGoogle = async (req, res) => {
     imageURL: req.body.imageURL,
     uid: req.body.uid,
     provider: 'Google',
+    isNew: true,
     createdAt: admin.firestore.Timestamp.fromDate(new Date()),
   };
   try {
@@ -72,7 +73,9 @@ export const signupWithGoogle = async (req, res) => {
         imageURL: newUser.imageURL,
         phoneNumber: newUser.phoneNumber,
       });
-      return res.status(200).json({ isNew: false });
+      if (doc.data()?.isNew === true)
+        return res.status(200).json({ isNew: true });
+      else return res.status(200).json({ isNew: false });
     } else {
       await database.doc(`/users/${newUser.uid}`).set(newUser);
       return res.status(201).json({ isNew: true });

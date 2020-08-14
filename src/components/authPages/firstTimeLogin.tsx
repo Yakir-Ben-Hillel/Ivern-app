@@ -88,7 +88,7 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
       <CssBaseline />
       <div className={classes.paper}>
         <Typography component='h1' variant='h5'>
-          Complete the Signup Process
+          fill the information
         </Typography>
         {user.photoURL ? (
           <Avatar className={classes.userAvatar} src={user.photoURL} />
@@ -146,7 +146,7 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
             color='primary'
             className={classes.submit}
           >
-            Sign In
+            Submit
           </Button>
         </form>
       </div>

@@ -18,7 +18,7 @@ import GoogleSignInButton from './buttons/googleSignIn';
 import axios from 'axios';
 function Copyright() {
   return (
-    <Typography variant='body2' color='textSecondary' align='center'>
+    <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
       Yakir Ben Hillel 2020
       {'.'}
@@ -109,64 +109,64 @@ const Login: React.FC = () => {
         'https://europe-west3-ivern-app.cloudfunctions.net/api/signup/google',
         userInfo
       );
-      if (res.data.isNew){
-      } history.goBack();
+      if (res.data.isNew) history.push('/login/confirm');
+      else history.goBack();
     } catch (error) {
       console.error(error);
     }
   };
   return (
-    <Container component='main' maxWidth='xs'>
+    <Container component="main" maxWidth="xs">
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
           <LockOutlinedIcon />
         </Avatar>
-        <Typography component='h1' variant='h5'>
+        <Typography component="h1" variant="h5">
           Sign in
         </Typography>
         <form onSubmit={onSubmit}>
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             required
             fullWidth
-            id='email'
+            id="email"
             value={email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setEmail(e.target.value)
             }
-            label='Email Address'
-            name='email'
-            autoComplete='email'
+            label="Email Address"
+            name="email"
+            autoComplete="email"
           />
           <TextField
-            variant='outlined'
-            margin='normal'
+            variant="outlined"
+            margin="normal"
             required
             fullWidth
-            name='password'
-            label='Password'
-            type='password'
-            id='password'
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
             value={password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setPassword(e.target.value)
             }
-            autoComplete='current-password'
+            autoComplete="current-password"
           />
           <FormControlLabel
-            control={<Checkbox value='remember' color='primary' />}
-            label='Remember me'
+            control={<Checkbox value="remember" color="primary" />}
+            label="Remember me"
           />
           {errorMessage && (
-            <Typography color='secondary'>{errorMessage}</Typography>
+            <Typography color="secondary">{errorMessage}</Typography>
           )}
           <Button
-            type='submit'
+            type="submit"
             fullWidth
-            variant='contained'
-            color='primary'
+            variant="contained"
+            color="primary"
             className={classes.submit}
           >
             Sign In
@@ -181,7 +181,7 @@ const Login: React.FC = () => {
         </Button>
         <Grid container>
           <Grid item>
-            <Link href='/signup' variant='body2'>
+            <Link href="/signup" variant="body2">
               {"Don't have an account? Sign Up"}
             </Link>
           </Grid>

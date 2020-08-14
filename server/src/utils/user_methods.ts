@@ -15,17 +15,28 @@ export interface RequestCustom extends express.Request {
 export const userUpdate = async (request, res) => {
   const req = request as RequestCustom;
   const userDetails = {
-    fullName: req.body.fullName,
-    location: req.body.location,
+    displayName: req.body.displayName,
+    phoneNumber: req.body.phoneNumber,
+    imageURL: req.body.imageURL,
   };
-  const reducedDetails: { fullName: any; location: any } = {
-    fullName: null,
-    location: null,
+  const reducedDetails: {
+    displayName: string;
+    phoneNumber: string;
+    imageURL: string;
+    isNew: boolean;
+  } = {
+    displayName: '',
+    phoneNumber: '',
+    imageURL: '',
+    isNew: false,
   };
-  if (!isEmpty(userDetails.fullName.trim()))
-    reducedDetails.fullName = userDetails.fullName;
-  if (!isEmpty(userDetails.location.trim()))
-    reducedDetails.location = userDetails.location;
+  if (!isEmpty(userDetails.displayName.trim()))
+    reducedDetails.displayName = userDetails.displayName;
+  if (!isEmpty(userDetails.phoneNumber.trim()))
+    reducedDetails.phoneNumber = userDetails.phoneNumber;
+  if (!isEmpty(userDetails.imageURL.trim()))
+    reducedDetails.imageURL = userDetails.imageURL;
+
   try {
     await database.doc(`users/${req.user.handle}`).update(reducedDetails);
     return res.status(201).json({ message: 'Details added successfully.' });
