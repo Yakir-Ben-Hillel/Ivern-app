@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AppRouter from './components/router/App';
+import AppRouter from './components/router/AppRouter';
 import 'normalize.css/normalize.css';
 import { firebase } from './firebase';
 import configureStore from './components/redux/store/configureStore';

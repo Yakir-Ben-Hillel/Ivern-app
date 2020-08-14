@@ -1,19 +1,17 @@
 import Avatar from '@material-ui/core/Avatar';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import Checkbox from '@material-ui/core/Checkbox';
 import Container from '@material-ui/core/Container';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { firebase, googleAuthProvider } from '../../firebase';
+import { firebase } from '../../firebase';
 import React from 'react';
 import { useHistory } from 'react-router';
-import MaskedInput from 'react-text-mask';
-import axios from 'axios';
+import { connect } from 'react-redux';
+import { AppState } from '../@types/types';
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
@@ -55,6 +53,10 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     backgroundColor: theme.palette.secondary.main,
   },
+  userAvatar: {
+    width: theme.spacing(12),
+    height: theme.spacing(12),
+  },
   form: {
     width: '100%', // Fix IE 11 issue.
     marginTop: theme.spacing(1),
@@ -64,35 +66,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 interface IProps {
-  user: firebase.auth.UserCredential;
+  user: firebase.User;
 }
 const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
-  const [displayName, setDisplayName] = React.useState(user.user?.displayName);
+  const [displayName, setDisplayName] = React.useState(user.displayName);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
-  const whichMessageToShow = (errorCode: string) => {
-    switch (errorCode) {
-      case 'auth/invalid-email':
-        setErrorMessage('The email address is invalid.');
-        break;
-      case 'auth/user-not-found':
-        setErrorMessage('The user does not exist, please Sign Up to proceed.');
-        break;
-      case 'auth/wrong-password':
-        setErrorMessage(
-          'The password is invalid or the user signed in with Google.'
-        );
-        break;
-    }
-  };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // firebase
-    //   .auth()
-    //   .signInWithEmailAndPassword(email, password)
-    //   .catch((error) => {
-    //     whichMessageToShow(error.code);
-    //   });
+    if (displayName === '' || phoneNumber === '')
+      setErrorMessage('Please fill the required fields.');
   };
   const classes = useStyles();
   const history = useHistory();
@@ -100,54 +83,33 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
     if (user === undefined) history.replace('/');
   });
 
-  const googleSignIn = async () => {
-    try {
-      const data = await firebase.auth().signInWithPopup(googleAuthProvider);
-      const userInfo = {
-        email: data.user?.email,
-        displayName: data.user?.displayName,
-        phoneNumber: data.user?.phoneNumber,
-        imageURL: data.user?.photoURL,
-        uid: data.user?.uid,
-      };
-      await axios.post(
-        'https://europe-west3-ivern-app.cloudfunctions.net/api/signup/google',
-        userInfo
-      );
-      history.goBack();
-    } catch (error) {
-      console.error(error);
-    }
-  };
   return (
     <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>
-        {user.user?.photoURL ? (
-          <Avatar className={classes.avatar} src={user.user?.photoURL} />
+        <Typography component='h1' variant='h5'>
+          Complete the Signup Process
+        </Typography>
+        {user.photoURL ? (
+          <Avatar className={classes.userAvatar} src={user.photoURL} />
         ) : (
           <Avatar className={classes.avatar}>
             <LockOutlinedIcon />
           </Avatar>
         )}
 
-        <Typography component='h1' variant='h5'>
-          Complete the Signup Process
-        </Typography>
         <form onSubmit={onSubmit}>
           <TextField
             variant='outlined'
             margin='normal'
-            required
             fullWidth
             id='displayName'
             disabled
-            value={user.user?.email}
+            value={user.email}
           />
           <TextField
             variant='outlined'
             margin='normal'
-            required
             fullWidth
             id='displayName'
             value={displayName}
@@ -158,29 +120,10 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
             name='displayName'
             autoComplete='DisplayName'
           />
-          <MaskedInput
-            mask={[
-              '(',
-              /[1-9]/,
-              /\d/,
-              /\d/,
-              ')',
-              ' ',
-              /\d/,
-              /\d/,
-              /\d/,
-              '-',
-              /\d/,
-              /\d/,
-              /\d/,
-              /\d/,
-            ]}
-          />
           <TextField
             variant='outlined'
             margin='normal'
             placeholder='05 -'
-            required
             fullWidth
             itemType='number'
             name='phone Number'
@@ -192,10 +135,6 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
               setPhoneNumber(e.target.value)
             }
             autoComplete='Phone Number'
-          />
-          <FormControlLabel
-            control={<Checkbox value='remember' color='primary' />}
-            label='Remember me'
           />
           {errorMessage && (
             <Typography color='secondary'>{errorMessage}</Typography>
@@ -217,4 +156,8 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
     </Container>
   );
 };
-export default FirstTimeLogin;
+const MapStateToProps = (state: AppState) => ({
+  user: state.auth.user,
+});
+
+export default connect(MapStateToProps)(FirstTimeLogin);

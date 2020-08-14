@@ -4,7 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import CloseIcon from '@material-ui/icons/Close';
-import { Area } from '../../searchBar';
+import { Area } from '../../../@types/types';
 import { israelAreas } from '../desktop/areaOptions';
 import {
   AppBar,
@@ -72,7 +72,11 @@ const MobileArea: React.FC<IProps> = ({ setArea, setAreasDialogOpen }) => {
         }}
         style={{ display: 'flex' }}
       >
-        <ListItemText className={classes.hebrew} id={labelId} primary={area.name} />
+        <ListItemText
+          className={classes.hebrew}
+          id={labelId}
+          primary={area.name}
+        />
       </ListItem>
     );
   };
@@ -99,33 +103,21 @@ const MobileArea: React.FC<IProps> = ({ setArea, setAreasDialogOpen }) => {
       </AppBar>
       <div>
         <List className={classes.root}>
-          <ListSubheader className={classes.hebrew}>
-            דרום
-          </ListSubheader>
+          <ListSubheader className={classes.hebrew}>דרום</ListSubheader>
           {zones.get('דרום').map(printLists)}
-          <ListSubheader className={classes.hebrew}>
-            מרכז
-          </ListSubheader>
+          <ListSubheader className={classes.hebrew}>מרכז</ListSubheader>
           {zones.get('מרכז').map(printLists)}
-          <ListSubheader className={classes.hebrew}>
-            השפלה
-          </ListSubheader>
+          <ListSubheader className={classes.hebrew}>השפלה</ListSubheader>
           {zones.get('השפלה').map(printLists)}
-          <ListSubheader className={classes.hebrew}>
-            אזור ירושלים
-          </ListSubheader>
+          <ListSubheader className={classes.hebrew}>אזור ירושלים</ListSubheader>
           {zones.get('אזור ירושלים').map(printLists)}
-          <ListSubheader className={classes.hebrew}>
-            השרון
-          </ListSubheader>
+          <ListSubheader className={classes.hebrew}>השרון</ListSubheader>
           {zones.get('השרון').map(printLists)}
           <ListSubheader className={classes.hebrew}>
             חדרה זכרון והעמקים
           </ListSubheader>
           {zones.get('חדרה זכרון והעמקים').map(printLists)}
-          <ListSubheader className={classes.hebrew}>
-            צפון
-          </ListSubheader>
+          <ListSubheader className={classes.hebrew}>צפון</ListSubheader>
           {zones.get('צפון').map(printLists)}
         </List>
       </div>

@@ -17,21 +17,8 @@ import PlatformSelect from './searchBar/desktop/bootstrapInput';
 import GamesOptions from './searchBar/desktop/gameOptionsDesktop';
 import AreaOptions from './searchBar/desktop/areaOptions';
 import MobileSearch from './searchBar/mobile/mobileSearch';
+import { Area, Game } from '../@types/types';
 import isMobile from 'is-mobile';
-export interface Game {
-  cover: number;
-  id: number;
-  name: string;
-  popularity: number;
-  rating: number;
-  slug: string;
-  imageURL: string;
-}
-export interface Area {
-  name: string;
-  area: string;
-  id: number;
-}
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {

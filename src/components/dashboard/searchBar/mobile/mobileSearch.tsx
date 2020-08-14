@@ -29,7 +29,7 @@ import {
 } from 'mdi-material-ui';
 import GameOptionsMobile from './gameOptionsMobile';
 import MobileArea from './mobileArea';
-import { Game, Area } from '../../searchBar';
+import { Game, Area } from '../../../@types/types';
 interface IGameOptions {
   options: Game[];
   games: Game[];

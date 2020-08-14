@@ -1,7 +1,7 @@
 import React from 'react';
 import { Autocomplete } from '@material-ui/lab';
 import { TextField } from '@material-ui/core';
-import { Area } from '../../searchBar';
+import { Area } from '../../../@types/types';
 interface IProps {
   setArea: React.Dispatch<React.SetStateAction<Area | undefined>>;
   areaError: boolean;
