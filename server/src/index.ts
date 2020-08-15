@@ -29,8 +29,11 @@ export const database = admin.firestore();
 //projects handlers.
 //user endpoints.
 
-app.use(cors({ origin: '*' }));
-
+app.use(cors());
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+});
 app.post('/login', login);
 app.post('/signup', signup);
 app.post('/signup/google', signupWithGoogle);
