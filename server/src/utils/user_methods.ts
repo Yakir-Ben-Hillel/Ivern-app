@@ -38,7 +38,9 @@ export const userUpdate = async (request, res) => {
     reducedDetails.imageURL = userDetails.imageURL;
 
   try {
-    await database.doc(`users/${req.user.handle}`).update(reducedDetails);
+    const verify = await admin.auth().verifyIdToken(req.body.idToken);
+    const uid = verify.uid;
+    await database.doc(`users/${uid}`).update(reducedDetails);
     return res.status(201).json({ message: 'Details updated successfully.' });
   } catch (error) {
     console.log(error);
