@@ -39,7 +39,7 @@ export const userUpdate = async (request, res) => {
 
   try {
     await database.doc(`users/${req.user.handle}`).update(reducedDetails);
-    return res.status(201).json({ message: 'Details added successfully.' });
+    return res.status(201).json({ message: 'Details updated successfully.' });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: error.code });

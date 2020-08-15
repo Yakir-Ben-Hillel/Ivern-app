@@ -13,6 +13,7 @@ import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
 import { AppState } from '../@types/types';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 function Copyright() {
   return (
@@ -78,26 +79,29 @@ const useStyles = makeStyles((theme) => ({
   input: {
     display: 'none',
   },
+  progress: {
+    margin: theme.spacing(1),
+  },
 }));
 interface IProps {
   user: firebase.User;
 }
 const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
   const [displayName, setDisplayName] = React.useState(user.displayName);
+  const [imageURL, setImageURL] = React.useState(user.photoURL);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
-  const [file, setFile] = React.useState<string>('');
-  function isNumber(n: any) {
+  const [loading, setLoading] = React.useState(false);
+  const isNumber = (n: string) => {
     return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
-  }
-  React.useEffect(() => {
-    console.log(file);
-  }, [file]);
+  };
+  React.useEffect(() => console.log(imageURL), [imageURL]);
   const imageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const formData = new FormData();
       const newFile = event.target.files[0];
       formData.append('image', newFile);
+      setLoading(true);
       const res = await axios.post(
         'https://europe-west3-ivern-app.cloudfunctions.net/api/image',
         formData,
@@ -107,13 +111,32 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
           },
         }
       );
+      setImageURL(res.data.imageURL);
+      setLoading(false);
     }
   };
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (displayName === '' || phoneNumber === '')
       setErrorMessage('Please fill the required fields.');
-    else setErrorMessage('');
+    else {
+      const idToken = await user.getIdToken();
+      const res = await axios.post(
+        'https://europe-west3-ivern-app.cloudfunctions.net/api/user',
+        {
+          displayName,
+          phoneNumber,
+          imageURL,
+        },
+        {
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+      if (res.status === 201) history.replace('/');
+    }
   };
   const classes = useStyles();
   const history = useHistory();
@@ -128,21 +151,24 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
         <Typography component="h1" variant="h5">
           fill the information
         </Typography>
-        {user.photoURL ? (
+        {imageURL ? (
           <div className={classes.root}>
             <input
               accept="image/*"
               className={classes.input}
               id="contained-button-file"
-              multiple
               type="file"
               onChange={imageUpload}
             />
             <label htmlFor="contained-button-file">
-              <Button disableRipple component="span">
-                <Avatar className={classes.userAvatar} src={user.photoURL} />
-                <AddAPhotoIcon className={classes.badge} />
-              </Button>
+              {loading ? (
+                <CircularProgress size={80} className={classes.progress} />
+              ) : (
+                <Button disableRipple component="span">
+                  <Avatar className={classes.userAvatar} src={imageURL} />
+                  <AddAPhotoIcon className={classes.badge} />
+                </Button>
+              )}
             </label>
           </div>
         ) : (

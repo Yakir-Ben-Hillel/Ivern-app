@@ -37,7 +37,11 @@ export const uploadImage = async (request, res) => {
   const busboy = new Busboy({ headers: req.headers });
 
   busboy.on('file', (fieldname, file, filename, encoding, mimetype) => {
-    if (mimetype === 'image/jpeg' || mimetype === 'image/png') {
+    if (
+      mimetype === 'image/jpeg' ||
+      mimetype === 'image/jpg' ||
+      mimetype === 'image/png'
+    ) {
       const imageExtension = filename.split('.')[
         filename.split('.').length - 1
       ];
@@ -72,9 +76,7 @@ export const uploadImage = async (request, res) => {
       });
     } catch (error) {
       console.log(error);
-      return res
-        .status(500)
-        .json({ error, success: false, rawBody: req.rawBody });
+      return res.status(500).json({ error, success: false });
     }
   });
   if (req.rawBody) busboy.end(req.rawBody);
