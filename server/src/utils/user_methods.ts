@@ -30,17 +30,15 @@ export const userUpdate = async (request, res) => {
     imageURL: '',
     isNew: false,
   };
-  if (!isEmpty(userDetails.displayName.trim()))
+  if (userDetails.displayName.trim())
     reducedDetails.displayName = userDetails.displayName;
-  if (!isEmpty(userDetails.phoneNumber.trim()))
+  if (userDetails.phoneNumber.trim())
     reducedDetails.phoneNumber = userDetails.phoneNumber;
-  if (!isEmpty(userDetails.imageURL.trim()))
+  if (userDetails.imageURL.trim())
     reducedDetails.imageURL = userDetails.imageURL;
 
   try {
-    const verify = await admin.auth().verifyIdToken(req.body.idToken);
-    const uid = verify.uid;
-    await database.doc(`users/${uid}`).update(reducedDetails);
+    await database.doc(`users/${req.user.uid}`).update(reducedDetails);
     return res.status(201).json({ message: 'Details updated successfully.' });
   } catch (error) {
     console.log(error);

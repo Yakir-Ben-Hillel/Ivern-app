@@ -29,11 +29,11 @@ export const database = admin.firestore();
 //projects handlers.
 //user endpoints.
 app.use(cors());
-app.options('*', cors());
+app.options('*',cors());
 app.post('/login', login);
 app.post('/signup', signup);
 app.post('/signup/google', signupWithGoogle);
-app.post('/user', userUpdate);
+app.post('/user', FBAuth, userUpdate);
 app.get('/user/:uid', getUser);
 app.post('/image', uploadImage);
 app.post('/users/image', FBAuth, changeProfileImage);
