@@ -23,13 +23,20 @@ import { changeProfileImage, uploadImage } from './utils/file_upload';
 import functions = require('firebase-functions');
 import admin = require('firebase-admin');
 import express = require('express');
-import cors = require('cors');
 const app = express();
 export const database = admin.firestore();
 //projects handlers.
 //user endpoints.
-
-app.use(cors());
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers'
+  );
+  next();
+});
 app.post('/login', login);
 app.post('/signup', signup);
 app.post('/signup/google', signupWithGoogle);
