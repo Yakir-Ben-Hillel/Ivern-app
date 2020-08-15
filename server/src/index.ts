@@ -29,7 +29,7 @@ export const database = admin.firestore();
 //projects handlers.
 //user endpoints.
 
-app.use(cors({ origin: '*' }));
+app.use(cors());
 
 app.post('/login', login);
 app.post('/signup', signup);
