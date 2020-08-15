@@ -130,7 +130,6 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
         },
         {
           headers: {
-            'Access-Control-Allow-Origin': '*',
             authorization: `Bearer ${idToken}`,
           },
         }

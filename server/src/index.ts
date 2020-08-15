@@ -30,7 +30,6 @@ export const database = admin.firestore();
 //user endpoints.
 
 app.use(cors());
-
 app.post('/login', login);
 app.post('/signup', signup);
 app.post('/signup/google', signupWithGoogle);
