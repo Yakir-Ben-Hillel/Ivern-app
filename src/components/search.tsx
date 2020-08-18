@@ -7,21 +7,8 @@ import SiteHeader from './dashboard/siteHeader';
 import Footer from './dashboard/footer';
 import axios from 'axios';
 import PostsList from './search/posts_list';
+import { Post } from './@types/types';
 
-export interface Post {
-  area: string;
-  gid: string;
-  pid: string;
-  uid: string;
-  gameName: string;
-  imageURL: string;
-  platform: string;
-  description: string;
-  price: number;
-  exchange: boolean;
-  sell: boolean;
-  createdAt: Date;
-}
 
 export const Search: React.FC = (props: any) => {
   const localLights = localStorage.getItem('lights');

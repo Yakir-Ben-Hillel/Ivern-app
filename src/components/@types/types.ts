@@ -17,3 +17,28 @@ export interface Game {
   slug: string;
   imageURL: string;
 }
+export interface Post {
+  area: string;
+  gid: string;
+  pid: string;
+  uid: string;
+  gameName: string;
+  imageURL: string;
+  platform: string;
+  description: string;
+  price: number;
+  exchange: boolean;
+  sell: boolean;
+  createdAt: Date;
+}
+export interface User {
+  displayName: string;
+  email: string;
+  imageURL: string;
+  city: string;
+  phoneNumber: string;
+  provider: string;
+  uid: string;
+  isNew: boolean;
+  createdAt: Date;
+}

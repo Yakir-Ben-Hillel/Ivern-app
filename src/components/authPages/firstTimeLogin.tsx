@@ -134,7 +134,7 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
           },
         }
       );
-      if (res.status === 201) history.replace('/');
+      if (res.status === 201) history.goBack();
     }
   };
   const classes = useStyles();
