@@ -9,13 +9,13 @@ import axios from 'axios';
 import PostsList from './search/posts_list';
 import { Post } from './@types/types';
 
-
 export const Search: React.FC = (props: any) => {
   const localLights = localStorage.getItem('lights');
   if (localLights === 'false') {
     document.body.classList.add('lights-off');
   }
   const [posts, setPosts] = React.useState<Post[]>();
+  const [postsLoading, setPostsLoading] = React.useState<boolean>(false);
   React.useEffect(() => {
     document.documentElement.classList.remove('no-js');
     document.documentElement.classList.add('js');
@@ -26,6 +26,7 @@ export const Search: React.FC = (props: any) => {
     if (posts !== undefined) return undefined;
     (async () => {
       const params = queryString.parse(props.location.search);
+      setPostsLoading(true);
       const res = await axios.get(
         'https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/custom',
         {
@@ -35,6 +36,7 @@ export const Search: React.FC = (props: any) => {
           },
         }
       );
+      setPostsLoading(false);
       console.log(res.data.posts);
       if (active) {
         setPosts(res.data.posts);
@@ -43,19 +45,19 @@ export const Search: React.FC = (props: any) => {
     return () => {
       active = false;
     };
-  });
+  },[posts, props.location.search]);
   return (
     <div>
       <PrimarySearchAppBar />
-      <div className='is-boxed has-animations'>
-        <div className='body-wrap boxed-container'>
+      <div className="is-boxed has-animations">
+        <div className="body-wrap boxed-container">
           <SiteHeader />
-          <div className='container-sm cta-inner'>
+          <div className="container-sm cta-inner">
             <h1>Search</h1>
             <Bar />
           </div>
-          <section className='cta section'>
-            <PostsList posts={posts} />
+          <section className="cta section">
+            <PostsList posts={posts} postsLoading={postsLoading} />
           </section>
 
           <Footer />

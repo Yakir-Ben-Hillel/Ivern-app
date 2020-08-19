@@ -24,6 +24,7 @@ export interface Post {
   uid: string;
   gameName: string;
   imageURL: string;
+  artwork: string | null;
   platform: string;
   description: string;
   price: number;
