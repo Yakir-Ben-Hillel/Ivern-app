@@ -13,11 +13,23 @@ export const postAllPS4games = async (req, res) => {
         'user-key': IGDB_API_KEY,
       },
       data:
-        'fields name,cover,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
+        'fields name,cover,artworks,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
     });
     const batch = database.batch();
     doc.data.forEach((game) => {
-      batch.set(database.collection('/games').doc(), game);
+      let artwork: number = 0;
+      if (game.artworks) {
+        artwork = game.artworks[game.artworks.length - 1];
+      }
+      const savedGame = {
+        name: game.name,
+        cover: game.cover,
+        artwork: artwork !== 0 ? artwork : null,
+        slug: game.slug,
+        popularity: game.popularity,
+        rating: game.rating,
+      };
+      batch.set(database.collection('/games').doc(), savedGame);
     });
     await batch.commit();
     return res.status(200).json({ message: 'Games added successfully' });

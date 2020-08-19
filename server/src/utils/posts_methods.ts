@@ -27,6 +27,7 @@ export const addPost = async (request, res) => {
       area: req.body.area,
       createdAt: new Date().toISOString(),
       gameName: null,
+      artwork: null,
     };
     if ((!post.sell && !post.exchange) || post.price <= 0)
       return res.status(400).json({ error: 'Bad input.' });
@@ -40,7 +41,7 @@ export const addPost = async (request, res) => {
       const image = await axios({
         //Getting cover url and making it logo_med.
         url: 'https://api-v3.igdb.com/covers',
-        method: 'POST',
+        method: 'GET',
         headers: {
           Accept: 'application/json',
           'user-key': IGDB_API_KEY,
@@ -52,6 +53,7 @@ export const addPost = async (request, res) => {
         .substring(2);
       post.imageURL = imageURL;
       post.gameName = game.data()?.name;
+      post.artwork = game.data()?.artwork;
     }
     const doc = await database.collection('/posts').add(post);
     await database.doc(`/posts/${doc.id}`).update({ pid: doc.id });
@@ -134,8 +136,22 @@ export const getAllUserPosts = async (req, res) => {
       return res.status(404).json({ message: 'The game has no posts' });
     else {
       const data: any[] = [];
-      posts.forEach((doc) => {
-        data.push(doc.data());
+      posts.forEach(async (doc) => {
+        let artwork: string | null = null;
+        if (doc.data().artwork !== null) {
+          const artworkDoc = await axios({
+            //Getting cover url and making it logo_med.
+            url: 'https://api-v3.igdb.com/artworks',
+            method: 'GET',
+            headers: {
+              Accept: 'application/json',
+              'user-key': IGDB_API_KEY,
+            },
+            data: `fields image_id;where id=${doc.data()?.artwork};`,
+          });
+          artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data.image_id}.jpg`;
+        }
+        data.push({ ...doc.data(), artwork });
       });
       return res.status(200).json({ posts: data });
     }

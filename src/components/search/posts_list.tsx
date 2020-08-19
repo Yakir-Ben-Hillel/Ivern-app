@@ -1,21 +1,21 @@
-import React from "react";
-import { makeStyles, createStyles, Theme } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import ButtonBase from "@material-ui/core/ButtonBase";
-import SwapHorizIcon from "@material-ui/icons/SwapHoriz";
-import AttachMoneyIcon from "@material-ui/icons/AttachMoney";
-import PersonIcon from "@material-ui/icons/Person";
-import PhoneIcon from "@material-ui/icons/Phone";
-import clsx from "clsx";
+import React from 'react';
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import Typography from '@material-ui/core/Typography';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import PersonIcon from '@material-ui/icons/Person';
+import PhoneIcon from '@material-ui/icons/Phone';
+import clsx from 'clsx';
 import {
   SonyPlaystation,
   MicrosoftXbox,
   NintendoSwitch,
-} from "mdi-material-ui";
-import { israelAreas } from "../dashboard/searchBar/desktop/areaOptions";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
+} from 'mdi-material-ui';
+import { israelAreas } from '../dashboard/searchBar/desktop/areaOptions';
+import Carousel from 'react-multi-carousel';
+import 'react-multi-carousel/lib/styles.css';
 import {
   Tooltip,
   Accordion,
@@ -28,13 +28,11 @@ import {
   CardActionArea,
   CardMedia,
   CardContent,
-  CardActions,
-  Button,
-} from "@material-ui/core";
-import axios from "axios";
-import CircularProgress from "@material-ui/core/CircularProgress";
-import Pagination from "@material-ui/lab/Pagination";
-import { Post, User } from "../@types/types";
+} from '@material-ui/core';
+import axios from 'axios';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Pagination from '@material-ui/lab/Pagination';
+import { Post, User } from '../@types/types';
 interface IProps {
   posts: Post[] | undefined;
 }
@@ -45,66 +43,68 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     paper: {
       padding: theme.spacing(1),
-      margin: "auto",
+      margin: 'auto',
       maxWidth: 800,
     },
     card: {
-      margin:'5px',
-      maxWidth:'200px'
+      margin: '5px',
+      height: '220px',
+      maxWidth: '200px',
     },
     image: {
       width: 100,
       height: 100,
     },
     img: {
-      margin: "auto",
-      display: "block",
-      maxWidth: "100%",
-      maxHeight: "100%",
+      margin: 'auto',
+      display: 'block',
+      maxWidth: '100%',
+      maxHeight: '100%',
     },
     icon: {
-      verticalAlign: "bottom",
+      verticalAlign: 'bottom',
       height: 20,
       width: 20,
     },
     pager: {
-      display: "flex",
-      justifyContent: "center",
+      display: 'flex',
+      justifyContent: 'center',
     },
     details: {
-      alignItems: "center",
+      alignItems: 'center',
     },
     column: {},
     helper: {
       borderLeft: `2px solid ${theme.palette.divider}`,
       padding: theme.spacing(1, 2),
+      margin: 'auto',
     },
     userInfo: {
-      alignContent: "center",
+      alignContent: 'center',
     },
     userAvatar: {
-      margin: "auto",
-      width: theme.spacing(10),
-      height: theme.spacing(10),
+      margin: 'auto',
+      width: theme.spacing(12),
+      height: theme.spacing(12),
     },
   })
 );
 const PostsList: React.FC<IProps> = ({ posts }) => {
-  const [expandedPost, setExpandedPost] = React.useState<string>("");
-  const [openedPostUID, setOpenedPostUID] = React.useState<string>("");
+  const [expandedPost, setExpandedPost] = React.useState<string>('');
+  const [openedPostUID, setOpenedPostUID] = React.useState<string>('');
   const [loading, setLoading] = React.useState<boolean>(false);
   const [user, setUser] = React.useState<User | null>(null);
   const handleChange = (post: Post) => () => {
-    if (expandedPost === "" || expandedPost !== post.pid) {
+    if (expandedPost === '' || expandedPost !== post.pid) {
       setExpandedPost(post.pid);
       setOpenedPostUID(post.uid);
     } else {
-      setExpandedPost("");
+      setExpandedPost('');
     }
   };
   React.useEffect(() => {
     let active = true;
-    if (expandedPost === "") {
+    if (expandedPost === '') {
       return undefined;
     }
 
@@ -123,11 +123,14 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
     };
     // eslint-disable-next-line
   }, [expandedPost]);
+  React.useEffect(() => {
+    console.log(user);
+  }, [user]);
   const platformIcon = (platform: string) => {
-    if (platform === "playstation")
+    if (platform === 'playstation')
       return <SonyPlaystation fontSize="inherit" />;
-    else if (platform === "xbox") return <MicrosoftXbox fontSize="inherit" />;
-    else if (platform === "switch")
+    else if (platform === 'xbox') return <MicrosoftXbox fontSize="inherit" />;
+    else if (platform === 'switch')
       return <NintendoSwitch fontSize="inherit" />;
     else return undefined;
   };
@@ -181,9 +184,9 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
                       item
                       xs
                       style={{
-                        position: "relative",
-                        float: "right",
-                        top: "25px",
+                        position: 'relative',
+                        float: 'right',
+                        top: '25px',
                       }}
                       spacing={1}
                     >
@@ -203,8 +206,8 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <div style={{ width: "66.66%" }}>
-                <Typography variant='h6'>More from the Seller</Typography>
+              <div style={{ width: '66.66%' }}>
+                <Typography variant="h6">More from the Seller</Typography>
                 <Carousel
                   additionalTransfrom={0}
                   arrows
@@ -304,8 +307,34 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
                         title="Contemplative Reptile"
                       />
                       <CardContent>
-                        <Typography display='block' align='center' variant="caption">
+                        <Typography
+                          display="block"
+                          align="center"
+                          variant="caption"
+                        >
                           God of War
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                    {/* <CardActions>
+                      <Button size="small" color="primary">
+                        Send Message
+                      </Button>
+                    </CardActions> */}
+                  </Card>
+                  <Card className={classes.card}>
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        alt="Contemplative Reptile"
+                        height="150px"
+                        width="100%"
+                        image="https://images.igdb.com/igdb/image/upload/t_1080p/ar6i6.jpg"
+                        title="Contemplative Reptile"
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="caption">
+                        The Elder Scrolls V: Skyrim Special Edition
                         </Typography>
                       </CardContent>
                     </CardActionArea>

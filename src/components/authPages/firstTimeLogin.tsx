@@ -120,6 +120,7 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
     if (displayName === '' || phoneNumber === '')
       setErrorMessage('Please fill the required fields.');
     else {
+      setPhoneNumber(phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3));
       const idToken = await user.getIdToken();
       const res = await axios.post(
         'https://europe-west3-ivern-app.cloudfunctions.net/api/user',
@@ -134,7 +135,7 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
           },
         }
       );
-      if (res.status === 201) history.goBack();
+      if (res.status === 201) history.replace('/');
     }
   };
   const classes = useStyles();
