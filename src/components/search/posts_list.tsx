@@ -49,7 +49,8 @@ const useStyles = makeStyles((theme: Theme) =>
       maxWidth: 800,
     },
     card: {
-      width: "auto",
+      margin:'5px',
+      maxWidth:'200px'
     },
     image: {
       width: 100,
@@ -202,8 +203,8 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
               </Grid>
             </AccordionSummary>
             <AccordionDetails>
-              <div style={{ width: "75%" }}>
-                <Typography variant="caption">{post.description}</Typography>
+              <div style={{ width: "66.66%" }}>
+                <Typography variant='h6'>More from the Seller</Typography>
                 <Carousel
                   additionalTransfrom={0}
                   arrows
@@ -214,13 +215,9 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
                   containerClass="container-with-dots"
                   dotListClass=""
                   draggable
-                  focusOnSelect={false}
-                  infinite
                   itemClass=""
                   keyBoardControl
                   minimumTouchDrag={80}
-                  renderButtonGroupOutside={false}
-                  renderDotsOutside={false}
                   responsive={{
                     desktop: {
                       breakpoint: {
@@ -257,9 +254,9 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
                       <CardMedia
                         component="img"
                         alt="Contemplative Reptile"
-                        height="100%"
+                        height="150px"
                         width="100%"
-                        image="https://images.igdb.com/igdb/image/upload/t_1080p/rdonk4uvyh8ijanrbs46.jpg"
+                        image="https://images.igdb.com/igdb/image/upload/t_1080p/ar6zu.jpg"
                         title="Contemplative Reptile"
                       />
                       <CardContent>
@@ -268,34 +265,57 @@ const PostsList: React.FC<IProps> = ({ posts }) => {
                         </Typography>
                       </CardContent>
                     </CardActionArea>
-                    <CardActions>
+                    {/* <CardActions>
                       <Button size="small" color="primary">
-                        Share
+                        Send Message
                       </Button>
-                    </CardActions>
+                    </CardActions> */}
                   </Card>
                   <Card className={classes.card}>
                     <CardActionArea>
                       <CardMedia
                         component="img"
                         alt="Contemplative Reptile"
-                        height="100%"
+                        height="150px"
                         width="100%"
-                        image="https://images.igdb.com/igdb/image/upload/t_logo_med/rdonk4uvyh8ijanrbs46.jpg"
+                        image="https://images.igdb.com/igdb/image/upload/t_1080p/rwznddfodf1x5mmj8zva.jpg"
                         title="Contemplative Reptile"
                       />
                       <CardContent>
                         <Typography gutterBottom variant="caption">
-                          The Last Of Us: Part II
+                          The Witcher 3: Wild Hunt
                         </Typography>
                       </CardContent>
                     </CardActionArea>
-                    <CardActions>
+                    {/* <CardActions>
                       <Button size="small" color="primary">
-                        Share
+                        Send Message
                       </Button>
-                    </CardActions>
+                    </CardActions> */}
                   </Card>
+                  <Card className={classes.card}>
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        alt="Contemplative Reptile"
+                        height="150px"
+                        width="100%"
+                        image="https://images.igdb.com/igdb/image/upload/t_1080p/vpr6s4gboxxmnhkdmqdg.jpg"
+                        title="Contemplative Reptile"
+                      />
+                      <CardContent>
+                        <Typography display='block' align='center' variant="caption">
+                          God of War
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                    {/* <CardActions>
+                      <Button size="small" color="primary">
+                        Send Message
+                      </Button>
+                    </CardActions> */}
+                  </Card>
+
                 </Carousel>
               </div>
               <div className={clsx(classes.column, classes.helper)}>
