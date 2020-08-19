@@ -22,6 +22,7 @@ export const postAllPS4games = async (req, res) => {
         artwork = game.artworks[game.artworks.length - 1];
       }
       const savedGame = {
+        id: game.id,
         name: game.name,
         cover: game.cover,
         artwork: artwork !== 0 ? artwork : null,
@@ -136,11 +137,25 @@ export const updateGames = async (context) => {
         'user-key': IGDB_API_KEY,
       },
       data:
-        'fields name,cover,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
+        'fields name,artworks,cover,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
     });
     const batch = database.batch();
     let counter = 0;
     doc.data.forEach(async (game) => {
+      let artwork: number = 0;
+      if (game.artworks) {
+        artwork = game.artworks[game.artworks.length - 1];
+      }
+      const savedGame = {
+        id: game.id,
+        name: game.name,
+        cover: game.cover,
+        artwork: artwork !== 0 ? artwork : null,
+        slug: game.slug,
+        popularity: game.popularity,
+        rating: game.rating,
+      };
+
       const image = await axios({
         //Getting cover url and making it logo_med.
         url: 'https://api-v3.igdb.com/covers',
@@ -157,9 +172,15 @@ export const updateGames = async (context) => {
 
       const gameDoc = await database.doc(`/games/${game.id}`).get();
       if (gameDoc.exists)
-        batch.update(database.doc(`/games/${game.id}`), { ...game, imageURL });
+        batch.update(database.doc(`/games/${game.id}`), {
+          ...savedGame,
+          imageURL,
+        });
       else {
-        batch.set(database.collection('/games').doc(), { ...game, imageURL });
+        batch.set(database.collection('/games').doc(), {
+          ...savedGame,
+          imageURL,
+        });
         counter++;
       }
     });
@@ -180,9 +201,23 @@ export const updateGamesFunc = async (req, res) => {
         'user-key': IGDB_API_KEY,
       },
       data:
-        'fields name,cover,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
+        'fields name,cover,artworks,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
     });
     doc.data.forEach(async (game) => {
+      let artwork: number = 0;
+      if (game.artworks) {
+        artwork = game.artworks[game.artworks.length - 1];
+      }
+      const savedGame = {
+        id: game.id,
+        name: game.name,
+        cover: game.cover,
+        artwork: artwork !== 0 ? artwork : null,
+        slug: game.slug,
+        popularity: game.popularity,
+        rating: game.rating,
+      };
+
       const image = await axios({
         //Getting cover url and making it logo_med.
         url: 'https://api-v3.igdb.com/covers',
@@ -205,12 +240,12 @@ export const updateGamesFunc = async (req, res) => {
       if (!gameDoc.empty) {
         await database
           .doc(`/games/${gameDoc.docs[0].id}`)
-          .update({ ...game, imageURL });
+          .update({ ...savedGame, imageURL });
       } else {
         await database
           .collection('/games')
           .doc()
-          .set({ ...game, imageURL });
+          .set({ ...savedGame, imageURL });
       }
     });
     return res
