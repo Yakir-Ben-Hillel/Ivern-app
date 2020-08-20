@@ -71,7 +71,6 @@ export const signupWithGoogle = async (req, res) => {
       await database.doc(`/users/${newUser.uid}`).update({
         displayName: newUser.displayName,
         imageURL: newUser.imageURL,
-        phoneNumber: newUser.phoneNumber,
       });
       if (doc.data()?.isNew === true)
         return res.status(200).json({ isNew: true });

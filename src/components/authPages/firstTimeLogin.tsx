@@ -95,7 +95,6 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
   const isNumber = (n: string) => {
     return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
   };
-  React.useEffect(() => console.log(imageURL), [imageURL]);
   const imageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const formData = new FormData();
