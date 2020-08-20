@@ -116,9 +116,7 @@ export const getAllGamePosts = async (req, res) => {
       return res.status(404).json({ message: 'The game has no posts' });
     else {
       const data: any[] = [];
-      posts.forEach((doc) => {
-        data.push(doc.data());
-      });
+      posts.forEach((doc) => data.push(doc.data()));
       return res.status(200).json({ posts: data });
     }
   } catch (error) {
@@ -133,26 +131,11 @@ export const getAllUserPosts = async (req, res) => {
       .where('uid', '==', req.params.uid)
       .get();
     if (posts.empty)
-      return res.status(404).json({ message: 'The game has no posts' });
+      return res.status(404).json({ message: 'The user has no posts' });
     else {
       const data: any[] = [];
-      posts.forEach(async (doc) => {
-        let artwork: string | null = null;
-        if (doc.data().artwork !== null) {
-          const artworkDoc = await axios({
-            //Getting cover url and making it logo_med.
-            url: 'https://api-v3.igdb.com/artworks',
-            method: 'GET',
-            headers: {
-              Accept: 'application/json',
-              'user-key': IGDB_API_KEY,
-            },
-            data: `fields image_id;where id=${doc.data()?.artwork};`,
-          });
-          artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data.image_id}.jpg`;
-        }
-        data.push({ ...doc.data(), artwork });
-      });
+      console.log(posts.docs.length);
+      posts.docs.forEach((doc) => data.push(doc.data()));
       return res.status(200).json({ posts: data });
     }
   } catch (error) {
