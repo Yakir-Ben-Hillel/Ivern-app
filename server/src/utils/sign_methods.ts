@@ -1,5 +1,6 @@
 import { firebase } from '../firebase';
 import admin = require('firebase-admin');
+admin.initializeApp();
 const database = admin.firestore();
 export const FBAuth = async (req, res, next) => {
   let idToken;

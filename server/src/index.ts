@@ -7,6 +7,7 @@ import {
   addGameToDatabase,
   updateGames,
   getAllGames,
+  updateArtworks,
   updateGamesFunc,
 } from './utils/games_methods';
 import {
@@ -41,6 +42,7 @@ app.get('/games', getAllGames);
 app.get('/games/:gameName', searchGameInDatabase);
 app.get('/games/api/:gameName', searchUnfoundGame);
 app.post('/games', postAllPS4games);
+app.post('/games/artworks',updateArtworks);
 app.post('/games/add', addGameToDatabase);
 app.post('/games/update', updateGamesFunc);
 //Posts endpoints.
