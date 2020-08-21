@@ -105,7 +105,7 @@ const PostAccordion: React.FC<IProps> = ({
                 <img
                   className={classes.img}
                   alt="complex"
-                  src={post.imageURL}
+                  src={post.cover}
                 />
               </ButtonBase>
             </Grid>
@@ -156,7 +156,7 @@ const PostAccordion: React.FC<IProps> = ({
         </AccordionSummary>
         <AccordionDetails>
           <div style={{ width: '66.66%' }}>
-            <PostsCarousel />
+            <PostsCarousel user={user} expandedPost={expandedPost} />
           </div>
           <div className={classes.helper}>
             {loading ? (

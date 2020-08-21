@@ -1,7 +1,5 @@
 import { RequestCustom } from './user_methods';
 import { database } from './games_methods';
-import { IGDB_API_KEY } from '../firebase';
-const axios = require('axios');
 export const getPost = async (req, res) => {
   try {
     const post = await database.doc(`/posts/${req.params.pid}`).get();
@@ -23,7 +21,7 @@ export const addPost = async (request, res) => {
       exchange: req.body.exchange,
       sell: req.body.sell,
       price: req.body.price,
-      imageURL: req.body.imageURL,
+      cover: req.body.cover,
       area: req.body.area,
       createdAt: new Date().toISOString(),
       gameName: null,
@@ -32,28 +30,16 @@ export const addPost = async (request, res) => {
     if ((!post.sell && !post.exchange) || post.price <= 0)
       return res.status(400).json({ error: 'Bad input.' });
     //Getting cover id from the API.
-    if (post.imageURL === null) {
+    if (post.cover === null) {
       const game = await database.doc(`games/${req.body.gid}`).get();
+      const gameData = game.data();
       if (!game.exists)
         res
           .status(400)
           .json({ error: 'The game does not exists in the database.' });
-      const image = await axios({
-        //Getting cover url and making it logo_med.
-        url: 'https://api-v3.igdb.com/covers',
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-          'user-key': IGDB_API_KEY,
-        },
-        data: `fields url;where id=${game.data()?.cover};`,
-      });
-      const imageURL: string = image.data[0].url
-        .replace('thumb', 'logo_med')
-        .substring(2);
-      post.imageURL = imageURL;
-      post.gameName = game.data()?.name;
-      post.artwork = game.data()?.artwork;
+      post.cover = gameData?.cover;
+      post.gameName = gameData?.name;
+      post.artwork = gameData?.artwork;
     }
     const doc = await database.collection('/posts').add(post);
     await database.doc(`/posts/${doc.id}`).update({ pid: doc.id });
@@ -89,8 +75,7 @@ export const editPost = async (request, res) => {
       exchange: req.body.exchange,
       sell: req.body.sell,
       price: req.body.price,
-      imageURL: req.body.imageURL,
-      createdAt: new Date().toISOString(),
+      cover: req.body.cover,
     };
     const post = await database.doc(`/posts/${req.body.pid}`).get();
     if (!post.exists)

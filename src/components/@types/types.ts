@@ -9,13 +9,13 @@ export interface Area {
   id: number;
 }
 export interface Game {
-  cover: number;
   id: number;
   name: string;
   popularity: number;
   rating: number;
   slug: string;
-  imageURL: string;
+  cover: string;
+  artwork: string | null;
 }
 export interface Post {
   area: string;
@@ -23,7 +23,7 @@ export interface Post {
   pid: string;
   uid: string;
   gameName: string;
-  imageURL: string;
+  cover: string;
   artwork: string | null;
   platform: string;
   description: string;

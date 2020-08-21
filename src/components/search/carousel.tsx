@@ -10,8 +10,37 @@ import {
   CardContent,
 } from '@material-ui/core';
 import Carousel from 'react-multi-carousel';
+import { User, Post } from '../@types/types';
+import axios from 'axios';
+interface IProps {
+  user: User | null;
+  expandedPost: string;
+}
+const PostsCarousel: React.FC<IProps> = ({ user, expandedPost }) => {
+  const [userPosts, setUserPosts] = React.useState<Post[]>([]);
+  const [loading, setLoading] = React.useState<boolean>(false);
+  const postsLoading = user && expandedPost !== '' && userPosts.length === 0;
 
-const PostsCarousel: React.FC = () => {
+  React.useEffect(() => {
+    let active = true;
+    if (!postsLoading) return undefined;
+
+    (async () => {
+      setLoading(true);
+      const posts = await axios.get(
+        `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/user/${user?.uid}`
+      );
+      if (active) {
+        console.log(posts.data);
+        setUserPosts(posts.data);
+        setLoading(false);
+      }
+    })();
+    return () => {
+      active = false;
+    };
+    // eslint-disable-next-line
+  }, [postsLoading]);
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
       card: {

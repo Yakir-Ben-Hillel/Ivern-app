@@ -122,7 +122,7 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
             <ListItemIcon>
               <React.Fragment>
                 <img
-                  src={'https://' + game.imageURL}
+                  src={'https://' + game.cover}
                   style={{
                     width: '45px',
                     height: '45px',
