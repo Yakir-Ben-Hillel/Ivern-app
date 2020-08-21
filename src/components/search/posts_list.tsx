@@ -48,7 +48,6 @@ const PostsList: React.FC<IProps> = ({ posts, postsLoading }) => {
     };
     // eslint-disable-next-line
   }, [expandedPost]);
-
   const classes = useStyles();
   return (
     <div>

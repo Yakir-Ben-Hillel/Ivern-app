@@ -35,7 +35,7 @@ export const postAllPS4games = async (req, res) => {
           .substring(2);
         if (artwork) {
           const artworkDoc = await axios({
-            //Getting cover url and making it logo_med.
+            //Getting artwork url and making it 1080p.
             url: 'https://api-v3.igdb.com/artworks',
             method: 'GET',
             headers: {

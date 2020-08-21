@@ -18,6 +18,7 @@ interface IProps {
 }
 const PostsCarousel: React.FC<IProps> = ({ user, expandedPost }) => {
   const [userPosts, setUserPosts] = React.useState<Post[]>([]);
+  //eslint-disable-next-line
   const [loading, setLoading] = React.useState<boolean>(false);
   const postsLoading = user && expandedPost !== '' && userPosts.length === 0;
 
