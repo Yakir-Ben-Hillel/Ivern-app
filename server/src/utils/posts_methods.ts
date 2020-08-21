@@ -1,5 +1,6 @@
 import { RequestCustom } from './user_methods';
-import { database } from './games_methods';
+import admin = require('firebase-admin');
+const database = admin.firestore();
 export const getPost = async (req, res) => {
   try {
     const post = await database.doc(`/posts/${req.params.pid}`).get();
@@ -23,7 +24,7 @@ export const addPost = async (request, res) => {
       price: req.body.price,
       cover: req.body.cover,
       area: req.body.area,
-      createdAt: new Date().toISOString(),
+      createdAt: admin.firestore.Timestamp.fromDate(new Date()),
       gameName: null,
       artwork: null,
     };

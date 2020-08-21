@@ -1,9 +1,6 @@
 import { firebase } from '../firebase';
 import admin = require('firebase-admin');
-admin.initializeApp();
 const database = admin.firestore();
-// Start writing Firebase Functions
-// https://firebase.google.com/docs/functions/typescript
 export const FBAuth = async (req, res, next) => {
   let idToken;
   if (

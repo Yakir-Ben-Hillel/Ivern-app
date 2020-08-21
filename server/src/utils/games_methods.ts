@@ -1,7 +1,7 @@
 import { IGDB_API_KEY } from '../firebase';
 import admin = require('firebase-admin');
-export const database = admin.firestore();
 const axios = require('axios');
+const database = admin.firestore();
 export const postAllPS4games = async (req, res) => {
   try {
     const doc = await axios({
