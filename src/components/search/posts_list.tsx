@@ -23,31 +23,36 @@ const useStyles = makeStyles(() =>
   })
 );
 const PostsList: React.FC<IProps> = ({ posts, postsLoading }) => {
-  const [expandedPost, setExpandedPost] = React.useState<string>('');
-  const [openedPostUID, setOpenedPostUID] = React.useState<string>('');
+  const [openedPost, setOpenedPost] = React.useState<Post | null>(null);
+  const [userPosts, setUserPosts] = React.useState<Post[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [user, setUser] = React.useState<User | null>(null);
   React.useEffect(() => {
     let active = true;
-    if (expandedPost === '') {
+    if (!openedPost) {
       return undefined;
     }
-
     (async () => {
       setLoading(true);
       const user = await axios.get(
-        `https://europe-west3-ivern-app.cloudfunctions.net/api/user/${openedPostUID}`
+        `https://europe-west3-ivern-app.cloudfunctions.net/api/user/${openedPost.uid}`
+      );
+      const posts = await axios.get(
+        `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/user/${user.data.uid}`
+      );
+      const postsToUse = posts.data.posts.filter(
+        (post: Post) => post.gid !== openedPost.gid
       );
       if (active) {
         setUser(user.data);
+        setUserPosts(postsToUse);
         setLoading(false);
       }
     })();
     return () => {
       active = false;
     };
-    // eslint-disable-next-line
-  }, [expandedPost]);
+  }, [openedPost]);
   const classes = useStyles();
   return (
     <div>
@@ -58,11 +63,11 @@ const PostsList: React.FC<IProps> = ({ posts, postsLoading }) => {
           {posts?.map((post) => (
             <PostAccordion
               user={user}
+              userPosts={userPosts}
+              openedPost={openedPost}
+              setOpenedPost={setOpenedPost}
               post={post}
               loading={loading}
-              expandedPost={expandedPost}
-              setExpandedPost={setExpandedPost}
-              setOpenedPostUID={setOpenedPostUID}
             />
           ))}
           <Paper className={classes.pager}>

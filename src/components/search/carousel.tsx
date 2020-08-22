@@ -8,49 +8,18 @@ import {
   CardActionArea,
   CardMedia,
   CardContent,
+  Grid,
 } from '@material-ui/core';
 import Carousel from 'react-multi-carousel';
 import { User, Post } from '../@types/types';
-import axios from 'axios';
+import { Skeleton } from '@material-ui/lab';
+import Svg from 'react-inlinesvg';
 interface IProps {
   user: User | null;
-  expandedPost: string;
+  userPosts: Post[];
+  loading: boolean;
 }
-const PostsCarousel: React.FC<IProps> = ({ user, expandedPost }) => {
-  const [userPosts, setUserPosts] = React.useState<Post[]>([]);
-  //eslint-disable-next-line
-  const [loading, setLoading] = React.useState<boolean>(false);
-  const postsLoading = user && expandedPost !== '' && userPosts.length === 0;
-
-  React.useEffect(() => {
-    let active = true;
-    if (!postsLoading) return undefined;
-
-    (async () => {
-      setLoading(true);
-      const posts = await axios.get(
-        `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/user/${user?.uid}`
-      );
-      if (active) {
-        console.log(posts.data);
-        setUserPosts(posts.data);
-        setLoading(false);
-      }
-    })();
-    return () => {
-      active = false;
-    };
-    // eslint-disable-next-line
-  }, [postsLoading]);
-  const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      card: {
-        margin: '5px',
-        height: '220px',
-        maxWidth: '200px',
-      },
-    })
-  );
+const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
   const responsive = {
     desktop: {
       breakpoint: {
@@ -77,118 +46,103 @@ const PostsCarousel: React.FC<IProps> = ({ user, expandedPost }) => {
       partialVisibilityGutter: 30,
     },
   };
+
+  const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+      card: {
+        margin: '5px',
+        height: '220px',
+        maxWidth: '200px',
+      },
+      skeleton: {
+        margin: '5px',
+        height: '180px',
+        width: '162px',
+      },
+    })
+  );
   const classes = useStyles();
   return (
     <div>
-      <Typography variant="h6">More from the Seller</Typography>
-      <Carousel
-        additionalTransfrom={0}
-        arrows
-        autoPlaySpeed={3000}
-        ssr
-        centerMode={false}
-        className=""
-        containerClass="container-with-dots"
-        dotListClass=""
-        draggable
-        itemClass=""
-        keyBoardControl
-        minimumTouchDrag={80}
-        responsive={responsive}
-        showDots={false}
-        sliderClass=""
-        slidesToSlide={1}
-        swipeable
-      >
-        <Card className={classes.card}>
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              alt="Contemplative Reptile"
-              height="150px"
-              width="100%"
-              image="https://images.igdb.com/igdb/image/upload/t_1080p/ar6zu.jpg"
-              title="Contemplative Reptile"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="caption">
-                The Last Of Us: Part II
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-          {/* <CardActions>
+      {loading ? (
+        <div>
+          <Typography variant="h6">More from the Seller</Typography>
+          <Grid container spacing={2}>
+            {[0, 1, 2].map(() => (
+              <Card className={classes.skeleton}>
+                <Skeleton
+                  variant="rect"
+                  width="100%"
+                  height="60%"
+                  style={{ marginBottom: '10px' }}
+                />
+                <Skeleton width="100%" />
+              </Card>
+            ))}
+          </Grid>
+        </div>
+      ) : (
+        <div>
+          <Typography variant='subtitle1'>
+            {userPosts.length > 0
+              ? 'More from the Seller'
+              : 'Seems like he is still playing his other games'}
+          </Typography>
+          {userPosts.length > 0 ? (
+            <Carousel
+              additionalTransfrom={0}
+              arrows
+              autoPlaySpeed={3000}
+              ssr
+              centerMode={false}
+              className=""
+              containerClass="container-with-dots"
+              draggable
+              keyBoardControl
+              minimumTouchDrag={80}
+              responsive={responsive}
+              showDots={false}
+              sliderClass=""
+              slidesToSlide={1}
+              swipeable
+            >
+              {userPosts.map((post) => (
+                <Card className={classes.card}>
+                  <CardActionArea>
+                    <CardMedia
+                      component="img"
+                      alt={post.gameName}
+                      height="150px"
+                      width="100%"
+                      image={post.artwork ? post.artwork : post.cover}
+                    />
+                    <CardContent>
+                      <Typography gutterBottom variant="caption">
+                        {post.gameName}
+                      </Typography>
+                    </CardContent>
+                  </CardActionArea>
+                  {/* <CardActions>
         <Button size="small" color="primary">
           Send Message
         </Button>
       </CardActions> */}
-        </Card>
-        <Card className={classes.card}>
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              alt="Contemplative Reptile"
-              height="150px"
-              width="100%"
-              image="https://images.igdb.com/igdb/image/upload/t_1080p/rwznddfodf1x5mmj8zva.jpg"
-              title="Contemplative Reptile"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="caption">
-                The Witcher 3: Wild Hunt
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-          {/* <CardActions>
-        <Button size="small" color="primary">
-          Send Message
-        </Button>
-      </CardActions> */}
-        </Card>
-        <Card className={classes.card}>
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              alt="Contemplative Reptile"
-              height="150px"
-              width="100%"
-              image="https://images.igdb.com/igdb/image/upload/t_1080p/vpr6s4gboxxmnhkdmqdg.jpg"
-              title="Contemplative Reptile"
-            />
-            <CardContent>
-              <Typography display="block" align="center" variant="caption">
-                God of War
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-          {/* <CardActions>
-        <Button size="small" color="primary">
-          Send Message
-        </Button>
-      </CardActions> */}
-        </Card>
-        <Card className={classes.card}>
-          <CardActionArea>
-            <CardMedia
-              component="img"
-              alt="Contemplative Reptile"
-              height="150px"
-              width="100%"
-              image="https://images.igdb.com/igdb/image/upload/t_1080p/ar6i6.jpg"
-              title="Contemplative Reptile"
-            />
-            <CardContent>
-              <Typography gutterBottom variant="caption">
-                The Elder Scrolls V: Skyrim Special Edition
-              </Typography>
-            </CardContent>
-          </CardActionArea>
-          {/* <CardActions>
-        <Button size="small" color="primary">
-          Send Message
-        </Button>
-      </CardActions> */}
-        </Card>
-      </Carousel>
+                </Card>
+              ))}
+            </Carousel>
+          ) : (
+            <div>
+              <Svg
+                style={{ margin: 'auto' }}
+                src={require('../dashboard/dist/images/gaming-animated.svg')}
+                width="320px"
+                height="300px"
+                alt="User has no other games"
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };

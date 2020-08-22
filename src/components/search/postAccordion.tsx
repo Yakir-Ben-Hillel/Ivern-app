@@ -28,19 +28,19 @@ import {
 import { Post, User } from '../@types/types';
 interface IProps {
   post: Post;
+  openedPost: Post | null;
   user: User | null;
+  userPosts: Post[];
   loading: boolean;
-  expandedPost: string;
-  setExpandedPost: React.Dispatch<React.SetStateAction<string>>;
-  setOpenedPostUID: React.Dispatch<React.SetStateAction<string>>;
+  setOpenedPost: React.Dispatch<React.SetStateAction<Post | null>>;
 }
 const PostAccordion: React.FC<IProps> = ({
   post,
   user,
+  openedPost,
+  setOpenedPost,
+  userPosts,
   loading,
-  expandedPost,
-  setExpandedPost,
-  setOpenedPostUID,
 }) => {
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -83,11 +83,10 @@ const PostAccordion: React.FC<IProps> = ({
     else return undefined;
   };
   const handleChange = (post: Post) => () => {
-    if (expandedPost === '' || expandedPost !== post.pid) {
-      setExpandedPost(post.pid);
-      setOpenedPostUID(post.uid);
+    if (!openedPost || openedPost.pid !== post.pid) {
+      setOpenedPost(post);
     } else {
-      setExpandedPost('');
+      setOpenedPost(null);
     }
   };
 
@@ -95,18 +94,14 @@ const PostAccordion: React.FC<IProps> = ({
   return (
     <div key={post.pid} className={classes.paper}>
       <Accordion
-        expanded={expandedPost === post.pid}
+        expanded={openedPost?.pid === post.pid}
         onChange={handleChange(post)}
       >
         <AccordionSummary>
           <Grid container spacing={2}>
             <Grid item>
               <ButtonBase className={classes.image}>
-                <img
-                  className={classes.img}
-                  alt="complex"
-                  src={post.cover}
-                />
+                <img className={classes.img} alt="complex" src={post.cover} />
               </ButtonBase>
             </Grid>
             <Grid item xs={12} sm container>
@@ -156,7 +151,11 @@ const PostAccordion: React.FC<IProps> = ({
         </AccordionSummary>
         <AccordionDetails>
           <div style={{ width: '66.66%' }}>
-            <PostsCarousel user={user} expandedPost={expandedPost} />
+            <PostsCarousel
+              user={user}
+              userPosts={userPosts}
+              loading={loading}
+            />
           </div>
           <div className={classes.helper}>
             {loading ? (
