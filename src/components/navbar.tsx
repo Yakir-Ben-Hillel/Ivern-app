@@ -60,31 +60,6 @@ const useStyles = makeStyles((theme: Theme) =>
         display: 'none',
       },
     },
-
-    // search: {
-    //   position: 'relative',
-    //   borderRadius: theme.shape.borderRadius,
-    //   backgroundColor: fade(theme.palette.common.white, 0.15),
-    //   '&:hover': {
-    //     backgroundColor: fade(theme.palette.common.white, 0.25),
-    //   },
-    //   marginRight: theme.spacing(2),
-    //   marginLeft: 0,
-    //   width: '100%',
-    //   [theme.breakpoints.up('sm')]: {
-    //     marginLeft: theme.spacing(3),
-    //     width: 'auto',
-    //   },
-    // },
-    // searchIcon: {
-    //   padding: theme.spacing(0, 2),
-    //   height: '100%',
-    //   position: 'absolute',
-    //   pointerEvents: 'none',
-    //   display: 'flex',
-    //   alignItems: 'center',
-    //   justifyContent: 'center',
-    // },
   })
 );
 
@@ -121,7 +96,6 @@ export default function PrimarySearchAppBar() {
   const handleMobileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setMobileMoreAnchorEl(event.currentTarget);
   };
-
   const menuId = 'primary-search-account-menu';
   const renderMenuSigned = (
     <Menu
@@ -133,8 +107,8 @@ export default function PrimarySearchAppBar() {
       open={isMenuOpen}
       onClose={handleMenuClose}
     >
+      <MenuItem onClick={() => history.push('/user')}>המשתמש שלי</MenuItem>
       <MenuItem onClick={handleMenuClose}>המשחקים שלי</MenuItem>
-      <MenuItem onClick={handleMenuClose}>המשתמש שלי</MenuItem>
       <MenuItem
         onClick={async () => {
           await firebase.auth().signOut();

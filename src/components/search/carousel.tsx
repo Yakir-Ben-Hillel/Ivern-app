@@ -68,22 +68,24 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
         <div>
           <Typography variant="h6">More from the Seller</Typography>
           <Grid container spacing={2}>
-            {[0, 1, 2].map(() => (
-              <Card className={classes.skeleton}>
-                <Skeleton
-                  variant="rect"
-                  width="100%"
-                  height="60%"
-                  style={{ marginBottom: '10px' }}
-                />
-                <Skeleton width="100%" />
-              </Card>
+            {[0, 1, 2].map((index) => (
+              <div key={index}>
+                <Card className={classes.skeleton}>
+                  <Skeleton
+                    variant="rect"
+                    width="100%"
+                    height="60%"
+                    style={{ marginBottom: '10px' }}
+                  />
+                  <Skeleton width="100%" />
+                </Card>
+              </div>
             ))}
           </Grid>
         </div>
       ) : (
         <div>
-          <Typography variant='subtitle1'>
+          <Typography variant="subtitle1">
             {userPosts.length > 0
               ? 'More from the Seller'
               : 'Seems like he is still playing his other games'}
@@ -106,28 +108,30 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
               slidesToSlide={1}
               swipeable
             >
-              {userPosts.map((post) => (
-                <Card className={classes.card}>
-                  <CardActionArea>
-                    <CardMedia
-                      component="img"
-                      alt={post.gameName}
-                      height="150px"
-                      width="100%"
-                      image={post.artwork ? post.artwork : post.cover}
-                    />
-                    <CardContent>
-                      <Typography gutterBottom variant="caption">
-                        {post.gameName}
-                      </Typography>
-                    </CardContent>
-                  </CardActionArea>
-                  {/* <CardActions>
+              {userPosts.map((post, index) => (
+                <div key={index}>
+                  <Card className={classes.card}>
+                    <CardActionArea>
+                      <CardMedia
+                        component="img"
+                        alt={post.gameName}
+                        height="150px"
+                        width="100%"
+                        image={post.artwork ? post.artwork : post.cover}
+                      />
+                      <CardContent>
+                        <Typography gutterBottom variant="caption">
+                          {post.gameName}
+                        </Typography>
+                      </CardContent>
+                    </CardActionArea>
+                    {/* <CardActions>
         <Button size="small" color="primary">
           Send Message
         </Button>
       </CardActions> */}
-                </Card>
+                  </Card>
+                </div>
               ))}
             </Carousel>
           ) : (
