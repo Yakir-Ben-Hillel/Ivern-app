@@ -5,7 +5,7 @@ import 'react-multi-carousel/lib/styles.css';
 import { Paper } from '@material-ui/core';
 import axios from 'axios';
 import Pagination from '@material-ui/lab/Pagination';
-import { Post, User } from '../@types/types';
+import { Post, User } from '../../@types/types';
 import PostAccordion from './postAccordion';
 interface IProps {
   posts: Post[] | undefined;

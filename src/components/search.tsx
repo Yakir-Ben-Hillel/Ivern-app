@@ -7,7 +7,7 @@ import SiteHeader from './dashboard/siteHeader';
 import Footer from './dashboard/footer';
 import axios from 'axios';
 import PostsList from './search/posts_list';
-import { Post } from './@types/types';
+import { Post } from '../@types/types';
 
 export const Search: React.FC = (props: any) => {
   const localLights = localStorage.getItem('lights');

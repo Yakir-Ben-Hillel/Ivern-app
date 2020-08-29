@@ -4,7 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import CloseIcon from '@material-ui/icons/Close';
-import { Area } from '../../../@types/types';
+import { Area } from '../../../../@types/types';
 import { israelAreas } from '../desktop/areaOptions';
 import {
   AppBar,

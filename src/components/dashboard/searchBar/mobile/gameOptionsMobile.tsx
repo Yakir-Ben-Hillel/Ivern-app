@@ -18,7 +18,7 @@ import {
 import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
-import { Game } from '../../../@types/types';
+import { Game } from '../../../../@types/types';
 interface IGameOptions {
   options: Game[];
   setNames: React.Dispatch<React.SetStateAction<string[]>>;

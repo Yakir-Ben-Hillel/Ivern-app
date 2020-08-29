@@ -11,7 +11,7 @@ import {
   Grid,
 } from '@material-ui/core';
 import Carousel from 'react-multi-carousel';
-import { User, Post } from '../@types/types';
+import { User, Post } from '../../@types/types';
 import { Skeleton } from '@material-ui/lab';
 import Svg from 'react-inlinesvg';
 interface IProps {

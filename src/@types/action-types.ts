@@ -1,4 +1,4 @@
-import { firebase } from '../../firebase';
+import { firebase } from '../firebase';
 const SET_USER = 'SET_USER';
 export interface SetUserAction {
   type: typeof SET_USER;

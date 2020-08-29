@@ -17,7 +17,7 @@ import PlatformSelect from './searchBar/desktop/bootstrapInput';
 import GamesOptions from './searchBar/desktop/gameOptionsDesktop';
 import AreaOptions from './searchBar/desktop/areaOptions';
 import MobileSearch from './searchBar/mobile/mobileSearch';
-import { Area, Game } from '../@types/types';
+import { Area, Game } from '../../@types/types';
 import isMobile from 'is-mobile';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

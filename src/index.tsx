@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AppRouter from './components/router/AppRouter';
+import AppRouter from './router/AppRouter';
 import 'normalize.css/normalize.css';
 import { firebase } from './firebase';
-import configureStore from './components/redux/store/configureStore';
+import configureStore from './redux/store/configureStore';
 import { Provider } from 'react-redux';
-import { setUser } from './components/redux/actions/auth';
+import { setUser } from './redux/actions/auth';
 const store = configureStore();
 const Application = () => (
   <Provider store={store}>

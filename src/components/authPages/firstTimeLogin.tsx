@@ -11,13 +11,13 @@ import { firebase } from '../../firebase';
 import React from 'react';
 import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { AppState } from '../@types/types';
+import { AppState } from '../../@types/types';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 function Copyright() {
   return (
-    <Typography variant="body2" color="textSecondary" align="center">
+    <Typography variant='body2' color='textSecondary' align='center'>
       {'Copyright © '}
       Yakir Ben Hillel 2020
       {'.'}
@@ -119,7 +119,8 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
     if (displayName === '' || phoneNumber === '')
       setErrorMessage('Please fill the required fields.');
     else {
-      setPhoneNumber(phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3));
+      if (phoneNumber[3] !== '-')
+        setPhoneNumber(phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3));
       const idToken = await user.getIdToken();
       const res = await axios.post(
         'https://europe-west3-ivern-app.cloudfunctions.net/api/user',
@@ -144,26 +145,26 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
   });
 
   return (
-    <Container component="main" maxWidth="xs">
+    <Container component='main' maxWidth='xs'>
       <CssBaseline />
       <div className={classes.paper}>
-        <Typography component="h1" variant="h5">
+        <Typography component='h1' variant='h5'>
           fill the information
         </Typography>
         {imageURL ? (
           <div className={classes.root}>
             <input
-              accept="image/*"
+              accept='image/*'
               className={classes.input}
-              id="contained-button-file"
-              type="file"
+              id='contained-button-file'
+              type='file'
               onChange={imageUpload}
             />
-            <label htmlFor="contained-button-file">
+            <label htmlFor='contained-button-file'>
               {loading ? (
                 <CircularProgress size={80} className={classes.progress} />
               ) : (
-                <Button disableRipple component="span">
+                <Button disableRipple component='span'>
                   <Avatar className={classes.userAvatar} src={imageURL} />
                   <AddAPhotoIcon className={classes.badge} />
                 </Button>
@@ -178,36 +179,36 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
 
         <form onSubmit={onSubmit}>
           <TextField
-            variant="outlined"
-            margin="normal"
+            variant='outlined'
+            margin='normal'
             fullWidth
-            id="displayName"
+            id='displayName'
             disabled
             value={user.email}
           />
           <TextField
-            variant="outlined"
-            margin="normal"
+            variant='outlined'
+            margin='normal'
             fullWidth
-            id="displayName"
+            id='displayName'
             value={displayName}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setDisplayName(e.target.value)
             }
-            label="Display Name"
-            name="displayName"
-            autoComplete="DisplayName"
+            label='Display Name'
+            name='displayName'
+            autoComplete='DisplayName'
           />
           <TextField
-            variant="outlined"
-            margin="normal"
-            placeholder="05 -"
+            variant='outlined'
+            margin='normal'
+            placeholder='05 -'
             fullWidth
-            itemType="number"
-            name="Phone Number"
-            label="Phone Number"
-            type="Phone Number"
-            id="phone"
+            itemType='number'
+            name='Phone Number'
+            label='Phone Number'
+            type='Phone Number'
+            id='phone'
             value={phoneNumber}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               if (
@@ -216,16 +217,16 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
               )
                 setPhoneNumber(e.target.value);
             }}
-            autoComplete="Phone Number"
+            autoComplete='Phone Number'
           />
           {errorMessage && (
-            <Typography color="secondary">{errorMessage}</Typography>
+            <Typography color='secondary'>{errorMessage}</Typography>
           )}
           <Button
-            type="submit"
+            type='submit'
             fullWidth
-            variant="contained"
-            color="primary"
+            variant='contained'
+            color='primary'
             className={classes.submit}
           >
             Submit

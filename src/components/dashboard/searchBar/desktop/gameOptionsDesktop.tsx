@@ -3,7 +3,7 @@ import React from 'react';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Chip, Typography, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
-import { Game } from '../../../@types/types';
+import { Game } from '../../../../@types/types';
 interface IGameOptions {
   options: Game[];
   setOptions: React.Dispatch<React.SetStateAction<Game[]>>;

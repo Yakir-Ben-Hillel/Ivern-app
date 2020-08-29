@@ -25,7 +25,7 @@ import {
   MicrosoftXbox,
   NintendoSwitch,
 } from 'mdi-material-ui';
-import { Post, User } from '../@types/types';
+import { Post, User } from '../../@types/types';
 interface IProps {
   post: Post;
   openedPost: Post | null;

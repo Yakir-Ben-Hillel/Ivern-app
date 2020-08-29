@@ -1,8 +1,8 @@
-import '../scss/style.scss';
+import '../../scss/style.scss';
 import React from 'react';
-import { firebase } from '../firebase';
+import { firebase } from '../../firebase';
 import axios from 'axios';
-import PrimarySearchBar from './navbar';
+import PrimarySearchBar from '../navbar';
 import {
   Grid,
   makeStyles,
@@ -16,11 +16,11 @@ import {
   Button,
   TextField,
 } from '@material-ui/core';
-import { User, Area } from './@types/types';
+import { User, Area } from '../../@types/types';
 import { isNumber } from 'util';
 import { useHistory } from 'react-router';
 import { Skeleton, Autocomplete } from '@material-ui/lab';
-import { israelAreas } from './dashboard/searchBar/desktop/areaOptions';
+import { israelAreas } from '../dashboard/searchBar/desktop/areaOptions';
 const UserInfo: React.FC = () => {
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -101,7 +101,7 @@ const UserInfo: React.FC = () => {
       if (res.status === 201) history.goBack();
     }
   };
-  const imageUpload = async (event: any) => {
+  const imageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const formData = new FormData();
       const newFile = event.target.files[0];
@@ -116,6 +116,7 @@ const UserInfo: React.FC = () => {
           },
         }
       );
+      console.log(res.data);
       setImageURL(res.data.imageURL);
       setLoading(false);
     }
@@ -123,10 +124,10 @@ const UserInfo: React.FC = () => {
   return (
     <div>
       <PrimarySearchBar />
-      <div className="is-boxed has-animations">
-        <div className="body-wrap boxed-container">
+      <div className='is-boxed has-animations'>
+        <div className='body-wrap boxed-container'>
           <div className={classes.root}>
-            <Container maxWidth="md">
+            <Container maxWidth='md'>
               <Grid container spacing={3}>
                 <Grid item xs>
                   <Card className={classes.paper}>
@@ -135,29 +136,29 @@ const UserInfo: React.FC = () => {
                         <div>
                           <Skeleton
                             className={classes.avatar}
-                            variant="circle"
+                            variant='circle'
                           />
                           <Skeleton
-                            variant="text"
-                            width="20%"
+                            variant='text'
+                            width='20%'
                             style={{ margin: 'auto' }}
                           />
                         </div>
                       ) : (
                         <div>
                           <Avatar className={classes.avatar} src={imageURL} />
-                          <Typography variant="h6">
+                          <Typography variant='h6'>
                             {user?.displayName}
                           </Typography>
                           <input
-                            accept="image/*"
+                            accept='image/*'
                             className={classes.input}
-                            id="contained-button-file"
-                            type="file"
+                            id='contained-button-file'
+                            type='file'
                             onChange={imageUpload}
                           />
-                          <label htmlFor="contained-button-file">
-                            <Button color="primary" component="span">
+                          <label htmlFor='contained-button-file'>
+                            <Button color='primary' component='span'>
                               Upload Image
                             </Button>
                           </label>
@@ -170,7 +171,7 @@ const UserInfo: React.FC = () => {
                               <div key={index}>
                                 <Skeleton
                                   className={classes.skeleton}
-                                  variant="rect"
+                                  variant='rect'
                                   width={700}
                                   height={50}
                                 />
@@ -181,38 +182,38 @@ const UserInfo: React.FC = () => {
                       ) : (
                         <form onSubmit={onSubmit}>
                           <TextField
-                            variant="outlined"
-                            margin="normal"
+                            variant='outlined'
+                            margin='normal'
                             fullWidth
-                            id="displayName"
+                            id='displayName'
                             disabled
                             value={user?.email}
-                            label="Email"
-                            name="email"
+                            label='Email'
+                            name='email'
                           />
                           <TextField
-                            variant="outlined"
-                            margin="normal"
+                            variant='outlined'
+                            margin='normal'
                             fullWidth
-                            id="displayName"
+                            id='displayName'
                             value={displayName}
                             onChange={(
                               e: React.ChangeEvent<HTMLInputElement>
                             ) => setDisplayName(e.target.value)}
-                            label="Display Name"
-                            name="displayName"
-                            autoComplete="DisplayName"
+                            label='Display Name'
+                            name='displayName'
+                            autoComplete='DisplayName'
                           />
                           <TextField
-                            variant="outlined"
-                            margin="normal"
-                            placeholder="05 -"
+                            variant='outlined'
+                            margin='normal'
+                            placeholder='05 -'
                             fullWidth
-                            itemType="number"
-                            name="Phone Number"
-                            label="Phone Number"
-                            type="Phone Number"
-                            id="phone"
+                            itemType='number'
+                            name='Phone Number'
+                            label='Phone Number'
+                            type='Phone Number'
+                            id='phone'
                             value={phoneNumber}
                             onChange={(
                               e: React.ChangeEvent<HTMLInputElement>
@@ -224,10 +225,10 @@ const UserInfo: React.FC = () => {
                               )
                                 setPhoneNumber(e.target.value);
                             }}
-                            autoComplete="Phone Number"
+                            autoComplete='Phone Number'
                           />
                           <Autocomplete
-                            id="checkboxes-tags-demo"
+                            id='checkboxes-tags-demo'
                             onChange={(event, area) => {
                               if (area) setArea(area);
                             }}
@@ -240,22 +241,22 @@ const UserInfo: React.FC = () => {
                                 {...params}
                                 fullWidth
                                 value={area}
-                                margin="normal"
-                                label="Hometown"
-                                variant="outlined"
+                                margin='normal'
+                                label='Hometown'
+                                variant='outlined'
                               />
                             )}
                           />
                           {errorMessage && (
-                            <Typography color="secondary">
+                            <Typography color='secondary'>
                               {errorMessage}
                             </Typography>
                           )}
                           <Button
-                            type="submit"
+                            type='submit'
                             fullWidth
-                            variant="contained"
-                            color="primary"
+                            variant='contained'
+                            color='primary'
                           >
                             Save
                           </Button>
