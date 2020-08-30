@@ -4,9 +4,16 @@ import { TextField } from '@material-ui/core';
 import { Area } from '../../../../@types/types';
 interface IProps {
   setArea: React.Dispatch<React.SetStateAction<Area | undefined>>;
+  size?: 'small' | 'medium' | undefined;
+  normalMargin?: string;
   areaError: boolean;
 }
-const AreaOptions: React.FC<IProps> = ({ setArea, areaError }) => {
+const AreaOptions: React.FC<IProps> = ({
+  setArea,
+  areaError,
+  normalMargin,
+  size,
+}) => {
   return (
     <Autocomplete
       id='checkboxes-tags-demo'
@@ -15,12 +22,13 @@ const AreaOptions: React.FC<IProps> = ({ setArea, areaError }) => {
       }}
       options={israelAreas}
       disableCloseOnSelect
-      size='small'
+      size={size ? size : 'small'}
       groupBy={(option) => option.area}
       getOptionLabel={(option) => option.name}
       renderInput={(params) => (
         <TextField
           {...params}
+          margin={normalMargin ? 'normal' : undefined}
           error={areaError}
           helperText={areaError ? 'Please choose some areas.' : ''}
           variant='outlined'

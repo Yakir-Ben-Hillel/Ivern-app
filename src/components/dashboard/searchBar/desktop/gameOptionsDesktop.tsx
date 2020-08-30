@@ -11,6 +11,7 @@ interface IGameOptions {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   gameError: boolean;
+  size?: 'small' | 'medium' | undefined;
 }
 const GamesOptions: React.FC<IGameOptions> = ({
   options,
@@ -18,6 +19,7 @@ const GamesOptions: React.FC<IGameOptions> = ({
   open,
   setOpen,
   setGames,
+  size,
   gameError,
 }) => {
   const loading = open && options.length === 0;
@@ -28,11 +30,11 @@ const GamesOptions: React.FC<IGameOptions> = ({
       onChange={(event, games) => {
         setGames(games);
       }}
-      id="size-small-outlined-multi"
+      id='size-small-outlined-multi'
       open={open}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      size="medium"
+      size='medium'
       options={options}
       loading={loading}
       disableCloseOnSelect
@@ -52,9 +54,9 @@ const GamesOptions: React.FC<IGameOptions> = ({
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
           <Chip
-            variant="outlined"
+            variant='outlined'
             label={option.name}
-            size="small"
+            size='small'
             {...getTagProps({ index })}
           />
         ))
@@ -64,15 +66,15 @@ const GamesOptions: React.FC<IGameOptions> = ({
           {...params}
           error={gameError}
           helperText={gameError ? 'Please choose some games.' : ''}
-          label="Search Games"
-          size="small"
-          variant="outlined"
+          label='Search Games'
+          size={size ? size : 'small'}
+          variant='outlined'
           InputProps={{
             ...params.InputProps,
             endAdornment: (
               <React.Fragment>
                 {loading ? (
-                  <CircularProgress color="inherit" size={20} />
+                  <CircularProgress color='inherit' size={20} />
                 ) : null}
                 {params.InputProps.endAdornment}
               </React.Fragment>
