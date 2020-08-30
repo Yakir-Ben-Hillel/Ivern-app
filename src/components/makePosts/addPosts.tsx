@@ -24,7 +24,7 @@ import axios from 'axios';
 import { Game, Area } from '../../@types/types';
 import GamesOptions from '../dashboard/searchBar/desktop/gameOptionsDesktop';
 import AreaOptions from '../dashboard/searchBar/desktop/areaOptions';
-import { Alert, AlertTitle } from '@material-ui/lab';
+import  Alert  from '@material-ui/lab/Alert';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
