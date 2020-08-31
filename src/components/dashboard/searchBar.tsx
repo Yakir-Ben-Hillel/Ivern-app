@@ -58,11 +58,13 @@ const SearchBar: React.FC = () => {
 export const Bar: React.FC = () => {
   const [gameError, setGameError] = React.useState(false);
   const [areaError, setAreaError] = React.useState(false);
-  const [platform, setPlatform] = React.useState('playstation');
   const [options, setOptions] = React.useState<Game[]>([]);
   const [games, setGames] = React.useState<Game[]>([]);
   const [area, setArea] = React.useState<Area>();
   const [open, setOpen] = React.useState(false);
+  const [platform, setPlatform] = React.useState<
+  'playstation' | 'xbox' | 'switch'
+>('playstation');
   const loading = open && options.length === 0;
   const classes = useStyles();
   const history = useHistory();

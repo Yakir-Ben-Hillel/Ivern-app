@@ -30,9 +30,9 @@ export const postAllPS4games = async (req, res) => {
         },
         data: `fields url;where id=${game.cover};`,
       });
-      const cover: string = image.data[0].url
-        .replace('thumb', 'logo_med')
-        .substring(2);
+      const cover: string =
+        'https://' +
+        image.data[0].url.replace('thumb', 'logo_med').substring(2);
       // if (artwork) {
       //   const artworkDoc = await axios({
       //     //Getting cover url and making it logo_med.
@@ -247,7 +247,7 @@ export const updateArtworks = async (req, res) => {
         return error;
       }
     });
-    return res.status(200).json({message:'Artworks updated successfully.'});
+    return res.status(200).json({ message: 'Artworks updated successfully.' });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });

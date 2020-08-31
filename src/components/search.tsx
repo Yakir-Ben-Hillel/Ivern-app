@@ -36,6 +36,7 @@ export const Search: React.FC = (props: any) => {
           },
         }
       );
+      console.log(res);
       setPostsLoading(false);
       if (active) {
         setPosts(res.data.posts);

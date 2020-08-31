@@ -16,37 +16,31 @@ export const addPost = async (request, res) => {
   try {
     const req = request as RequestCustom;
     const post = {
+      gameName: req.body.gameName,
       gid: req.body.gid,
       uid: req.user.uid,
+      description: req.body.description,
       platform: req.body.platform,
       exchange: req.body.exchange,
       sell: req.body.sell,
       price: req.body.price,
       cover: req.body.cover,
+      artwork: req.body.artwork,
       area: req.body.area,
       createdAt: admin.firestore.Timestamp.fromDate(new Date()),
-      gameName: null,
-      artwork: null,
     };
-    if ((!post.sell && !post.exchange) || post.price <= 0)
+    if (
+      (!post.sell && !post.exchange) ||
+      post.platform === '' ||
+      post.description === '' ||
+      post.price <= 0
+    )
       return res.status(400).json({ error: 'Bad input.' });
-    //Getting cover id from the API.
-    if (post.cover === null) {
-      const game = await database.doc(`games/${req.body.gid}`).get();
-      const gameData = game.data();
-      if (!game.exists)
-        res
-          .status(400)
-          .json({ error: 'The game does not exists in the database.' });
-      post.cover = gameData?.cover;
-      post.gameName = gameData?.name;
-      post.artwork = gameData?.artwork;
-    }
     const doc = await database.collection('/posts').add(post);
     await database.doc(`/posts/${doc.id}`).update({ pid: doc.id });
     return res
       .status(200)
-      .json({ message: `Post ${doc.id} added successfully.` });
+      .json({ message: `Post ${doc.id} added successfully.`, data: post });
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);

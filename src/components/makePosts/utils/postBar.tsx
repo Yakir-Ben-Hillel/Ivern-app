@@ -19,6 +19,7 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import AddIcon from '@material-ui/icons/Add';
+import { Post } from '../../../@types/types';
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -80,6 +81,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 interface Props {
+  postsList: Post[];
   /**
    * Injected by the documentation to work in an iframe.
    * You won't need it on your project.
@@ -102,6 +104,12 @@ const PostAppBar: React.FC<Props> = (props) => {
       <div className={classes.toolbar} />
       <Divider />
       <List>
+        {props.postsList.map((post, index) => (
+          <ListItem key={index} button>
+            <img src={post.cover} alt='game cover' />
+            <ListItemText primary={post.gameName} />
+          </ListItem>
+        ))}
         <ListItem button>
           <ListItemIcon>
             <AddIcon />

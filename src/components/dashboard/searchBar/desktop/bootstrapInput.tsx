@@ -7,10 +7,17 @@ import {
 } from 'mdi-material-ui';
 import { Select, MenuItem, withStyles } from '@material-ui/core';
 interface IProps {
-  platform: string;
-  setPlatform: React.Dispatch<SetStateAction<string>>;
+  platform: 'playstation' | 'xbox' | 'switch';
+  setPlatform: React.Dispatch<
+    SetStateAction<'playstation' | 'xbox' | 'switch'>
+  >;
+  fullWidth?: boolean;
 }
-const PlatformSelect: React.FC<IProps> = ({platform,setPlatform}) => {
+const PlatformSelect: React.FC<IProps> = ({
+  platform,
+  setPlatform,
+  fullWidth,
+}) => {
   const handleChange = (event: any) => {
     setPlatform(event.target.value);
   };
@@ -19,6 +26,7 @@ const PlatformSelect: React.FC<IProps> = ({platform,setPlatform}) => {
       labelId='demo-customized-select-label'
       id='demo-customized-select'
       label='Platform'
+      fullWidth={fullWidth ? true : false}
       value={platform}
       onChange={handleChange}
       defaultValue='playstation'
