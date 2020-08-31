@@ -1,6 +1,7 @@
 export interface AppState {
   auth: {
-    user: firebase.User;
+    user: User;
+    loading: boolean;
   };
 }
 export interface Area {
@@ -41,5 +42,6 @@ export interface User {
   provider: string;
   uid: string;
   isNew: boolean;
+  posts?: Post[];
   createdAt: Date;
 }

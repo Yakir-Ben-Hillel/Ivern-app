@@ -1,6 +1,5 @@
 import React from 'react';
 import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
-import axios from 'axios';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -23,6 +22,8 @@ import {
 } from 'mdi-material-ui';
 import { firebase } from '../firebase';
 import { useHistory } from 'react-router';
+import { connect } from 'react-redux';
+import { AppState, User } from '../@types/types';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grow: {
@@ -64,30 +65,25 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-export default function PrimarySearchAppBar() {
-  const signedInUser = firebase.auth().currentUser;
-  React.useEffect(() => {
-    if (signedInUser) {
-      (async () => {
-        const user = await axios.get(
-          `https://europe-west3-ivern-app.cloudfunctions.net/api/user/${signedInUser.uid}`
-        );
-        setPhotoURL(user.data.imageURL);
-      })();
-    }
-  }, [signedInUser]);
+interface IProps {
+  user: User;
+  loading: boolean;
+}
+const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
   const classes = useStyles();
   const history = useHistory();
-  const [photoURL, setPhotoURL] = React.useState<string | null>('');
+  const [imageURL, setImageURL] = React.useState<string | null>('');
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [
     mobileMoreAnchorEl,
     setMobileMoreAnchorEl,
   ] = React.useState<null | HTMLElement>(null);
-
   const isMenuOpen = Boolean(anchorEl);
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
+
+  React.useEffect(() => {
+    if (user) setImageURL(user.imageURL);
+  }, [user]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -171,14 +167,18 @@ export default function PrimarySearchAppBar() {
           aria-haspopup='true'
           color='primary'
         >
-          {photoURL ? (
-            <Tooltip
-              title={signedInUser?.displayName ? signedInUser.displayName : ''}
-            >
-              <Avatar src={photoURL} alt={'google photo'} />
-            </Tooltip>
+          {loading ? (
+            <CircularProgress />
           ) : (
-            <div>{signedInUser ? <CircularProgress /> : <AccountCircle />}</div>
+            <div>
+              {imageURL ? (
+                <Tooltip title={user.displayName ? user.displayName : ''}>
+                  <Avatar src={imageURL} alt={'google photo'} />
+                </Tooltip>
+              ) : (
+                <AccountCircle />
+              )}
+            </div>
           )}
         </IconButton>
         <p>הפרופיל שלי</p>
@@ -215,13 +215,7 @@ export default function PrimarySearchAppBar() {
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button
-              color='primary'
-              startIcon={<SonyPlaystation />}
-              onClick={() =>
-                console.log('I clicked on the playstation button!')
-              }
-            >
+            <Button color='primary' startIcon={<SonyPlaystation />}>
               Playstation
             </Button>
             <Button color='primary' startIcon={<MicrosoftXbox />}>
@@ -244,17 +238,17 @@ export default function PrimarySearchAppBar() {
               onClick={handleProfileMenuOpen}
               color='primary'
             >
-              {photoURL ? (
-                <Tooltip
-                  title={
-                    signedInUser?.displayName ? signedInUser.displayName : ''
-                  }
-                >
-                  <Avatar src={photoURL} alt={'google photo'} />
-                </Tooltip>
+              {loading ? (
+                <CircularProgress />
               ) : (
                 <div>
-                  {signedInUser ? <CircularProgress /> : <AccountCircle />}
+                  {imageURL ? (
+                    <Tooltip title={user.displayName ? user.displayName : ''}>
+                      <Avatar src={imageURL} alt={'google photo'} />
+                    </Tooltip>
+                  ) : (
+                    <AccountCircle />
+                  )}
                 </div>
               )}
             </IconButton>
@@ -299,4 +293,10 @@ export default function PrimarySearchAppBar() {
       {firebase.auth().currentUser ? renderMenuSigned : renderMenuUnsigned}
     </div>
   );
-}
+};
+const MapStateToProps = (state: AppState) => ({
+  user: state.auth.user,
+  loading: state.auth.loading,
+});
+
+export default connect(MapStateToProps)(PrimarySearchAppBar);

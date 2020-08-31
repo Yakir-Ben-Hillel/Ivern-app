@@ -1,6 +1,5 @@
 import '../../scss/style.scss';
 import React from 'react';
-import { firebase } from '../../firebase';
 import axios from 'axios';
 import PrimarySearchBar from '../navbar';
 import {
@@ -16,12 +15,24 @@ import {
   Button,
   TextField,
 } from '@material-ui/core';
-import { User, Area } from '../../@types/types';
+import { User, Area, AppState } from '../../@types/types';
 import { isNumber } from 'util';
 import { useHistory } from 'react-router';
 import { Skeleton, Autocomplete } from '@material-ui/lab';
 import { israelAreas } from '../dashboard/searchBar/desktop/areaOptions';
-const UserInfo: React.FC = () => {
+import { UpdateUserAction } from '../../@types/action-types';
+import { startUpdateUser } from '../../redux/actions/auth';
+import { connect } from 'react-redux';
+interface IProps {
+  user: User;
+  startUpdateUser: (data: {
+    displayName: string;
+    phoneNumber: string;
+    imageURL: string;
+  }) => Promise<UpdateUserAction>;
+}
+
+const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
       root: {
@@ -54,51 +65,28 @@ const UserInfo: React.FC = () => {
     })
   );
 
-  const uid = firebase.auth().currentUser?.uid;
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [user, setUser] = React.useState<User | undefined>();
   const [area, setArea] = React.useState<Area | undefined>();
-  const [displayName, setDisplayName] = React.useState(user?.displayName);
-  const [imageURL, setImageURL] = React.useState(user?.imageURL);
-  const [phoneNumber, setPhoneNumber] = React.useState(user?.phoneNumber);
+  const [displayName, setDisplayName] = React.useState(user.displayName);
+  const [imageURL, setImageURL] = React.useState(user.imageURL);
+  const [phoneNumber, setPhoneNumber] = React.useState(user.phoneNumber);
   const [errorMessage, setErrorMessage] = React.useState('');
   const classes = useStyles();
   const history = useHistory();
-  React.useEffect(() => {
-    (async () => {
-      setLoading(true);
-      const user = await axios.get(
-        `https://europe-west3-ivern-app.cloudfunctions.net/api/user/${uid}`
-      );
-      setUser(user.data);
-      setImageURL(user.data.imageURL);
-      setDisplayName(user.data.displayName);
-      setPhoneNumber(user.data.phoneNumber);
-      setArea(user.data.city);
-      setLoading(false);
-    })();
-  }, [uid]);
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (displayName === '' || phoneNumber === '')
       setErrorMessage('Please fill the required fields.');
     else {
-      setPhoneNumber(phoneNumber?.slice(0, 3) + '-' + phoneNumber?.slice(3));
-      const idToken = await firebase.auth().currentUser?.getIdToken();
-      const res = await axios.post(
-        'https://europe-west3-ivern-app.cloudfunctions.net/api/user',
-        {
-          displayName,
-          phoneNumber,
-          imageURL,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
-      if (res.status === 201) history.goBack();
+      if (phoneNumber[3] !== '-')
+        setPhoneNumber(phoneNumber?.slice(0, 3) + '-' + phoneNumber?.slice(3));
+      const res = await startUpdateUser({
+        displayName,
+        phoneNumber,
+        imageURL,
+      });
+      console.log(res);
+      history.goBack();
     }
   };
   const imageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -273,4 +261,11 @@ const UserInfo: React.FC = () => {
     </div>
   );
 };
-export default UserInfo;
+const mapDispatchToProps = {
+  startUpdateUser,
+};
+
+const mapStateToProps = (state: AppState) => ({
+  user: state.auth.user,
+});
+export default connect(mapStateToProps, mapDispatchToProps)(UserInfo);

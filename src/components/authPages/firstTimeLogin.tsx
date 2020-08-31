@@ -7,14 +7,15 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { firebase } from '../../firebase';
 import React from 'react';
 import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
-import { AppState } from '../../@types/types';
+import { AppState, User } from '../../@types/types';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
+import { startUpdateUser } from '../../redux/actions/auth';
+import { UpdateUserAction } from '../../@types/action-types';
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>
@@ -84,11 +85,16 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 interface IProps {
-  user: firebase.User;
+  user: User;
+  startUpdateUser: (data: {
+    displayName: string;
+    phoneNumber: string;
+    imageURL: string;
+  }) => Promise<UpdateUserAction>;
 }
-const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
+const FirstTimeLogin: React.FC<IProps> = ({ user, startUpdateUser }) => {
   const [displayName, setDisplayName] = React.useState(user.displayName);
-  const [imageURL, setImageURL] = React.useState(user.photoURL);
+  const [imageURL, setImageURL] = React.useState(user.imageURL);
   const [phoneNumber, setPhoneNumber] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
   const [loading, setLoading] = React.useState(false);
@@ -121,21 +127,12 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
     else {
       if (phoneNumber[3] !== '-')
         setPhoneNumber(phoneNumber.slice(0, 3) + '-' + phoneNumber.slice(3));
-      const idToken = await user.getIdToken();
-      const res = await axios.post(
-        'https://europe-west3-ivern-app.cloudfunctions.net/api/user',
-        {
-          displayName,
-          phoneNumber,
-          imageURL,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
-      if (res.status === 201) history.replace('/');
+        await startUpdateUser({
+        displayName,
+        phoneNumber,
+        imageURL,
+      });
+      history.replace('/');
     }
   };
   const classes = useStyles();
@@ -239,8 +236,12 @@ const FirstTimeLogin: React.FC<IProps> = ({ user }) => {
     </Container>
   );
 };
-const MapStateToProps = (state: AppState) => ({
+const mapDispatchToProps = {
+  startUpdateUser,
+};
+
+const mapStateToProps = (state: AppState) => ({
   user: state.auth.user,
 });
 
-export default connect(MapStateToProps)(FirstTimeLogin);
+export default connect(mapStateToProps, mapDispatchToProps)(FirstTimeLogin);

@@ -5,6 +5,14 @@ export default (state = {}, action: AuthActionTypes) => {
       return {
         user: action.user,
       };
+    case 'UPDATE_USER':
+      return {
+        user: { ...action.currentData, ...action.data },
+      };
+    case 'LOADING_USER':
+      return {
+        loading: action.loading,
+      };
     default:
       return state;
   }

@@ -5,7 +5,7 @@ import 'normalize.css/normalize.css';
 import { firebase } from './firebase';
 import configureStore from './redux/store/configureStore';
 import { Provider } from 'react-redux';
-import { setUser } from './redux/actions/auth';
+import { startSetUser } from './redux/actions/auth';
 const store = configureStore();
 const Application = () => (
   <Provider store={store}>
@@ -20,6 +20,6 @@ const renderApp = () => {
   }
 };
 firebase.auth().onAuthStateChanged((user) => {
-  if (user) store.dispatch(setUser(user));
+  if (user) store.dispatch(startSetUser(user.uid));
   renderApp();
 });

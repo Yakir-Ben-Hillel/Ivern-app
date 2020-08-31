@@ -136,7 +136,7 @@ const PostAppBar: React.FC<Props> = (props) => {
             <MenuIcon />
           </IconButton>
           <Typography variant='h6' noWrap color='inherit'>
-            Responsive drawer
+            Posts Manager
           </Typography>
         </Toolbar>
       </AppBar>{' '}
