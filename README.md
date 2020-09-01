@@ -4,7 +4,7 @@
 
 <img src='./src/components/dashboard/dist/images/IMG_0003.jpg' alt='' width='500px'/>
 
-Ivern is a Personal Project built for your for your pocket.<br/>
+Ivern is a Personal Project built for your pocket.<br/>
  Explore new video games, Sell your old ones, And Swap you old games for
 some new ones your heart desires.
 
