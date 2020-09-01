@@ -13,7 +13,7 @@ Ivern has an extensive gaming library, that's updating each day to make sure it 
 <img src='./src/components/dashboard/dist/images/IMG_0001.jpg' alt='' width='500px'/>
 
 Ivern uses a sharp and beautiful Responsive UI mainly built using Material-UI library
-for ensuring an enjoying browsing experience.
+for ensuring an enjoyable browsing experience.
 
 <img src='./src/components/dashboard/dist/images/IMG_0004.jpg' alt='' width='500px'/>
 
