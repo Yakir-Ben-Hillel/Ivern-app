@@ -9,7 +9,7 @@ import UserInfo from '../components/userInfo/userInfo';
 // import PrimarySearchAppBar from './components/navbar';
 import { connect } from 'react-redux';
 import { AppState } from '../@types/types';
-import AddPosts from '../components/makePosts/addPosts';
+import PostsManager from '../components/posts/postsManager';
 interface IProps {
   isAuthenticated: boolean;
 }
@@ -24,7 +24,7 @@ const AppRouter: React.FC<IProps> = ({ isAuthenticated }) => {
       {isAuthenticated && (
         <Switch>
           <Route exact path='/login/confirm' component={FirstTimeLogin} />
-          <Route exact path='/user/post' component={AddPosts} />
+          <Route exact path='/user/post' component={PostsManager} />
           <Route exact path='/user' component={UserInfo} />
         </Switch>
       )}

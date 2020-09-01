@@ -1,3 +1,4 @@
+import { firebase } from '../firebase';
 export interface AppState {
   auth: {
     user: User;
@@ -31,7 +32,10 @@ export interface Post {
   price: number;
   exchange: boolean;
   sell: boolean;
-  createdAt: Date;
+  createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
 }
 export interface User {
   displayName: string;
@@ -42,6 +46,6 @@ export interface User {
   provider: string;
   uid: string;
   isNew: boolean;
-  posts?: Post[];
-  createdAt: Date;
+  posts: Post[];
+  createdAt: firebase.firestore.Timestamp;
 }

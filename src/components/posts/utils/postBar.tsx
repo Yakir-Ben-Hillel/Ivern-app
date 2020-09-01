@@ -23,34 +23,6 @@ import { Post } from '../../../@types/types';
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    root: {
-      display: 'flex',
-      backgroundColor: theme.palette.background.default,
-      flexGrow: 1,
-    },
-    paper: {
-      padding: theme.spacing(2),
-      margin: theme.spacing(2),
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      textAlign: 'center',
-      color: theme.palette.text.secondary,
-    },
-    avatar: {
-      width: theme.spacing(12),
-      height: theme.spacing(12),
-      margin: 'auto',
-    },
-    input: {
-      display: 'none',
-    },
-    progress: {
-      margin: theme.spacing(1),
-    },
-    skeleton: {
-      margin: theme.spacing(1.5),
-    },
     drawer: {
       [theme.breakpoints.up('sm')]: {
         width: drawerWidth,
@@ -74,43 +46,70 @@ const useStyles = makeStyles((theme: Theme) =>
     drawerPaper: {
       width: drawerWidth,
     },
-    content: {
-      flexGrow: 1,
-      padding: theme.spacing(3),
+    cover: {
+      marginRight: theme.spacing(1),
     },
   })
 );
 interface Props {
   postsList: Post[];
+  setSelectedPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
   /**
    * Injected by the documentation to work in an iframe.
    * You won't need it on your project.
    */
   window?: () => Window;
 }
-const PostAppBar: React.FC<Props> = (props) => {
-  const { window } = props;
+const PostAppBar: React.FC<Props> = ({
+  postsList,
+  setSelectedPost,
+  window,
+}) => {
   const container =
     window !== undefined ? () => window().document.body : undefined;
 
   const theme = useTheme();
   const classes = useStyles();
+  const [selectedIndex, setSelectedIndex] = React.useState<number | null>(null);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+  const handleListItemClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    index: number
+  ) => {
+    setSelectedIndex(index);
+    if (index !== postsList.length) setSelectedPost(postsList[index]);
+    else setSelectedPost(undefined);
   };
   const drawer = (
     <div>
       <div className={classes.toolbar} />
       <Divider />
       <List>
-        {props.postsList.map((post, index) => (
-          <ListItem key={index} button>
-            <img src={post.cover} alt='game cover' />
+        {postsList.map((post, index) => (
+          <ListItem
+            key={index}
+            onClick={(event) => handleListItemClick(event, index)}
+            selected={selectedIndex === index}
+            button
+          >
+            <img
+              className={classes.cover}
+              width='40px'
+              height='50px'
+              src={post.cover}
+              alt='game cover'
+            />
             <ListItemText primary={post.gameName} />
           </ListItem>
         ))}
-        <ListItem button>
+        <ListItem
+          button
+          selected={selectedIndex === postsList.length}
+          onClick={(event) => handleListItemClick(event, postsList.length)}
+        >
           <ListItemIcon>
             <AddIcon />
           </ListItemIcon>

@@ -9,7 +9,7 @@ import {
 } from '@material-ui/core';
 import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
-import { useStyles } from '../addPosts';
+import { useStyles } from '../postsManager';
 import Alert from '@material-ui/lab/Alert';
 import axios from 'axios';
 interface IProps {

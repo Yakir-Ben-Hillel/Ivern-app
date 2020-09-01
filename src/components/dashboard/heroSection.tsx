@@ -23,8 +23,9 @@ const HeroSection: React.FC = () => {
           <div className='hero-copy'>
             <h1 className='hero-title mt-0'>Play. Swap. Sell</h1>
             <p className='hero-paragraph'>
-              Explore new games while switching or selling the games you already
-              finished! Click on the button below to start exploring.
+              Sell your old games, Explore new games, And Swap you old games for
+              some new ones your heart desires. Click on the button below to
+              explore.
             </p>
             <div className='hero-cta'>
               <a className='button button-primary' href='#'>
