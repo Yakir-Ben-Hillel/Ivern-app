@@ -13,6 +13,7 @@ import {
 import AreaOptions from '../../dashboard/searchBar/desktop/areaOptions';
 import PlatformSelect from '../../dashboard/searchBar/desktop/bootstrapInput';
 interface IProps {
+  edit: boolean;
   open: boolean;
   gamesLoading: boolean;
   price: string;
@@ -37,6 +38,7 @@ interface IProps {
   descriptionError: boolean;
 }
 const AddPostFields: React.FC<IProps> = ({
+  edit,
   open,
   gamesLoading,
   options,
@@ -60,54 +62,56 @@ const AddPostFields: React.FC<IProps> = ({
 }) => {
   return (
     <div>
-      <Autocomplete
-        onChange={(event, game) => {
-          setGame(game);
-        }}
-        id='size-small-outlined-multi'
-        open={open}
-        onOpen={() => setOpen(true)}
-        onClose={() => setOpen(false)}
-        size='medium'
-        options={options}
-        loading={gamesLoading}
-        disableCloseOnSelect
-        getOptionLabel={(option: Game) => option.name}
-        renderOption={(option) => (
-          <React.Fragment>
-            <img
-              src={'https://' + option.cover}
-              alt=''
-              style={{
-                width: '45px',
-                marginRight: '7px',
+      {!edit && (
+        <Autocomplete
+          onChange={(event, game) => {
+            setGame(game);
+          }}
+          id='size-small-outlined-multi'
+          open={open}
+          onOpen={() => setOpen(true)}
+          onClose={() => setOpen(false)}
+          size='medium'
+          options={options}
+          loading={gamesLoading}
+          disableCloseOnSelect
+          getOptionLabel={(option: Game) => option.name}
+          renderOption={(option) => (
+            <React.Fragment>
+              <img
+                src={'https://' + option.cover}
+                alt=''
+                style={{
+                  width: '45px',
+                  marginRight: '7px',
+                }}
+              />
+              <Typography>{option.name}</Typography>
+            </React.Fragment>
+          )}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              error={gameError}
+              helperText={gameError ? 'Please choose a game.' : ''}
+              label='Search Games'
+              size='medium'
+              variant='outlined'
+              InputProps={{
+                ...params.InputProps,
+                endAdornment: (
+                  <React.Fragment>
+                    {gamesLoading ? (
+                      <CircularProgress color='inherit' size={20} />
+                    ) : null}
+                    {params.InputProps.endAdornment}
+                  </React.Fragment>
+                ),
               }}
             />
-            <Typography>{option.name}</Typography>
-          </React.Fragment>
-        )}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            error={gameError}
-            helperText={gameError ? 'Please choose a game.' : ''}
-            label='Search Games'
-            size='medium'
-            variant='outlined'
-            InputProps={{
-              ...params.InputProps,
-              endAdornment: (
-                <React.Fragment>
-                  {gamesLoading ? (
-                    <CircularProgress color='inherit' size={20} />
-                  ) : null}
-                  {params.InputProps.endAdornment}
-                </React.Fragment>
-              ),
-            }}
-          />
-        )}
-      />
+          )}
+        />
+      )}
       <AreaOptions
         setArea={setArea}
         size={'medium'}

@@ -4,7 +4,7 @@ import PostAppBar from './utils/postBar';
 import { Container, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { AppState, Post, User } from '../../@types/types';
-import AddPosts from './utils/addPosts';
+import PostControl from './utils/postControl';
 import PostView from './utils/postView';
 interface IProps {
   user: User;
@@ -68,18 +68,25 @@ export const useStyles = makeStyles((theme: Theme) =>
 const PostManager: React.FC<IProps> = ({ user, loading }) => {
   const [postsList, setPostsList] = React.useState<Post[]>(user.posts);
   const [selectedPost, setSelectedPost] = React.useState<Post>();
+  const [edit, setEdit] = React.useState<boolean>(false);
   const classes = useStyles();
+  React.useEffect(()=>console.log(edit),[edit]);
   return (
     <div>
-      <PostAppBar postsList={postsList} setSelectedPost={setSelectedPost} />
+      <PostAppBar postsList={postsList} setSelectedPost={setSelectedPost} setEdit={setEdit} />
       <div className='is-boxed has-animations'>
         <div className='body-wrap boxed-container'>
           <div className={classes.root}>
             <Container maxWidth='lg'>
-              {selectedPost ? (
-                <PostView selectedPost={selectedPost} />
+              {selectedPost && !edit ? (
+                <PostView selectedPost={selectedPost} setEdit={setEdit} />
               ) : (
-                <AddPosts postsList={postsList} setPostsList={setPostsList} />
+                <PostControl
+                  selectedPost={selectedPost}
+                  postsList={postsList}
+                  setPostsList={setPostsList}
+                  edit={edit}
+                />
               )}
             </Container>
           </div>

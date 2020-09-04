@@ -10,6 +10,8 @@ import PostAccordion from './postAccordion';
 interface IProps {
   posts: Post[] | undefined;
   postsLoading: boolean;
+  page: number;
+  setPage: React.Dispatch<React.SetStateAction<number>>;
 }
 const useStyles = makeStyles(() =>
   createStyles({
@@ -22,8 +24,14 @@ const useStyles = makeStyles(() =>
     },
   })
 );
-const PostsList: React.FC<IProps> = ({ posts, postsLoading }) => {
+const PostsList: React.FC<IProps> = ({
+  posts,
+  postsLoading,
+  page,
+  setPage,
+}) => {
   const [openedPost, setOpenedPost] = React.useState<Post | null>(null);
+  const [postsToShow, setPostsToShow] = React.useState<Post[] | undefined>();
   const [userPosts, setUserPosts] = React.useState<Post[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
   const [user, setUser] = React.useState<User | null>(null);
@@ -53,6 +61,10 @@ const PostsList: React.FC<IProps> = ({ posts, postsLoading }) => {
       active = false;
     };
   }, [openedPost]);
+  React.useEffect(
+    () => setPostsToShow(posts?.slice(0 + (page - 1) * 6, 6 + (page - 1) * 6)),
+    [posts, page]
+  );
   const classes = useStyles();
   return (
     <div>
@@ -60,20 +72,26 @@ const PostsList: React.FC<IProps> = ({ posts, postsLoading }) => {
         <PostSkeleton />
       ) : (
         <div className={classes.root}>
-          {posts?.map((post) => (
-            <PostAccordion
-              user={user}
-              userPosts={userPosts}
-              openedPost={openedPost}
-              setOpenedPost={setOpenedPost}
-              post={post}
-              loading={loading}
-            />
+          {postsToShow?.map((post, index) => (
+            <div key={index}>
+              <PostAccordion
+                user={user}
+                userPosts={userPosts}
+                openedPost={openedPost}
+                setOpenedPost={setOpenedPost}
+                post={post}
+                loading={loading}
+              />
+            </div>
           ))}
           <Paper className={classes.pager}>
             <Pagination
-              count={posts ? Math.ceil(posts.length / 8) : undefined}
-              size="large"
+              page={page}
+              onChange={(event: React.ChangeEvent<unknown>, value: number) =>
+                setPage(value)
+              }
+              count={posts ? Math.ceil(posts.length / 6) : undefined}
+              size='large'
             />
           </Paper>
         </div>
