@@ -9,9 +9,14 @@ import { useStyles } from '../postsManager';
 interface IProps {
   postsList: Post[];
   setPostsList: React.Dispatch<React.SetStateAction<Post[]>>;
+  setSelectedPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
 }
 
-const AddPosts: React.FC<IProps> = ({ setPostsList, postsList }) => {
+const AddPosts: React.FC<IProps> = ({
+  setPostsList,
+  postsList,
+  setSelectedPost,
+}) => {
   const [game, setGame] = React.useState<Game | null>(null);
   const [area, setArea] = React.useState<Area>();
   const [platform, setPlatform] = React.useState<
@@ -65,6 +70,7 @@ const AddPosts: React.FC<IProps> = ({ setPostsList, postsList }) => {
         if (res.status === 200) {
           const post: Post = res.data.data;
           setPostsList([...postsList, post]);
+          setSelectedPost(post);
           return postsList;
         }
       }

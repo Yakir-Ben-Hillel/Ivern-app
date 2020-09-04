@@ -54,12 +54,20 @@ const PostView: React.FC<IProps> = ({ selectedPost }) => {
           <Grid container alignItems='center' spacing={3}>
             <Grid item xs>
               <div>
-                {selectedPost.artwork && (
+                {selectedPost.artwork ? (
                   <img
                     style={{ objectFit: 'cover', margin: 0 }}
                     width='100%'
                     height='400px'
                     src={selectedPost.artwork}
+                    alt=''
+                  />
+                ) : (
+                  <img
+                    style={{ objectFit: 'cover', margin: 0 }}
+                    width='100%'
+                    height='400px'
+                    src={selectedPost.cover}
                     alt=''
                   />
                 )}
