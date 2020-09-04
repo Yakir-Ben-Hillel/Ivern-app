@@ -60,7 +60,7 @@ const AddPostCard: React.FC<IProps> = ({ imageURL, setImageURL }) => {
             <CardContent className={classes.cardAction}>
               {imageLoading ? (
                 <CircularProgress size={60} />
-              ) : imageURL ? (
+              ) : imageURL && !imageURL.includes('igdb') ? (
                 <div>
                   <img width='100%' height='300px' src={imageURL} alt='' />
                 </div>

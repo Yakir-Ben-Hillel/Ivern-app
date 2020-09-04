@@ -21,7 +21,7 @@ import { useHistory } from 'react-router';
 import { Skeleton, Autocomplete } from '@material-ui/lab';
 import { israelAreas } from '../dashboard/searchBar/desktop/areaOptions';
 import { UpdateUserAction } from '../../@types/action-types';
-import { startUpdateUser } from '../../redux/actions/auth';
+import { startUpdateUser } from '../../redux/actions/userInfo';
 import { connect } from 'react-redux';
 interface IProps {
   user: User;

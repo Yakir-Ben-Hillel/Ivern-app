@@ -70,10 +70,14 @@ const PostManager: React.FC<IProps> = ({ user, loading }) => {
   const [selectedPost, setSelectedPost] = React.useState<Post>();
   const [edit, setEdit] = React.useState<boolean>(false);
   const classes = useStyles();
-  React.useEffect(()=>console.log(edit),[edit]);
+  React.useEffect(() => console.log(edit), [edit]);
   return (
     <div>
-      <PostAppBar postsList={postsList} setSelectedPost={setSelectedPost} setEdit={setEdit} />
+      <PostAppBar
+        postsList={postsList}
+        setSelectedPost={setSelectedPost}
+        setEdit={setEdit}
+      />
       <div className='is-boxed has-animations'>
         <div className='body-wrap boxed-container'>
           <div className={classes.root}>
@@ -83,6 +87,7 @@ const PostManager: React.FC<IProps> = ({ user, loading }) => {
               ) : (
                 <PostControl
                   selectedPost={selectedPost}
+                  setSelectedPost={setSelectedPost}
                   postsList={postsList}
                   setPostsList={setPostsList}
                   edit={edit}

@@ -11,3 +11,4 @@ firestore_export
 build
 .vscode/launch.json
 *.cache
+src/firebase.ts

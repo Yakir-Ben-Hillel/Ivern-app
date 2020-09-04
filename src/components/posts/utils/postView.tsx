@@ -12,6 +12,13 @@ import EditIcon from '@material-ui/icons/Edit';
 import DescriptionIcon from '@material-ui/icons/Description';
 import DeleteIcon from '@material-ui/icons/Delete';
 import LocalOfferIcon from '@material-ui/icons/LocalOffer';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import axios from 'axios';
+import { firebase } from '../../../firebase';
 import EventIcon from '@material-ui/icons/Event';
 import { useStyles } from '../postsManager';
 import { Post } from '../../../@types/types';
@@ -34,6 +41,18 @@ const PostView: React.FC<IProps> = ({ selectedPost, setEdit }) => {
       return <NintendoSwitch fontSize='inherit' />;
     else return undefined;
   };
+  const deletePost = async () => {
+    const idToken = await firebase.auth().currentUser?.getIdToken();
+    const res = await axios.delete(
+      `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/delete/${selectedPost.pid}`,
+      {
+        headers: {
+          authorization: `Bearer ${idToken}`,
+        },
+      }
+    );
+    console.log(res.data);
+  };
   const makeDate = () => {
     const postDate = new Date(selectedPost.createdAt._seconds * 1000);
     return `${postDate.getDate()}/${
@@ -41,7 +60,7 @@ const PostView: React.FC<IProps> = ({ selectedPost, setEdit }) => {
     }/${postDate.getFullYear()}`;
   };
   const imageURL: string = selectedPost.cover.replace('logo_med', '1080p');
-
+  const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const classes = useStyles();
   return (
     <div>
@@ -92,6 +111,7 @@ const PostView: React.FC<IProps> = ({ selectedPost, setEdit }) => {
                 color='default'
                 variant='contained'
                 className={classes.button}
+                onClick={() => setDeleteDialogOpen(true)}
               >
                 <DeleteIcon className={classes.leftIcon} />
                 Delete
@@ -116,6 +136,30 @@ const PostView: React.FC<IProps> = ({ selectedPost, setEdit }) => {
           </Grid>
         </CardContent>
       </Card>
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+        aria-labelledby='delete-dialog-title'
+        aria-describedby='delete-dialog-description'
+      >
+        <DialogTitle id='delete-dialog-title'>
+          {'Are you sure you want to delete this post?'}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Deleting the post is perminent and cannot be recovered, are you sure
+            you want to proceed?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setDeleteDialogOpen(false)} color='primary'>
+            Cancle
+          </Button>
+          <Button onClick={deletePost} color='secondary' autoFocus>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

@@ -46,6 +46,5 @@ export interface User {
   provider: string;
   uid: string;
   isNew: boolean;
-  posts: Post[];
   createdAt: firebase.firestore.Timestamp;
 }

@@ -5,7 +5,7 @@ import 'normalize.css/normalize.css';
 import { firebase } from './firebase';
 import configureStore from './redux/store/configureStore';
 import { Provider } from 'react-redux';
-import { startSetUser } from './redux/actions/auth';
+import { startSetUser } from './redux/actions/userInfo';
 const store = configureStore();
 const Application = () => (
   <Provider store={store}>

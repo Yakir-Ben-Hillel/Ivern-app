@@ -43,11 +43,8 @@ export const startSetUser = (uid: string) => {
     const user = await axios.get(
       `https://europe-west3-ivern-app.cloudfunctions.net/api/user/${uid}`
     );
-    const posts = await axios.get(
-      `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/user/${uid}`
-    );
     dispatch(loadingUser(false));
-    return dispatch(setUser({ ...user.data, posts: posts.data.posts }));
+    return dispatch(setUser({ ...user.data }));
   };
 };
 export const startUpdateUser = (data: {

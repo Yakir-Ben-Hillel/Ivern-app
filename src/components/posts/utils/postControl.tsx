@@ -10,12 +10,15 @@ interface IProps {
   selectedPost: Post | undefined;
   postsList: Post[];
   setPostsList: React.Dispatch<React.SetStateAction<Post[]>>;
+  setSelectedPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
+
   edit: boolean;
 }
 
 const PostControl: React.FC<IProps> = ({
   selectedPost,
   setPostsList,
+  setSelectedPost,
   postsList,
   edit,
 }) => {
@@ -44,7 +47,7 @@ const PostControl: React.FC<IProps> = ({
       setSellable(selectedPost.sell);
       setSwappable(selectedPost.exchange);
       // setArea(selectedPost)
-      //setImageURL(selectedPost.cover);
+      setImageURL(selectedPost.cover);
     }
   }, [edit, selectedPost]);
   const gamesLoading = open && options.length === 0;
@@ -56,22 +59,25 @@ const PostControl: React.FC<IProps> = ({
       if (!area) setAreaError(true);
       if (description === '') setDescriptionError(true);
       if (price === '') setPriceError(true);
-      if (game && area && description !== '' && price !== '') {
+      if ((game || edit) && area && description !== '' && price !== '') {
         const idToken = await firebase.auth().currentUser?.getIdToken();
-        if (!edit) {
+        if (!edit && game) {
+          const reqPost = {
+            gameName: game.name,
+            gid: game.id.toString(),
+            artwork: game.artwork,
+            cover: imageURL ? imageURL : `https://${game.cover}`,
+            area: area.id.toString(),
+            sell: sellable,
+            exchange: swappable,
+            description,
+            platform,
+            price,
+          };
           const res = await axios.post(
             'https://europe-west3-ivern-app.cloudfunctions.net/api/posts/add',
             {
-              gameName: game.name,
-              gid: game.id.toString(),
-              artwork: game.artwork,
-              cover: imageURL ? imageURL : `https://${game.cover}`,
-              area: area.id.toString(),
-              sell: sellable,
-              exchange: swappable,
-              description,
-              platform,
-              price,
+              ...reqPost,
             },
             {
               headers: {
@@ -87,12 +93,13 @@ const PostControl: React.FC<IProps> = ({
           const res = await axios.post(
             `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/edit/${selectedPost?.pid}`,
             {
+              area: area.id.toString(),
               exchange: swappable,
               sell: sellable,
-              price: price,
-              platform: platform,
-              area: area,
               cover: imageURL,
+              price,
+              description,
+              platform,
             },
             {
               headers: {
@@ -104,7 +111,9 @@ const PostControl: React.FC<IProps> = ({
           const updatedPosts: Post[] = postsList.map((post) => {
             if (post.pid === res.data.post.pid)
               return { ...post, ...res.data.data };
+            return post;
           });
+          console.log(updatedPosts);
           setPostsList(updatedPosts);
         }
       }

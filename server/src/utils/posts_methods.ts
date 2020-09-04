@@ -81,9 +81,7 @@ export const editPost = async (request, res) => {
       return res.status(403).json({ error: 'Unauthorized.' });
     else {
       await post.ref.update(updateData);
-      return res
-        .status(200)
-        .json({ message: 'Post updated successfully.', post: post.data() });
+      return res.status(200).json({ message: 'Post updated successfully.',post:post.data() });
     }
   } catch (error) {
     console.log(error);
