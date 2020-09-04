@@ -7,11 +7,18 @@ import { Game, Area, Post } from '../../../@types/types';
 import AddPostFields from './addPostFields';
 import { useStyles } from '../postsManager';
 interface IProps {
+  selectedPost: Post | undefined;
   postsList: Post[];
   setPostsList: React.Dispatch<React.SetStateAction<Post[]>>;
+  edit: boolean;
 }
 
-const AddPosts: React.FC<IProps> = ({ setPostsList, postsList }) => {
+const PostControl: React.FC<IProps> = ({
+  selectedPost,
+  setPostsList,
+  postsList,
+  edit,
+}) => {
   const [game, setGame] = React.useState<Game | null>(null);
   const [area, setArea] = React.useState<Area>();
   const [platform, setPlatform] = React.useState<
@@ -30,6 +37,16 @@ const AddPosts: React.FC<IProps> = ({ setPostsList, postsList }) => {
   const [descriptionError, setDescriptionError] = React.useState<boolean>(
     false
   );
+  React.useEffect(() => {
+    if (edit && selectedPost) {
+      setDescription(selectedPost.description);
+      setPrice(selectedPost.price.toString());
+      setSellable(selectedPost.sell);
+      setSwappable(selectedPost.exchange);
+      // setArea(selectedPost)
+      //setImageURL(selectedPost.cover);
+    }
+  }, [edit, selectedPost]);
   const gamesLoading = open && options.length === 0;
   const classes = useStyles();
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -41,31 +58,53 @@ const AddPosts: React.FC<IProps> = ({ setPostsList, postsList }) => {
       if (price === '') setPriceError(true);
       if (game && area && description !== '' && price !== '') {
         const idToken = await firebase.auth().currentUser?.getIdToken();
-        const res = await axios.post(
-          'https://europe-west3-ivern-app.cloudfunctions.net/api/posts/add',
-          {
-            gameName: game.name,
-            gid: game.id.toString(),
-            artwork: game.artwork,
-            cover: imageURL ? imageURL : `https://${game.cover}`,
-            area: area.id.toString(),
-            sell: sellable,
-            exchange: swappable,
-            description,
-            platform,
-            price,
-          },
-          {
-            headers: {
-              authorization: `Bearer ${idToken}`,
+        if (!edit) {
+          const res = await axios.post(
+            'https://europe-west3-ivern-app.cloudfunctions.net/api/posts/add',
+            {
+              gameName: game.name,
+              gid: game.id.toString(),
+              artwork: game.artwork,
+              cover: imageURL ? imageURL : `https://${game.cover}`,
+              area: area.id.toString(),
+              sell: sellable,
+              exchange: swappable,
+              description,
+              platform,
+              price,
             },
-          }
-        );
-        console.log(res);
-        if (res.status === 200) {
+            {
+              headers: {
+                authorization: `Bearer ${idToken}`,
+              },
+            }
+          );
           const post: Post = res.data.data;
           setPostsList([...postsList, post]);
           return postsList;
+        } else {
+          const res = await axios.post(
+            `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/edit/${selectedPost?.pid}`,
+            {
+              exchange: swappable,
+              sell: sellable,
+              price: price,
+              platform: platform,
+              area: area,
+              cover: imageURL,
+            },
+            {
+              headers: {
+                authorization: `Bearer ${idToken}`,
+              },
+            }
+          );
+          console.log(res.data);
+          const updatedPosts: Post[] = postsList.map((post) => {
+            if (post.pid === res.data.post.pid)
+              return { ...post, ...res.data.data };
+          });
+          setPostsList(updatedPosts);
         }
       }
     } catch (error) {
@@ -100,6 +139,7 @@ const AddPosts: React.FC<IProps> = ({ setPostsList, postsList }) => {
             <Grid container alignItems='center' spacing={3}>
               <Grid item xs>
                 <AddPostFields
+                  edit={edit}
                   open={open}
                   gamesLoading={gamesLoading}
                   options={options}
@@ -132,4 +172,4 @@ const AddPosts: React.FC<IProps> = ({ setPostsList, postsList }) => {
     </div>
   );
 };
-export default AddPosts;
+export default PostControl;

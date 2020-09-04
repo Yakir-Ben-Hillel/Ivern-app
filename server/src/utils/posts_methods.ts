@@ -70,6 +70,8 @@ export const editPost = async (request, res) => {
       exchange: req.body.exchange,
       sell: req.body.sell,
       price: req.body.price,
+      platform: req.body.platform,
+      area: req.body.area,
       cover: req.body.cover,
     };
     const post = await database.doc(`/posts/${req.body.pid}`).get();
@@ -79,7 +81,9 @@ export const editPost = async (request, res) => {
       return res.status(403).json({ error: 'Unauthorized.' });
     else {
       await post.ref.update(updateData);
-      return res.status(200).json({ message: 'Post updated successfully.' });
+      return res
+        .status(200)
+        .json({ message: 'Post updated successfully.', post: post.data() });
     }
   } catch (error) {
     console.log(error);

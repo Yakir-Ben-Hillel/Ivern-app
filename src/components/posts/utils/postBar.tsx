@@ -54,6 +54,8 @@ const useStyles = makeStyles((theme: Theme) =>
 interface Props {
   postsList: Post[];
   setSelectedPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
+
   /**
    * Injected by the documentation to work in an iframe.
    * You won't need it on your project.
@@ -63,6 +65,7 @@ interface Props {
 const PostAppBar: React.FC<Props> = ({
   postsList,
   setSelectedPost,
+  setEdit,
   window,
 }) => {
   const container =
@@ -79,6 +82,7 @@ const PostAppBar: React.FC<Props> = ({
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     index: number
   ) => {
+    setEdit(false);
     setSelectedIndex(index);
     if (index !== postsList.length) setSelectedPost(postsList[index]);
     else setSelectedPost(undefined);

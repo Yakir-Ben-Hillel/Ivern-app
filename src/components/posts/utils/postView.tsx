@@ -22,9 +22,10 @@ import {
 } from 'mdi-material-ui';
 interface IProps {
   selectedPost: Post;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const PostView: React.FC<IProps> = ({ selectedPost }) => {
+const PostView: React.FC<IProps> = ({ selectedPost, setEdit }) => {
   const platformIcon = (platform: string) => {
     if (platform === 'playstation')
       return <SonyPlaystation fontSize='inherit' />;
@@ -90,6 +91,7 @@ const PostView: React.FC<IProps> = ({ selectedPost }) => {
               <Button
                 color='default'
                 variant='contained'
+                onClick={() => setEdit(true)}
                 className={classes.button}
               >
                 <EditIcon className={classes.leftIcon} />
