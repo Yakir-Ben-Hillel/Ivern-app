@@ -10,7 +10,7 @@ import {
 } from '../../../redux/actions/userPosts';
 import { useStyles } from '../postsManager';
 import { connect } from 'react-redux';
-import { AddPostAction } from '../../../@types/action-types';
+import { AddPostAction, UpdatePostAction } from '../../../@types/action-types';
 interface IProps {
   selectedPost: Post | undefined;
   postsList: Post[];
@@ -25,7 +25,7 @@ interface IProps {
       description: string;
       platform: 'playstation' | 'xbox' | 'switch';
     }
-  ) => Promise<void>;
+  ) => Promise<UpdatePostAction>;
   startAddPost: (reqPost: {
     gameName: string;
     gid: string;
@@ -114,9 +114,8 @@ const PostControl: React.FC<IProps> = ({
               description,
               platform,
             };
-            await startUpdatePost(selectedPost.pid, updatePostData);
-            const newPost = { ...selectedPost, ...updatePostData };
-            setSelectedPost(newPost);
+            const res = await startUpdatePost(selectedPost.pid, updatePostData);
+            setSelectedPost(res.post);
             setEdit(false);
           }
         }

@@ -6,7 +6,6 @@ import Signup from '../components/authPages/signup';
 import { Search } from '../components/search';
 import FirstTimeLogin from '../components/authPages/firstTimeLogin';
 import UserInfo from '../components/userInfo/userInfo';
-// import PrimarySearchAppBar from './components/navbar';
 import { connect } from 'react-redux';
 import { AppState } from '../@types/types';
 import PostsManager from '../components/posts/postsManager';
@@ -15,21 +14,23 @@ interface IProps {
 }
 const AppRouter: React.FC<IProps> = ({ isAuthenticated }) => {
   return (
-    <Router>
-      <Switch>
-        <Route exact path='/' component={Dashboard} />
-        <Route exact path='/signup' component={Signup} />
-        <Route exact path='/login' component={Login} />
-      </Switch>
-      {isAuthenticated && (
+    <div>
+      <Router>
         <Switch>
-          <Route exact path='/login/confirm' component={FirstTimeLogin} />
-          <Route exact path='/user/post' component={PostsManager} />
-          <Route exact path='/user' component={UserInfo} />
+          <Route exact path="/" component={Dashboard} />
+          <Route exact path="/signup" component={Signup} />
+          <Route exact path="/login" component={Login} />
         </Switch>
-      )}
-      <Route path='/search' component={Search} />
-    </Router>
+        {isAuthenticated && (
+          <Switch>
+            <Route exact path="/login/confirm" component={FirstTimeLogin} />
+            <Route exact path="/user/post" component={PostsManager} />
+            <Route exact path="/user" component={UserInfo} />
+          </Switch>
+        )}
+        <Route path="/search" component={Search} />
+      </Router>
+    </div>
   );
 };
 const MapStateToProps = (state: AppState) => ({

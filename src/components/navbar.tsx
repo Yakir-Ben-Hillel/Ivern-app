@@ -116,7 +116,7 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={() => history.push('/user')}>המשתמש שלי</MenuItem>
-      <MenuItem onClick={() => history.push('/user/post')}>צור פוסט</MenuItem>
+      <MenuItem onClick={() => history.push('/user/post')}>נהל פוסטים</MenuItem>
       <MenuItem
         onClick={async () => {
           await firebase.auth().signOut();
@@ -191,7 +191,7 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
 
   return (
     <div className={classes.grow}>
-      <AppBar position="static" color="transparent">
+      <AppBar position="static" elevation={0} color="transparent">
         <Toolbar variant="dense">
           <IconButton edge="start" color="primary" aria-label="open drawer">
             <MenuIcon />

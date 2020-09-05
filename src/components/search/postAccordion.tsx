@@ -89,6 +89,29 @@ const PostAccordion: React.FC<IProps> = ({
       setOpenedPost(null);
     }
   };
+  const today = new Date(Date.now());
+  const makeDate = () => {
+    const postDate = new Date(post.createdAt._seconds * 1000);
+    const postDateObj = {
+      postDay: postDate.getDate(),
+      postMonth: (postDate.getMonth() % 12) + 1,
+      postYear: postDate.getFullYear(),
+    };
+    if (
+      postDateObj.postDay === today.getDate() &&
+      postDateObj.postMonth === (today.getMonth() % 12) + 1 &&
+      postDateObj.postYear === today.getFullYear()
+    )
+      return 'Updated Today';
+    else if (
+      postDateObj.postDay === today.getDate() - 1 &&
+      postDateObj.postMonth === (today.getMonth() % 12) + 1 &&
+      postDateObj.postYear === today.getFullYear()
+    )
+      return 'Updated Yesterday';
+    else
+      return `last updated ${postDateObj.postDay}/${postDateObj.postMonth}/${postDateObj.postYear}`;
+  };
 
   const classes = useStyles();
   return (
@@ -122,7 +145,7 @@ const PostAccordion: React.FC<IProps> = ({
               <Grid item direction="column" spacing={2}>
                 <Typography variant="subtitle1">{`₪${post.price}.00`}</Typography>
                 <Typography variant="body2" color="textSecondary">
-                  Updated Today
+                  {makeDate()}
                 </Typography>
                 <Grid
                   item

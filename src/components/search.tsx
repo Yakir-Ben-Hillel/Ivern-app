@@ -56,15 +56,16 @@ export const Search: React.FC = (props: any) => {
   }, [posts, props.location.search]);
   return (
     <div>
-      <PrimarySearchAppBar />
-      <div className='is-boxed has-animations'>
-        <div className='body-wrap boxed-container'>
+      <div className="is-boxed has-animations">
+        <div className="body-wrap boxed-container">
+          <PrimarySearchAppBar />
+
           <SiteHeader />
-          <div className='container-sm cta-inner'>
+          <div className="container-sm cta-inner">
             <h1>Search</h1>
             <Bar />
           </div>
-          <section className='cta section'>
+          <section className="cta section">
             <PostsList
               posts={posts}
               postsLoading={postsLoading}

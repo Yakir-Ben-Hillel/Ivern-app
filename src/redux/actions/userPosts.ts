@@ -65,7 +65,7 @@ export const startUpdatePost = (
         },
       }
     );
-    dispatch(updatePost(res.data.post));
+    return dispatch(updatePost(res.data.post));
   };
 };
 export const startAddPost = (postData: {

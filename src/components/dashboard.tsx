@@ -7,6 +7,7 @@ import HeroSection from './dashboard/heroSection';
 import Features from './dashboard/features';
 import SearchBar from './dashboard/searchBar';
 import Footer from './dashboard/footer';
+import PrimarySearchBar from './navbar';
 export const Dashboard: React.FC = () => {
   React.useEffect(() => {
     document.documentElement.classList.remove('no-js');
@@ -22,8 +23,9 @@ export const Dashboard: React.FC = () => {
   });
 
   return (
-    <div className='is-boxed has-animations'>
-      <div className='body-wrap boxed-container'>
+    <div className="is-boxed has-animations">
+      <div className="body-wrap boxed-container">
+        <PrimarySearchBar />
         <SiteHeader />
         <main>
           <HeroSection />
