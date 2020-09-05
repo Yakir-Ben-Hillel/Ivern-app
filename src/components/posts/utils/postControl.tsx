@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Card, CardContent } from '@material-ui/core';
+import { Grid, Card, CardContent, Typography } from '@material-ui/core';
 import AddPostCard from './addPostCard';
 import axios from 'axios';
 import { Game, Area, Post, AppState } from '../../../@types/types';
@@ -152,6 +152,9 @@ const PostControl: React.FC<IProps> = ({
           <form onSubmit={onSubmit}>
             <Grid container alignItems="center" spacing={3}>
               <Grid item xs>
+                <Typography className={classes.title} variant="h5">
+                  {edit ? 'Edit Post' : 'Upload Post'}
+                </Typography>
                 <AddPostFields
                   edit={edit}
                   open={open}

@@ -83,7 +83,6 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
 
   React.useEffect(() => {
     if (user) {
-      console.log(user.imageURL);
       setImageURL(user.imageURL);
     }
   }, [user]);

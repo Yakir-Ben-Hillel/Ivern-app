@@ -51,6 +51,11 @@ export const useStyles = makeStyles((theme: Theme) =>
       marginTop: '-85px',
       marginBottom: '5px',
     },
+    title: {
+      display: 'flex',
+      margin: theme.spacing(1),
+      marginBottom: theme.spacing(2),
+    },
     button: {
       margin: theme.spacing(1),
       marginTop: theme.spacing(2),
