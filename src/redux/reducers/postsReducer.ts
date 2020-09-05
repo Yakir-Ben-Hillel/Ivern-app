@@ -1,25 +1,36 @@
 import { PostsActionTypes } from '../../@types/action-types';
 import { Post } from '../../@types/types';
-const postsReducerDefaultState: Post[] = [];
+const postsReducerDefaultState: { posts: Post[]; loading: boolean } = {
+  posts: [],
+  loading: false,
+};
 export default (state = postsReducerDefaultState, action: PostsActionTypes) => {
   switch (action.type) {
     case 'SET_POSTS':
-        return action.posts;
+      return { ...state, ...action.posts };
     case 'ADD_POST': {
+      return { ...state, posts: [action.post, ...state.posts] };
+    }
+    case 'UPDATE_POST': {
       return {
-        posts: [action.post, ...state],
+        ...state,
+        posts: state.posts.map((post) => {
+          if (post.pid === action.post.pid)
+            return {
+              ...post,
+              ...action.post,
+            };
+          else return post;
+        }),
       };
     }
-    case 'UPDATE_POST':{
-        posts:return state.map(post=>{
-            if(post.pid===)
-        })
-    }
-    case 'LOADING_POSTS': {
+    case 'DELETE_POST':
       return {
-        loading: action.loading,
+        ...state,
+        posts: state.posts.filter((post) => post.pid !== action.pid),
       };
-    }
+    case 'LOADING_POSTS':
+      return { ...state, loading: action.loading };
     default:
       return state;
   }

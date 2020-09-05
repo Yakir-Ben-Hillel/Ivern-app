@@ -1,7 +1,11 @@
 import { firebase } from '../firebase';
 export interface AppState {
-  auth: {
+  userInfo: {
     user: User;
+    loading: boolean;
+  };
+  userPosts: {
+    posts: Post[];
     loading: boolean;
   };
 }
@@ -27,9 +31,9 @@ export interface Post {
   gameName: string;
   cover: string;
   artwork: string | null;
-  platform: string;
+  platform: 'playstation' | 'xbox' | 'switch';
   description: string;
-  price: number;
+  price: string;
   exchange: boolean;
   sell: boolean;
   createdAt: {

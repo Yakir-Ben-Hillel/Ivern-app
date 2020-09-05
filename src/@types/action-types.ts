@@ -39,6 +39,10 @@ export interface UpdatePostAction {
   type: typeof UPDATE_POST;
   post: Post;
 }
+export interface DeletePostAction {
+  type: typeof DELETE_POST;
+  pid: string;
+}
 export interface LoadingPostsAction {
   type: typeof LOADING_POSTS;
   loading: boolean;
@@ -51,5 +55,6 @@ export type AuthActionTypes =
 export type PostsActionTypes =
   | AddPostAction
   | UpdatePostAction
+  | DeletePostAction
   | SetPostsAction
   | LoadingPostsAction;

@@ -1,13 +1,14 @@
 import { ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import { firebase } from '../../firebase';
-import { AppState, Post } from '../../@types/types';
+import { Post } from '../../@types/types';
 import axios from 'axios';
 import {
   SetPostsAction,
   LoadingPostsAction,
   AddPostAction,
   UpdatePostAction,
+  DeletePostAction,
 } from '../../@types/action-types';
 const setPosts = (posts: Post[]): SetPostsAction => {
   return {
@@ -27,16 +28,28 @@ const updatePost = (post: Post): UpdatePostAction => {
     post,
   };
 };
+const deletePost = (pid: string): DeletePostAction => {
+  return {
+    type: 'DELETE_POST',
+    pid,
+  };
+};
+const loadingPosts = (loading: boolean): LoadingPostsAction => {
+  return {
+    type: 'LOADING_POSTS',
+    loading,
+  };
+};
 export const startUpdatePost = (
   pid: string,
   updateData: {
     area: string;
-    cover: string;
-    description: string;
-    platform: string;
-    price: string;
-    sell: boolean;
     exchange: boolean;
+    sell: boolean;
+    cover: string | undefined;
+    price: string;
+    description: string;
+    platform: 'playstation' | 'xbox' | 'switch';
   }
 ) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
@@ -58,14 +71,14 @@ export const startUpdatePost = (
 export const startAddPost = (postData: {
   gameName: string;
   gid: string;
-  artwork: string;
+  artwork: string | null;
   cover: string;
   area: string;
-  description: string;
-  platform: string;
-  price: string;
   sell: boolean;
   exchange: boolean;
+  description: string;
+  platform: 'playstation' | 'xbox' | 'switch';
+  price: string;
 }) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     const idToken = await firebase.auth().currentUser?.getIdToken();
@@ -80,22 +93,26 @@ export const startAddPost = (postData: {
         },
       }
     );
-    dispatch(addPost(res.data.post));
+    return dispatch(addPost(res.data.data));
   };
 };
-const loadingPosts = (loading: boolean): LoadingPostsAction => {
-  return {
-    type: 'LOADING_POSTS',
-    loading,
+export const startDeletePost = (pid: string) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+    const idToken = await firebase.auth().currentUser?.getIdToken();
+    await axios.delete(
+      `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/delete/${pid}`,
+      {
+        headers: {
+          authorization: `Bearer ${idToken}`,
+        },
+      }
+    );
+    return dispatch(deletePost(pid));
   };
 };
-
 export const startSetPosts = () => {
-  return async (
-    dispatch: ThunkDispatch<{}, {}, AnyAction>,
-    getState: () => AppState
-  ) => {
-    const uid = getState().auth.user.uid;
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+    const uid = firebase.auth().currentUser?.uid;
     dispatch(loadingPosts(true));
     const posts = await axios.get(
       `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/user/${uid}`

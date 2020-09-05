@@ -241,7 +241,7 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: AppState) => ({
-  user: state.auth.user,
+  user: state.userInfo.user,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FirstTimeLogin);

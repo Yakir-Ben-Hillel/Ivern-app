@@ -33,7 +33,7 @@ const AppRouter: React.FC<IProps> = ({ isAuthenticated }) => {
   );
 };
 const MapStateToProps = (state: AppState) => ({
-  isAuthenticated: !!state.auth.user,
+  isAuthenticated: !!state.userInfo.user,
 });
 
 export default connect(MapStateToProps)(AppRouter);

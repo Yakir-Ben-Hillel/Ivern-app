@@ -6,6 +6,7 @@ import { firebase } from './firebase';
 import configureStore from './redux/store/configureStore';
 import { Provider } from 'react-redux';
 import { startSetUser } from './redux/actions/userInfo';
+import { startSetPosts } from './redux/actions/userPosts';
 const store = configureStore();
 const Application = () => (
   <Provider store={store}>
@@ -21,5 +22,6 @@ const renderApp = () => {
 };
 firebase.auth().onAuthStateChanged((user) => {
   if (user) store.dispatch(startSetUser(user.uid));
+  store.dispatch(startSetPosts());
   renderApp();
 });
