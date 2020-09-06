@@ -4,34 +4,29 @@ import '../../scss/style.scss';
 import Svg from 'react-inlinesvg';
 const SiteHeader: React.FC = () => (
   <header>
-    <div className='container'>
-      <div className='site-header-inner'>
-        
-        <div className='brand header-brand'>
-          <h1 className='m-0'>
-            <a href='/'>
-              <header>
-                <div className='container'>
-                  <div className='site-header-inner'>
-                    <div className='brand header-brand'>
-                      <h1 className='m-0'>
-                        <a href='#'>
-                          <Svg
-                            className='header-logo-image asset-light'
-                            src={require('./dist/images/logo-light.svg')}
-                          />
-                          <Svg
-                            className='header-logo-image asset-dark'
-                            src={require('./dist/images/logo-dark.svg')}
-                            alt='Logo'
-                          />
-                        </a>
-                      </h1>
-                    </div>
+    <div className="container">
+      <div className="site-header-inner">
+        <div className="brand header-brand">
+          <h1 className="m-0">
+            <header>
+              <div className="container">
+                <div className="site-header-inner">
+                  <div className="brand header-brand">
+                    <h1 className="m-0">
+                      <Svg
+                        className="header-logo-image asset-light"
+                        src={require('./dist/images/logo-light.svg')}
+                      />
+                      <Svg
+                        className="header-logo-image asset-dark"
+                        src={require('./dist/images/logo-dark.svg')}
+                        alt="Logo"
+                      />
+                    </h1>
                   </div>
                 </div>
-              </header>
-            </a>
+              </div>
+            </header>
           </h1>
         </div>
       </div>

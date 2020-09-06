@@ -43,11 +43,8 @@ export const startSetUser = (uid: string) => {
     const user = await axios.get(
       `https://europe-west3-ivern-app.cloudfunctions.net/api/user/${uid}`
     );
-    const posts = await axios.get(
-      `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/user/${uid}`
-    );
     dispatch(loadingUser(false));
-    return dispatch(setUser({ ...user.data, posts: posts.data.posts }));
+    return dispatch(setUser({ ...user.data }));
   };
 };
 export const startUpdateUser = (data: {
@@ -59,7 +56,7 @@ export const startUpdateUser = (data: {
     dispatch: ThunkDispatch<{}, {}, AnyAction>,
     getState: () => AppState
   ) => {
-    const currentData = getState().auth.user;
+    const currentData = getState().userInfo.user;
     const idToken = await firebase.auth().currentUser?.getIdToken();
     await axios.post(
       'https://europe-west3-ivern-app.cloudfunctions.net/api/user',

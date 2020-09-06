@@ -14,7 +14,7 @@ import Alert from '@material-ui/lab/Alert';
 import axios from 'axios';
 interface IProps {
   imageURL: string | undefined;
-  setImageURL: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setImageURL: React.Dispatch<React.SetStateAction<string>>;
 }
 const AddPostCard: React.FC<IProps> = ({ imageURL, setImageURL }) => {
   const [imageLoading, setImageLoading] = React.useState<boolean>(false);
@@ -50,24 +50,24 @@ const AddPostCard: React.FC<IProps> = ({ imageURL, setImageURL }) => {
       <Card>
         <CardActionArea style={{ marginBottom: '10px' }}>
           <input
-            accept='image/*'
+            accept="image/*"
             className={classes.input}
-            id='contained-button-file'
-            type='file'
+            id="contained-button-file"
+            type="file"
             onChange={imageUpload}
           />
-          <label htmlFor='contained-button-file'>
+          <label htmlFor="contained-button-file">
             <CardContent className={classes.cardAction}>
               {imageLoading ? (
                 <CircularProgress size={60} />
-              ) : imageURL ? (
+              ) : imageURL && !imageURL.includes('igdb') ? (
                 <div>
-                  <img width='100%' height='300px' src={imageURL} alt='' />
+                  <img width="100%" height="300px" src={imageURL} alt="" />
                 </div>
               ) : (
                 <div>
-                  <CloudUploadOutlinedIcon fontSize='large' />
-                  <Typography variant='h6' color='textSecondary'>
+                  <CloudUploadOutlinedIcon fontSize="large" />
+                  <Typography variant="h6" color="textSecondary">
                     Click to upload an image
                   </Typography>
                 </div>
@@ -75,14 +75,14 @@ const AddPostCard: React.FC<IProps> = ({ imageURL, setImageURL }) => {
             </CardContent>
           </label>
         </CardActionArea>
-        <Alert severity='info'>
+        <Alert severity="info">
           The game cover will be used if a picture isn't provided.
         </Alert>
       </Card>
       <Button
-        type='submit'
-        color='default'
-        variant='contained'
+        type="submit"
+        color="default"
+        variant="contained"
         className={classes.button}
       >
         <SaveIcon className={classes.leftIcon} />

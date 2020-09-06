@@ -15,13 +15,12 @@ import {
   Button,
   TextField,
 } from '@material-ui/core';
-import { User, Area, AppState } from '../../@types/types';
+import { User, AppState } from '../../@types/types';
 import { isNumber } from 'util';
 import { useHistory } from 'react-router';
-import { Skeleton, Autocomplete } from '@material-ui/lab';
-import { israelAreas } from '../dashboard/searchBar/desktop/areaOptions';
+import { Skeleton } from '@material-ui/lab';
 import { UpdateUserAction } from '../../@types/action-types';
-import { startUpdateUser } from '../../redux/actions/auth';
+import { startUpdateUser } from '../../redux/actions/userInfo';
 import { connect } from 'react-redux';
 interface IProps {
   user: User;
@@ -66,7 +65,6 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
   );
 
   const [loading, setLoading] = React.useState<boolean>(false);
-  const [area, setArea] = React.useState<Area | undefined>();
   const [displayName, setDisplayName] = React.useState(user.displayName);
   const [imageURL, setImageURL] = React.useState(user.imageURL);
   const [phoneNumber, setPhoneNumber] = React.useState(user.phoneNumber);
@@ -80,12 +78,11 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
     else {
       if (phoneNumber[3] !== '-')
         setPhoneNumber(phoneNumber?.slice(0, 3) + '-' + phoneNumber?.slice(3));
-      const res = await startUpdateUser({
+      await startUpdateUser({
         displayName,
         phoneNumber,
         imageURL,
       });
-      console.log(res);
       history.goBack();
     }
   };
@@ -104,7 +101,6 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
           },
         }
       );
-      console.log(res.data);
       setImageURL(res.data.imageURL);
       setLoading(false);
     }
@@ -112,10 +108,10 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
   return (
     <div>
       <PrimarySearchBar />
-      <div className='is-boxed has-animations'>
-        <div className='body-wrap boxed-container'>
+      <div className="is-boxed has-animations">
+        <div className="body-wrap boxed-container">
           <div className={classes.root}>
-            <Container maxWidth='md'>
+            <Container maxWidth="md">
               <Grid container spacing={3}>
                 <Grid item xs>
                   <Card className={classes.paper}>
@@ -124,29 +120,29 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                         <div>
                           <Skeleton
                             className={classes.avatar}
-                            variant='circle'
+                            variant="circle"
                           />
                           <Skeleton
-                            variant='text'
-                            width='20%'
+                            variant="text"
+                            width="20%"
                             style={{ margin: 'auto' }}
                           />
                         </div>
                       ) : (
                         <div>
                           <Avatar className={classes.avatar} src={imageURL} />
-                          <Typography variant='h6'>
+                          <Typography variant="h6">
                             {user?.displayName}
                           </Typography>
                           <input
-                            accept='image/*'
+                            accept="image/*"
                             className={classes.input}
-                            id='contained-button-file'
-                            type='file'
+                            id="contained-button-file"
+                            type="file"
                             onChange={imageUpload}
                           />
-                          <label htmlFor='contained-button-file'>
-                            <Button color='primary' component='span'>
+                          <label htmlFor="contained-button-file">
+                            <Button color="primary" component="span">
                               Upload Image
                             </Button>
                           </label>
@@ -159,7 +155,7 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                               <div key={index}>
                                 <Skeleton
                                   className={classes.skeleton}
-                                  variant='rect'
+                                  variant="rect"
                                   width={700}
                                   height={50}
                                 />
@@ -170,38 +166,38 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                       ) : (
                         <form onSubmit={onSubmit}>
                           <TextField
-                            variant='outlined'
-                            margin='normal'
+                            variant="outlined"
+                            margin="normal"
                             fullWidth
-                            id='displayName'
+                            id="displayName"
                             disabled
                             value={user?.email}
-                            label='Email'
-                            name='email'
+                            label="Email"
+                            name="email"
                           />
                           <TextField
-                            variant='outlined'
-                            margin='normal'
+                            variant="outlined"
+                            margin="normal"
                             fullWidth
-                            id='displayName'
+                            id="displayName"
                             value={displayName}
                             onChange={(
                               e: React.ChangeEvent<HTMLInputElement>
                             ) => setDisplayName(e.target.value)}
-                            label='Display Name'
-                            name='displayName'
-                            autoComplete='DisplayName'
+                            label="Display Name"
+                            name="displayName"
+                            autoComplete="DisplayName"
                           />
                           <TextField
-                            variant='outlined'
-                            margin='normal'
-                            placeholder='05 -'
+                            variant="outlined"
+                            margin="normal"
+                            placeholder="05 -"
                             fullWidth
-                            itemType='number'
-                            name='Phone Number'
-                            label='Phone Number'
-                            type='Phone Number'
-                            id='phone'
+                            itemType="number"
+                            name="Phone Number"
+                            label="Phone Number"
+                            type="Phone Number"
+                            id="phone"
                             value={phoneNumber}
                             onChange={(
                               e: React.ChangeEvent<HTMLInputElement>
@@ -213,38 +209,18 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                               )
                                 setPhoneNumber(e.target.value);
                             }}
-                            autoComplete='Phone Number'
-                          />
-                          <Autocomplete
-                            id='checkboxes-tags-demo'
-                            onChange={(event, area) => {
-                              if (area) setArea(area);
-                            }}
-                            options={israelAreas}
-                            disableCloseOnSelect
-                            groupBy={(option) => option.area}
-                            getOptionLabel={(option) => option.name}
-                            renderInput={(params) => (
-                              <TextField
-                                {...params}
-                                fullWidth
-                                value={area}
-                                margin='normal'
-                                label='Hometown'
-                                variant='outlined'
-                              />
-                            )}
+                            autoComplete="Phone Number"
                           />
                           {errorMessage && (
-                            <Typography color='secondary'>
+                            <Typography color="secondary">
                               {errorMessage}
                             </Typography>
                           )}
                           <Button
-                            type='submit'
+                            type="submit"
                             fullWidth
-                            variant='contained'
-                            color='primary'
+                            variant="contained"
+                            color="primary"
                           >
                             Save
                           </Button>
@@ -266,6 +242,6 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: AppState) => ({
-  user: state.auth.user,
+  user: state.userInfo.user,
 });
 export default connect(mapStateToProps, mapDispatchToProps)(UserInfo);

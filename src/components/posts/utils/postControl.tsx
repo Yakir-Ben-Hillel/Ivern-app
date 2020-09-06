@@ -1,21 +1,54 @@
 import React from 'react';
-import { Grid, Card, CardContent } from '@material-ui/core';
+import { Grid, Card, CardContent, Typography } from '@material-ui/core';
 import AddPostCard from './addPostCard';
-import { firebase } from '../../../firebase';
 import axios from 'axios';
-import { Game, Area, Post } from '../../../@types/types';
+import { Game, Area, Post, AppState } from '../../../@types/types';
 import AddPostFields from './addPostFields';
+import {
+  startAddPost,
+  startUpdatePost,
+} from '../../../redux/actions/userPosts';
 import { useStyles } from '../postsManager';
+import { connect } from 'react-redux';
+import { AddPostAction, UpdatePostAction } from '../../../@types/action-types';
 interface IProps {
   selectedPost: Post | undefined;
   postsList: Post[];
-  setPostsList: React.Dispatch<React.SetStateAction<Post[]>>;
+  startUpdatePost: (
+    pid: string,
+    updateData: {
+      area: string;
+      exchange: boolean;
+      sell: boolean;
+      cover: string | undefined;
+      price: string;
+      description: string;
+      platform: 'playstation' | 'xbox' | 'switch';
+    }
+  ) => Promise<UpdatePostAction>;
+  startAddPost: (reqPost: {
+    gameName: string;
+    gid: string;
+    artwork: string | null;
+    cover: string;
+    area: string;
+    sell: boolean;
+    exchange: boolean;
+    description: string;
+    platform: 'playstation' | 'xbox' | 'switch';
+    price: string;
+  }) => Promise<AddPostAction>;
+  setSelectedPost: React.Dispatch<React.SetStateAction<Post | undefined>>;
+  setEdit: React.Dispatch<React.SetStateAction<boolean>>;
   edit: boolean;
 }
 
 const PostControl: React.FC<IProps> = ({
+  startAddPost,
+  startUpdatePost,
   selectedPost,
-  setPostsList,
+  setSelectedPost,
+  setEdit,
   postsList,
   edit,
 }) => {
@@ -26,7 +59,7 @@ const PostControl: React.FC<IProps> = ({
   >('playstation');
   const [description, setDescription] = React.useState<string>('');
   const [price, setPrice] = React.useState<string>('');
-  const [imageURL, setImageURL] = React.useState<string | undefined>();
+  const [imageURL, setImageURL] = React.useState<string>('');
   const [sellable, setSellable] = React.useState<boolean>(true);
   const [swappable, setSwappable] = React.useState<boolean>(true);
   const [open, setOpen] = React.useState(false);
@@ -43,8 +76,7 @@ const PostControl: React.FC<IProps> = ({
       setPrice(selectedPost.price.toString());
       setSellable(selectedPost.sell);
       setSwappable(selectedPost.exchange);
-      // setArea(selectedPost)
-      //setImageURL(selectedPost.cover);
+      setImageURL(selectedPost.cover);
     }
   }, [edit, selectedPost]);
   const gamesLoading = open && options.length === 0;
@@ -56,58 +88,39 @@ const PostControl: React.FC<IProps> = ({
       if (!area) setAreaError(true);
       if (description === '') setDescriptionError(true);
       if (price === '') setPriceError(true);
-      if (game && area && description !== '' && price !== '') {
-        const idToken = await firebase.auth().currentUser?.getIdToken();
-        if (!edit) {
-          const res = await axios.post(
-            'https://europe-west3-ivern-app.cloudfunctions.net/api/posts/add',
-            {
+      if (selectedPost) {
+        if ((game || edit) && area && description !== '' && price !== '') {
+          if (!edit && game) {
+            const addPostData = {
               gameName: game.name,
               gid: game.id.toString(),
               artwork: game.artwork,
-              cover: imageURL ? imageURL : `https://${game.cover}`,
+              cover: imageURL !== '' ? imageURL : `https://${game.cover}`,
               area: area.id.toString(),
               sell: sellable,
               exchange: swappable,
               description,
               platform,
               price,
-            },
-            {
-              headers: {
-                authorization: `Bearer ${idToken}`,
-              },
-            }
-          );
-          const post: Post = res.data.data;
-          setPostsList([...postsList, post]);
-          setSelectedPost(post);
-          return postsList;
-        } else {
-          const res = await axios.post(
-            `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/edit/${selectedPost?.pid}`,
-            {
+            };
+            await startAddPost(addPostData);
+          } else {
+            const updatePostData = {
+              area: area.id.toString(),
               exchange: swappable,
               sell: sellable,
-              price: price,
-              platform: platform,
-              area: area,
               cover: imageURL,
-            },
-            {
-              headers: {
-                authorization: `Bearer ${idToken}`,
-              },
-            }
-          );
-          console.log(res.data);
-          const updatedPosts: Post[] = postsList.map((post) => {
-            if (post.pid === res.data.post.pid)
-              return { ...post, ...res.data.data };
-          });
-          setPostsList(updatedPosts);
+              price,
+              description,
+              platform,
+            };
+            const res = await startUpdatePost(selectedPost.pid, updatePostData);
+            setSelectedPost(res.post);
+            setEdit(false);
+          }
         }
       }
+      return postsList;
     } catch (error) {
       throw new Error(error);
     }
@@ -137,8 +150,11 @@ const PostControl: React.FC<IProps> = ({
       <Card className={classes.paper}>
         <CardContent className={classes.card}>
           <form onSubmit={onSubmit}>
-            <Grid container alignItems='center' spacing={3}>
+            <Grid container alignItems="center" spacing={3}>
               <Grid item xs>
+                <Typography className={classes.title} variant="h5">
+                  {edit ? 'Edit Post' : 'Upload Post'}
+                </Typography>
                 <AddPostFields
                   edit={edit}
                   open={open}
@@ -173,4 +189,12 @@ const PostControl: React.FC<IProps> = ({
     </div>
   );
 };
-export default PostControl;
+const mapDispatchToProps = {
+  startAddPost,
+  startUpdatePost,
+};
+const mapStateToProps = (state: AppState) => ({
+  user: state.userInfo.user,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostControl);

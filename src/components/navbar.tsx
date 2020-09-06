@@ -82,7 +82,9 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
   const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
 
   React.useEffect(() => {
-    if (user) setImageURL(user.imageURL);
+    if (user) {
+      setImageURL(user.imageURL);
+    }
   }, [user]);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -113,7 +115,7 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
       onClose={handleMenuClose}
     >
       <MenuItem onClick={() => history.push('/user')}>המשתמש שלי</MenuItem>
-      <MenuItem onClick={() => history.push('/user/post')}>צור פוסט</MenuItem>
+      <MenuItem onClick={() => history.push('/user/post')}>נהל פוסטים</MenuItem>
       <MenuItem
         onClick={async () => {
           await firebase.auth().signOut();
@@ -153,8 +155,8 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
       onClose={handleMobileMenuClose}
     >
       <MenuItem>
-        <IconButton aria-label='show 11 new notifications' color='primary'>
-          <Badge badgeContent={11} color='secondary'>
+        <IconButton aria-label="show 11 new notifications" color="primary">
+          <Badge badgeContent={11} color="secondary">
             <NotificationsIcon />
           </Badge>
         </IconButton>
@@ -162,10 +164,10 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
       </MenuItem>
       <MenuItem onClick={handleProfileMenuOpen}>
         <IconButton
-          aria-label='account of current user'
-          aria-controls='primary-search-account-menu'
-          aria-haspopup='true'
-          color='primary'
+          aria-label="account of current user"
+          aria-controls="primary-search-account-menu"
+          aria-haspopup="true"
+          color="primary"
         >
           {loading ? (
             <CircularProgress />
@@ -188,18 +190,18 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
 
   return (
     <div className={classes.grow}>
-      <AppBar position='static' color='transparent'>
-        <Toolbar variant='dense'>
-          <IconButton edge='start' color='primary' aria-label='open drawer'>
+      <AppBar position="static" elevation={0} color="transparent">
+        <Toolbar variant="dense">
+          <IconButton edge="start" color="primary" aria-label="open drawer">
             <MenuIcon />
           </IconButton>
-          <IconButton aria-label='saved' color='primary'>
+          <IconButton aria-label="saved" color="primary">
             <HeartOutline />
           </IconButton>
 
           <IconButton
-            aria-label='history'
-            color='primary'
+            aria-label="history"
+            color="primary"
             className={classes.menuButton}
           >
             <History />
@@ -207,36 +209,36 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
 
           <Typography
             className={classes.title}
-            color='primary'
-            variant='h6'
+            color="primary"
+            variant="h6"
             noWrap
           >
             Ivern
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
-            <Button color='primary' startIcon={<SonyPlaystation />}>
+            <Button color="primary" startIcon={<SonyPlaystation />}>
               Playstation
             </Button>
-            <Button color='primary' startIcon={<MicrosoftXbox />}>
+            <Button color="primary" startIcon={<MicrosoftXbox />}>
               Xbox
             </Button>
-            <Button color='primary' startIcon={<NintendoSwitch />}>
+            <Button color="primary" startIcon={<NintendoSwitch />}>
               Switch
             </Button>
 
-            <IconButton aria-label='show 17 new notifications' color='primary'>
-              <Badge badgeContent={17} color='secondary'>
+            <IconButton aria-label="show 17 new notifications" color="primary">
+              <Badge badgeContent={17} color="secondary">
                 <NotificationsIcon />
               </Badge>
             </IconButton>
             <IconButton
-              edge='end'
-              aria-label='account of current user'
+              edge="end"
+              aria-label="account of current user"
               aria-controls={menuId}
-              aria-haspopup='true'
+              aria-haspopup="true"
               onClick={handleProfileMenuOpen}
-              color='primary'
+              color="primary"
             >
               {loading ? (
                 <CircularProgress />
@@ -255,34 +257,34 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
           </div>
           <div className={classes.sectionMobile}>
             <IconButton
-              aria-label='playstation'
+              aria-label="playstation"
               aria-controls={mobileMenuId}
-              color='primary'
+              color="primary"
             >
               <SonyPlaystation />
             </IconButton>
 
             <IconButton
-              aria-label='xbox'
+              aria-label="xbox"
               aria-controls={mobileMenuId}
-              color='primary'
+              color="primary"
             >
               <MicrosoftXbox />
             </IconButton>
             <IconButton
-              aria-label='switch'
+              aria-label="switch"
               aria-controls={mobileMenuId}
-              color='primary'
+              color="primary"
             >
               <NintendoSwitch />
             </IconButton>
 
             <IconButton
-              aria-label='show more'
+              aria-label="show more"
               aria-controls={mobileMenuId}
-              aria-haspopup='true'
+              aria-haspopup="true"
               onClick={handleMobileMenuOpen}
-              color='primary'
+              color="primary"
             >
               <MoreIcon />
             </IconButton>
@@ -295,8 +297,8 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
   );
 };
 const MapStateToProps = (state: AppState) => ({
-  user: state.auth.user,
-  loading: state.auth.loading,
+  user: state.userInfo.user,
+  loading: state.userInfo.loading,
 });
 
 export default connect(MapStateToProps)(PrimarySearchAppBar);

@@ -28,7 +28,7 @@ const HeroSection: React.FC = () => {
               explore.
             </p>
             <div className='hero-cta'>
-              <a className='button button-primary' href='#'>
+              <a className='button button-primary' href='/search'>
                 Explore
               </a>
               <div className='lights-toggle'>

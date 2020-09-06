@@ -14,7 +14,7 @@ import { AppState, User } from '../../@types/types';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
-import { startUpdateUser } from '../../redux/actions/auth';
+import { startUpdateUser } from '../../redux/actions/userInfo';
 import { UpdateUserAction } from '../../@types/action-types';
 function Copyright() {
   return (
@@ -241,7 +241,7 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = (state: AppState) => ({
-  user: state.auth.user,
+  user: state.userInfo.user,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(FirstTimeLogin);

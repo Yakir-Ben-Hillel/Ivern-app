@@ -3,11 +3,11 @@ import React from 'react';
 import PostAppBar from './utils/postBar';
 import { Container, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { AppState, Post, User } from '../../@types/types';
+import { AppState, Post } from '../../@types/types';
 import PostControl from './utils/postControl';
 import PostView from './utils/postView';
 interface IProps {
-  user: User;
+  posts: Post[];
   loading: boolean;
 }
 const drawerWidth = 190;
@@ -51,6 +51,11 @@ export const useStyles = makeStyles((theme: Theme) =>
       marginTop: '-85px',
       marginBottom: '5px',
     },
+    title: {
+      display: 'flex',
+      margin: theme.spacing(1),
+      marginBottom: theme.spacing(2),
+    },
     button: {
       margin: theme.spacing(1),
       marginTop: theme.spacing(2),
@@ -65,26 +70,37 @@ export const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const PostManager: React.FC<IProps> = ({ user, loading }) => {
-  const [postsList, setPostsList] = React.useState<Post[]>(user.posts);
+const PostManager: React.FC<IProps> = ({ posts, loading }) => {
+  const [postsList, setPostsList] = React.useState<Post[]>(posts);
   const [selectedPost, setSelectedPost] = React.useState<Post>();
   const [edit, setEdit] = React.useState<boolean>(false);
   const classes = useStyles();
-  React.useEffect(()=>console.log(edit),[edit]);
+  React.useEffect(() => {
+    setPostsList(posts);
+  }, [posts]);
   return (
     <div>
-      <PostAppBar postsList={postsList} setSelectedPost={setSelectedPost} setEdit={setEdit} />
-      <div className='is-boxed has-animations'>
-        <div className='body-wrap boxed-container'>
+      <PostAppBar
+        postsList={postsList}
+        setSelectedPost={setSelectedPost}
+        setEdit={setEdit}
+      />
+      <div className="is-boxed has-animations">
+        <div className="body-wrap boxed-container">
           <div className={classes.root}>
-            <Container maxWidth='lg'>
+            <Container maxWidth="lg">
               {selectedPost && !edit ? (
-                <PostView selectedPost={selectedPost} setEdit={setEdit} />
+                <PostView
+                  selectedPost={selectedPost}
+                  setSelectedPost={setSelectedPost}
+                  setEdit={setEdit}
+                />
               ) : (
                 <PostControl
                   selectedPost={selectedPost}
                   postsList={postsList}
-                  setPostsList={setPostsList}
+                  setEdit={setEdit}
+                  setSelectedPost={setSelectedPost}
                   edit={edit}
                 />
               )}
@@ -96,8 +112,8 @@ const PostManager: React.FC<IProps> = ({ user, loading }) => {
   );
 };
 const MapStateToProps = (state: AppState) => ({
-  user: state.auth.user,
-  loading: state.auth.loading,
+  posts: state.userPosts.posts,
+  loading: state.userPosts.loading,
 });
 
 export default connect(MapStateToProps)(PostManager);
