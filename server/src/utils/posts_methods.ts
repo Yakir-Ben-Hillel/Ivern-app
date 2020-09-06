@@ -49,7 +49,7 @@ export const addPost = async (request, res) => {
 export const deletePost = async (request, res) => {
   try {
     const req = request as RequestCustom;
-    const post = await database.doc(`/posts/${req.body.pid}`).get();
+    const post = await database.doc(`/posts/${req.params.pid}`).get();
     if (!post.exists)
       return res.status(404).json({ error: 'Post did not found.' });
     else if (post.data()?.uid !== req.user.uid)
@@ -70,20 +70,23 @@ export const editPost = async (request, res) => {
       exchange: req.body.exchange,
       sell: req.body.sell,
       price: req.body.price,
+      description: req.body.description,
       platform: req.body.platform,
       area: req.body.area,
       cover: req.body.cover,
     };
-    const post = await database.doc(`/posts/${req.body.pid}`).get();
+    const postRef = database.doc(`/posts/${req.params.pid}`);
+    const post = await postRef.get();
     if (!post.exists)
       return res.status(404).json({ error: 'Post did not found.' });
     else if (post.data()?.uid !== req.user.uid)
       return res.status(403).json({ error: 'Unauthorized.' });
     else {
-      await post.ref.update(updateData);
+      await postRef.update(updateData);
+      const updatedPost = (await postRef.get()).data();
       return res
         .status(200)
-        .json({ message: 'Post updated successfully.', post: post.data() });
+        .json({ message: 'Post updated successfully.', post: updatedPost });
     }
   } catch (error) {
     console.log(error);
