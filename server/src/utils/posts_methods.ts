@@ -111,6 +111,27 @@ export const getAllGamePosts = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+export const getAllPlatformPosts = async (req, res) => {
+  try {
+    const platform = req.params.platform;
+    if (
+      platform !== 'playstation' &&
+      platform !== 'xbox' &&
+      platform !== 'switch'
+    )
+      return res.status(400).json({ error: 'invalid platform' });
+    const posts = await database
+      .collection('/posts')
+      .where('platform', '==', platform)
+      .get();
+    const data: any[] = [];
+    posts.forEach((post) => data.push(post.data()));
+    return res.status(200).json({ posts: data });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json(error);
+  }
+};
 export const getAllUserPosts = async (req, res) => {
   try {
     const posts = await database
@@ -154,17 +175,20 @@ export const getCustomPostsRequest = async (req, res) => {
   try {
     const requestedGames = req.query.games;
     const requestedArea = req.query.areas;
+    const requestedPlatform = req.query.platform;
     if (requestedGames && requestedArea) {
       let docsRef: any;
       if (Array.isArray(requestedGames)) {
         docsRef = database
           .collection('/posts')
           .where('gid', 'in', requestedGames)
+          .where('platform', '==', requestedPlatform)
           .where('area', '==', requestedArea);
       } else {
         docsRef = database
           .collection('/posts')
           .where('gid', '==', requestedGames)
+          .where('platform', '==', requestedPlatform)
           .where('area', '==', requestedArea);
       }
       const postsRef = await docsRef.get();
@@ -176,7 +200,7 @@ export const getCustomPostsRequest = async (req, res) => {
     } else
       return res
         .status(400)
-        .json({ error: 'Games or Area are not specified.' });
+        .json({ error: 'Games, Area or Platform are not specified.' });
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);

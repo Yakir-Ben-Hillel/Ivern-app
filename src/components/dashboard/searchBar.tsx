@@ -63,8 +63,8 @@ export const Bar: React.FC = () => {
   const [area, setArea] = React.useState<Area>();
   const [open, setOpen] = React.useState(false);
   const [platform, setPlatform] = React.useState<
-  'playstation' | 'xbox' | 'switch'
->('playstation');
+    'playstation' | 'xbox' | 'switch'
+  >('playstation');
   const loading = open && options.length === 0;
   const classes = useStyles();
   const history = useHistory();
@@ -74,6 +74,7 @@ export const Bar: React.FC = () => {
       const queryParams = new URLSearchParams();
       games.forEach((game) => queryParams.append('game', `${game.id}`));
       queryParams.append('area', `${area.id}`);
+      queryParams.append('platform', platform);
       history.push({
         pathname: '/search',
         search: '?' + queryParams,

@@ -6,7 +6,7 @@ import { Bar } from './dashboard/searchBar';
 import SiteHeader from './dashboard/siteHeader';
 import Footer from './dashboard/footer';
 import axios, { AxiosResponse } from 'axios';
-import PostsList from './search/posts_list';
+import PostsList from './search/postsLIst';
 import { Post } from '../@types/types';
 
 export const Search: React.FC = (props: any) => {
@@ -27,18 +27,22 @@ export const Search: React.FC = (props: any) => {
     if (posts !== undefined) return undefined;
     (async () => {
       const params = queryString.parse(props.location.search);
-      console.log(params);
       setPostsLoading(true);
       let res: AxiosResponse<any> | undefined;
-      if (params.game) {
+      if (params.game && params.areas && params.platform) {
         res = await axios.get(
           'https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/custom',
           {
             params: {
               games: params.game,
               areas: params.area,
+              platform: params.platform,
             },
           }
+        );
+      } else if (params.platform) {
+        res = await axios.get(
+          `https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/platform/${params.platform}`
         );
       } else {
         res = await axios.get(
@@ -56,16 +60,15 @@ export const Search: React.FC = (props: any) => {
   }, [posts, props.location.search]);
   return (
     <div>
-      <div className="is-boxed has-animations">
-        <div className="body-wrap boxed-container">
+      <div className='is-boxed has-animations'>
+        <div className='body-wrap boxed-container'>
           <PrimarySearchAppBar />
-
           <SiteHeader />
-          <div className="container-sm cta-inner">
+          <div className='container-sm cta-inner'>
             <h1>Search</h1>
             <Bar />
           </div>
-          <section className="cta section">
+          <section className='cta section'>
             <PostsList
               posts={posts}
               postsLoading={postsLoading}

@@ -43,10 +43,10 @@ const PostView: React.FC<IProps> = ({
 }) => {
   const platformIcon = (platform: string) => {
     if (platform === 'playstation')
-      return <SonyPlaystation fontSize="inherit" />;
-    else if (platform === 'xbox') return <MicrosoftXbox fontSize="inherit" />;
+      return <SonyPlaystation fontSize='inherit' />;
+    else if (platform === 'xbox') return <MicrosoftXbox fontSize='inherit' />;
     else if (platform === 'switch')
-      return <NintendoSwitch fontSize="inherit" />;
+      return <NintendoSwitch fontSize='inherit' />;
     else return undefined;
   };
   const deletePost = async () => {
@@ -71,45 +71,45 @@ const PostView: React.FC<IProps> = ({
             height: '100%',
           }}
         >
-          <Grid container alignItems="center" spacing={3}>
+          <Grid container alignItems='center' spacing={3}>
             <Grid item xs>
               <div>
                 {selectedPost.artwork ? (
                   <img
                     style={{ objectFit: 'cover', margin: 0 }}
-                    width="100%"
-                    height="400px"
+                    width='100%'
+                    height='400px'
                     src={selectedPost.artwork}
-                    alt=""
+                    alt=''
                   />
                 ) : (
                   <img
                     style={{ objectFit: 'cover', margin: 0 }}
-                    width="100%"
-                    height="400px"
-                    src={selectedPost.cover}
-                    alt=""
+                    width='100%'
+                    height='400px'
+                    src={selectedPost.cover.replace('logo_med', '1080p')}
+                    alt=''
                   />
                 )}
-                <Avatar className={classes.avatar} src={imageURL} alt="" />
+                <Avatar className={classes.avatar} src={imageURL} alt='' />
               </div>
-              <Typography variant="h5" component="h2">
+              <Typography variant='h5' component='h2'>
                 {platformIcon(selectedPost.platform)}
                 {selectedPost.gameName}
               </Typography>
-              <Typography color="textSecondary">
-                <DescriptionIcon fontSize="inherit" />
+              <Typography color='textSecondary'>
+                <DescriptionIcon fontSize='inherit' />
                 {'Description: '}
                 {selectedPost.description}
               </Typography>
-              <Typography color="textSecondary">
-                <LocalOfferIcon fontSize="inherit" />
+              <Typography color='textSecondary'>
+                <LocalOfferIcon fontSize='inherit' />
                 {'Price: '}
                 {selectedPost.price}
               </Typography>
               <Button
-                color="default"
-                variant="contained"
+                color='default'
+                variant='contained'
                 className={classes.button}
                 onClick={() => setDeleteDialogOpen(true)}
               >
@@ -117,8 +117,8 @@ const PostView: React.FC<IProps> = ({
                 Delete
               </Button>
               <Button
-                color="default"
-                variant="contained"
+                color='default'
+                variant='contained'
                 onClick={() => setEdit(true)}
                 className={classes.button}
               >
@@ -126,8 +126,8 @@ const PostView: React.FC<IProps> = ({
                 Edit
               </Button>
               <CardActions>
-                <Typography variant="caption">
-                  <EventIcon fontSize="inherit" />
+                <Typography variant='caption'>
+                  <EventIcon fontSize='inherit' />
                   {'Created At: '}
                   {makeDate()}
                 </Typography>
@@ -139,23 +139,23 @@ const PostView: React.FC<IProps> = ({
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
-        aria-labelledby="delete-dialog-title"
-        aria-describedby="delete-dialog-description"
+        aria-labelledby='delete-dialog-title'
+        aria-describedby='delete-dialog-description'
       >
-        <DialogTitle id="delete-dialog-title">
+        <DialogTitle id='delete-dialog-title'>
           {'Are you sure you want to delete this post?'}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText id="alert-dialog-description">
+          <DialogContentText id='alert-dialog-description'>
             Deleting the post is permanent and cannot be recovered, are you sure
             you want to proceed?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setDeleteDialogOpen(false)} color="primary">
+          <Button onClick={() => setDeleteDialogOpen(false)} color='primary'>
             Cancel
           </Button>
-          <Button onClick={deletePost} color="secondary" autoFocus>
+          <Button onClick={deletePost} color='secondary' autoFocus>
             Delete
           </Button>
         </DialogActions>

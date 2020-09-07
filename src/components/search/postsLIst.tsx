@@ -7,6 +7,7 @@ import axios from 'axios';
 import Pagination from '@material-ui/lab/Pagination';
 import { Post, User } from '../../@types/types';
 import PostAccordion from './postAccordion';
+import isMobile from 'is-mobile';
 interface IProps {
   posts: Post[] | undefined;
   postsLoading: boolean;
@@ -90,8 +91,9 @@ const PostsList: React.FC<IProps> = ({
               onChange={(event: React.ChangeEvent<unknown>, value: number) =>
                 setPage(value)
               }
+              boundaryCount={1}
               count={posts ? Math.ceil(posts.length / 6) : undefined}
-              size='large'
+              size={isMobile() ? 'medium' : 'large'}
             />
           </Paper>
         </div>

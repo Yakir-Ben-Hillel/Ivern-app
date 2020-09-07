@@ -46,6 +46,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      display: 'grid',
     },
     margin: {
       margin: theme.spacing(1),
@@ -90,7 +91,6 @@ const MobileSearch: React.FC<IGameOptions> = ({
   const handleClose = () => {
     setOpen(false);
     setDialogOpen(false);
-    setPlatform('');
   };
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -98,10 +98,12 @@ const MobileSearch: React.FC<IGameOptions> = ({
       const queryParams = new URLSearchParams();
       games.forEach((game) => queryParams.append('game', `${game.id}`));
       queryParams.append('area', `${area.id}`);
+      queryParams.append('platform', `${platform}`);
       history.push({
         pathname: '/search',
         search: '?' + queryParams,
       });
+      if (history.location.pathname === '/search') window.location.reload();
     }
   };
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -199,9 +201,9 @@ const MobileSearch: React.FC<IGameOptions> = ({
                   <MenuItem
                     button
                     key='playstation'
-                    selected={platform === 'Playstation'}
+                    selected={platform === 'playstation'}
                     onClick={(event: React.MouseEvent<HTMLElement>) => {
-                      setPlatform('Playstation');
+                      setPlatform('playstation');
                       setAnchorEl(null);
                     }}
                   >
@@ -212,9 +214,9 @@ const MobileSearch: React.FC<IGameOptions> = ({
                   </MenuItem>
                   <MenuItem
                     key='xbox'
-                    selected={platform === 'Xbox'}
+                    selected={platform === 'xbox'}
                     onClick={() => {
-                      setPlatform('Xbox');
+                      setPlatform('xbox');
                       setAnchorEl(null);
                     }}
                   >
@@ -225,9 +227,9 @@ const MobileSearch: React.FC<IGameOptions> = ({
                   </MenuItem>
                   <MenuItem
                     key='switch'
-                    selected={platform === 'Switch'}
+                    selected={platform === 'switch'}
                     onClick={() => {
-                      setPlatform('Switch');
+                      setPlatform('switch');
                       setAnchorEl(null);
                     }}
                   >

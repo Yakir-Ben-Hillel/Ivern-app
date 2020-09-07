@@ -19,6 +19,7 @@ import {
   getAllUserPosts,
   getAllPosts,
   getCustomPostsRequest,
+  getAllPlatformPosts,
 } from './utils/posts_methods';
 import { changeProfileImage, uploadImage } from './utils/file_upload';
 import functions = require('firebase-functions');
@@ -42,11 +43,12 @@ app.get('/games', getAllGames);
 app.get('/games/:gameName', searchGameInDatabase);
 app.get('/games/api/:gameName', searchUnfoundGame);
 app.post('/games', postAllPS4games);
-app.post('/games/artworks',updateArtworks);
+app.post('/games/artworks', updateArtworks);
 app.post('/games/add', addGameToDatabase);
 app.post('/games/update', updateGamesFunc);
 //Posts endpoints.
 app.get('/posts/get', getAllPosts);
+app.get('/posts/get/platform/:platform', getAllPlatformPosts);
 app.get('/posts/get/custom', getCustomPostsRequest);
 app.get('/posts/get/one/:pid', getPost);
 app.get('/posts/get/game/:gid', getAllGamePosts);
