@@ -79,6 +79,7 @@ export const Bar: React.FC = () => {
         pathname: '/search',
         search: '?' + queryParams,
       });
+      if (history.location.pathname === '/search') window.location.reload();
     } else {
       if (games.length === 0) setGameError(true);
       if (area) setAreaError(true);

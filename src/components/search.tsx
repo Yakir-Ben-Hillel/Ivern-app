@@ -8,6 +8,7 @@ import Footer from './dashboard/footer';
 import axios, { AxiosResponse } from 'axios';
 import PostsList from './search/postsList';
 import { Post } from '../@types/types';
+import { Typography } from '@material-ui/core';
 
 export const Search: React.FC = (props: any) => {
   const localLights = localStorage.getItem('lights');
@@ -29,7 +30,7 @@ export const Search: React.FC = (props: any) => {
       const params = queryString.parse(props.location.search);
       setPostsLoading(true);
       let res: AxiosResponse<any> | undefined;
-      if (params.game && params.areas && params.platform) {
+      if (params.game && params.area && params.platform) {
         res = await axios.get(
           'https://europe-west3-ivern-app.cloudfunctions.net/api/posts/get/custom',
           {
@@ -65,7 +66,7 @@ export const Search: React.FC = (props: any) => {
           <PrimarySearchAppBar />
           <SiteHeader />
           <div className='container-sm cta-inner'>
-            <h1>Search</h1>
+            <Typography variant='h4'>Search</Typography>
             <Bar />
           </div>
           <section className='cta section'>

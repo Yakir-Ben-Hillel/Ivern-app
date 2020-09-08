@@ -16,6 +16,7 @@ import {
   MicrosoftXbox,
   NintendoSwitch,
 } from 'mdi-material-ui';
+import Svg from 'react-inlinesvg';
 import { firebase } from '../firebase';
 import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
@@ -29,7 +30,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: theme.spacing(2),
     },
     title: {
-      display: 'block',
+      display: 'flex',
+      marginLeft: theme.spacing(1),
     },
     inputRoot: {
       color: 'inherit',
@@ -190,13 +192,12 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
     <div className={classes.grow}>
       <AppBar position='static' elevation={0} color='transparent'>
         <Toolbar variant='dense'>
-          <Typography
-            className={classes.title}
-            color='primary'
-            variant='h6'
-            noWrap
-          >
-            Ivern
+          <Svg
+            className='header-logo-image asset-light'
+            src={require('../components/dashboard/dist/images/logo-light.svg')}
+          />
+          <Typography className={classes.title} color='primary' variant='h5'>
+            {'Ivern'}
           </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
@@ -222,11 +223,11 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
               Switch
             </Button>
 
-            <IconButton aria-label='show 17 new notifications' color='primary'>
+            {/* <IconButton aria-label='show 17 new notifications' color='primary'>
               <Badge badgeContent={17} color='secondary'>
                 <NotificationsIcon />
               </Badge>
-            </IconButton>
+            </IconButton> */}
             <IconButton
               edge='end'
               aria-label='account of current user'

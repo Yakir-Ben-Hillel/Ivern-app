@@ -1,14 +1,12 @@
 import React from 'react';
 import {
   Dialog,
-  DialogTitle,
   Grid,
   Avatar,
   Typography,
   makeStyles,
   Theme,
   createStyles,
-  Divider,
 } from '@material-ui/core';
 import { Post, User } from '../../../@types/types';
 import PostsCarousel from '../carousel';
@@ -16,7 +14,7 @@ import { Skeleton } from '@material-ui/lab';
 import PersonIcon from '@material-ui/icons/Person';
 import PhoneIcon from '@material-ui/icons/Phone';
 import DescriptionIcon from '@material-ui/icons/Description';
-
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 interface IProps {
   post: Post;
   openedPost: Post | null;
@@ -37,6 +35,11 @@ export const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       flexGrow: 1,
     },
+    hebrew: {
+      direction: 'rtl',
+      marginRight: theme.spacing(2),
+      marginBottom: theme.spacing(1),
+    },
     avatar: {
       width: theme.spacing(18),
       height: theme.spacing(18),
@@ -46,11 +49,19 @@ export const useStyles = makeStyles((theme: Theme) =>
     },
     helper: {
       borderLeft: `2px solid ${theme.palette.divider}`,
-      padding: theme.spacing(1, 0, 0, 4),
+      paddingLeft: theme.spacing(1),
+      marginRight: theme.spacing(1),
+    },
+    infoSkeleton: {
       margin: 'auto',
+      marginLeft: theme.spacing(4),
+      marginRight: theme.spacing(2),
     },
     userInfo: {
-      alignContent: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      margin: 'auto',
     },
     userAvatar: {
       margin: 'auto',
@@ -78,7 +89,6 @@ const PostDialog: React.FC<IProps> = ({
         aria-labelledby='simple-dialog-title'
         open={dialogOpen}
       >
-        <DialogTitle id='simple-dialog-title'>Set backup account</DialogTitle>
         <Grid container alignItems='center'>
           <Grid item xs={12}>
             <div>
@@ -110,57 +120,62 @@ const PostDialog: React.FC<IProps> = ({
               {openedPost?.gameName}
             </Typography>
           </Grid>
-          <Typography color='textSecondary'>
-            <DescriptionIcon fontSize='inherit' />
-            {openedPost?.description}
-          </Typography>
-          <Typography>{`${openedPost?.price}₪`}</Typography>
-
           <Grid container direction='column'>
-            <Grid item xs>
-              <div className={classes.helper}>
-                {loading ? (
-                  <div>
-                    <Skeleton variant='circle' width={96} height={96} />
-                    <Skeleton width='100%' />
+            <Grid className={classes.hebrew} item xs>
+              <Typography color='textSecondary'>
+                <DescriptionIcon fontSize='inherit' />
+                {openedPost?.description}
+              </Typography>
+              <Typography color='textSecondary'>
+                <AccountBalanceWalletIcon fontSize='inherit' />
+                {`${openedPost?.price}₪`}
+              </Typography>
+            </Grid>
+          </Grid>
+          <Grid container alignContent='center' direction='column'>
+            {loading ? (
+              <div>
+                <Grid container direction='row'>
+                  <Grid className={classes.infoSkeleton} item xs>
                     <Skeleton variant='text' />
-                  </div>
-                ) : (
-                  <Grid
-                    className={classes.userInfo}
-                    container
-                    direction='column'
-                  >
-                    <Grid item>
-                      <Avatar
-                        className={classes.userAvatar}
-                        src={user?.imageURL}
-                      />
-                    </Grid>
-                    <Grid item>
-                      <Typography variant='caption' color='textSecondary'>
-                        <PersonIcon fontSize='small' />
-                        {user?.displayName}
-                      </Typography>
-                    </Grid>
-                    <Divider />
-                    <Grid item>
-                      <Typography variant='caption' color='textSecondary'>
-                        <PhoneIcon fontSize='small' />
-                        {user?.phoneNumber}
-                      </Typography>
-                    </Grid>
+                    <Skeleton variant='text' />
                   </Grid>
-                )}
+                  <Grid item xs>
+                    <Skeleton variant='circle' width={96} height={96} />
+                  </Grid>
+                </Grid>
               </div>
-            </Grid>
-            <Grid item xs>
-              <PostsCarousel
-                user={user}
-                userPosts={userPosts}
-                loading={loading}
-              />
-            </Grid>
+            ) : (
+              <div className={classes.helper}>
+                <Grid container>
+                  <Grid className={classes.userInfo} item xs>
+                    <Typography variant='caption' color='textSecondary'>
+                      <PersonIcon fontSize='small' />
+                      {user?.displayName}
+                    </Typography>
+                    <Typography variant='caption' color='textSecondary'>
+                      <PhoneIcon fontSize='small' />
+                      {user?.phoneNumber}
+                    </Typography>
+                  </Grid>
+                  <Grid className={classes.helper} item>
+                    <Avatar
+                      className={classes.userAvatar}
+                      src={user?.imageURL}
+                    />
+                  </Grid>
+                </Grid>
+              </div>
+            )}
+            {(userPosts.length > 0 || loading) && (
+              <Grid item xs>
+                <PostsCarousel
+                  user={user}
+                  userPosts={userPosts}
+                  loading={loading}
+                />
+              </Grid>
+            )}
           </Grid>
         </Grid>
       </Dialog>

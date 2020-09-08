@@ -88,9 +88,10 @@ const PostsList: React.FC<IProps> = ({
           <Paper className={classes.pager}>
             <Pagination
               page={page}
-              onChange={(event: React.ChangeEvent<unknown>, value: number) =>
-                setPage(value)
-              }
+              onChange={(event: React.ChangeEvent<unknown>, value: number) => {
+                setPage(value);
+                window.scrollTo({ top: 0, behavior: 'auto' });
+              }}
               boundaryCount={1}
               count={posts ? Math.ceil(posts.length / 6) : undefined}
               size={isMobile() ? 'medium' : 'large'}
