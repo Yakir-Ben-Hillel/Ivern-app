@@ -16,6 +16,7 @@ import {
   NintendoSwitch,
 } from 'mdi-material-ui';
 import { useStyles } from '../postAccordion';
+import PostDialog from './postDialog';
 interface IProps {
   post: Post;
   openedPost: Post | null;
@@ -32,7 +33,9 @@ const PostsListMobile: React.FC<IProps> = ({
   loading,
   setOpenedPost,
 }) => {
-  const platformIcon = (platform: string) => {
+  const platformIcon = (
+    platform: 'playstation' | 'xbox' | 'switch' | undefined
+  ) => {
     if (platform === 'playstation')
       return <SonyPlaystation fontSize='inherit' />;
     else if (platform === 'xbox') return <MicrosoftXbox fontSize='inherit' />;
@@ -40,10 +43,19 @@ const PostsListMobile: React.FC<IProps> = ({
       return <NintendoSwitch fontSize='inherit' />;
     else return undefined;
   };
+  const handleClickOpen = () => {
+    setOpenedPost(post);
+    setDialogOpen(true);
+  };
+  const handleClickClose = () => {
+    setDialogOpen(false);
+    setOpenedPost(null);
+  };
+  const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
   const classes = useStyles();
   return (
     <div>
-      <Paper className={classes.paper}>
+      <Paper onClick={handleClickOpen} className={classes.paper}>
         <Grid container spacing={2}>
           <Grid item>
             <ButtonBase className={classes.image}>
@@ -86,6 +98,17 @@ const PostsListMobile: React.FC<IProps> = ({
           </Grid>
         </Grid>
       </Paper>
+      <PostDialog
+        platformIcon={platformIcon}
+        post={post}
+        user={user}
+        userPosts={userPosts}
+        openedPost={openedPost}
+        dialogOpen={dialogOpen}
+        setOpenedPost={setOpenedPost}
+        loading={loading}
+        handleClickClose={handleClickClose}
+      />
     </div>
   );
 };

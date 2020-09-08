@@ -6,7 +6,7 @@ import { Bar } from './dashboard/searchBar';
 import SiteHeader from './dashboard/siteHeader';
 import Footer from './dashboard/footer';
 import axios, { AxiosResponse } from 'axios';
-import PostsList from './search/postsLIst';
+import PostsList from './search/postsList';
 import { Post } from '../@types/types';
 
 export const Search: React.FC = (props: any) => {
