@@ -9,7 +9,7 @@ const Footer: React.FC = () => {
       <div className='container'>
         <div className='site-footer-inner'>
           <div className='brand footer-brand'>
-            <a href='#'>
+            <a href='/'>
               <Svg
                 className='asset-light'
                 src={require('./dist/images/logo-light.svg')}

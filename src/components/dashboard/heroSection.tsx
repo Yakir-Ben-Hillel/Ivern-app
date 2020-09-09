@@ -14,6 +14,7 @@ const HeroSection: React.FC = () => {
     choice = false;
     document.body.classList.add('lights-off');
   }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [lights, SwitchLights] = React.useState(choice);
 
   return (

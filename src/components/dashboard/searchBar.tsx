@@ -41,10 +41,10 @@ const SearchBar: React.FC = () => {
       <div className='container-sm'>
         <div className='cta-inner section-inner'>
           <div className='cta-header text-center'>
-            <h2 className='section-title mt-0'>Get it and Switch</h2>
+            <h2 className='section-title mt-0'>What are you waiting for?</h2>
             <p className='section-paragraph'>
-              Lorem ipsum is common placeholder text used to demonstrate the
-              graphic elements of a document or visual presentation.
+              Search for a specific games you desire on the platform you love
+              the most.
             </p>
             <div className='cta-cta'>
               <Bar />

@@ -1,1 +1,20 @@
-<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path fill-opacity=".64" fill="#93F4FE" d="M0 0h24v48H0z"/><path fill-opacity=".64" fill="#FFCF7B" d="M28 0h20v20H28z"/><path d="M14 9v4h20V9a1 1 0 0 0-1-1H15a1 1 0 0 0-1 1z" fill="#7C85E1"/><path d="M39 15H9a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h3V23h24v10h3a1 1 0 0 0 1-1V16a1 1 0 0 0-1-1zM20 40v-6h-6z" fill="#535FD7"/><path d="M14 25v7h7a1 1 0 0 1 1 1v7h11a1 1 0 0 0 1-1V25H14z" fill="#7C85E1"/></g></svg>
+<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="602" width="802" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <g id="svg_1" fill-rule="evenodd" fill="none">
+   <path id="svg_2" d="m-0.18182,-0.28142l24,0l0,48l-24,0l0,-48z" fill="#93F4FE" fill-opacity="0.64"/>
+   <path id="svg_3" d="m27.88821,0.21008l20,0l0,20l-20,0l0,-20z" fill="#FFCF7B" fill-opacity="0.64"/>
+   <path stroke="null" id="svg_4" fill="#7C85E1" d="m15.48281,7.61818l0,5.74545l16.18181,0l0,-5.74545a0.80909,1.43636 0 0 0 -0.80909,-1.43636l-14.56363,0a0.80909,1.43636 0 0 0 -0.80909,1.43636z"/>
+   <path stroke="null" id="svg_5" fill="#535FD7" d="m38.85994,15.25185l-30,0a1,1.00389 0 0 0 -1,1.00389l0,16.06225a1,1.00389 0 0 0 1,1.00389l3,0l0,-10.0389l24,0l0,10.0389l3,0a1,1.00389 0 0 0 1,-1.00389l0,-16.06225a1,1.00389 0 0 0 -1,-1.00389z"/>
+   <line stroke="null" stroke-linecap="null" stroke-linejoin="null" id="svg_7" y2="15.66528" x2="23.69455" y1="14.39255" x1="23.33091" fill-opacity="null" stroke-opacity="null" stroke-width="null" fill="none"/>
+   <path stroke="null" transform="rotate(-180 23.552927017211914,13.8658447265625) " id="svg_10" fill="#7C85E1" d="m22.08295,14.72769l0,-2.29825l2.93995,0l0,2.29825a0.147,-0.57456 0 0 0 -0.147,0.57457l-2.64596,0a0.147,-0.57456 0 0 0 -0.147,-0.57457z"/>
+   <ellipse transform="rotate(-3.3664588928222656 38.7854614257813,58.57437133789067) " stroke="#ffffff" ry="0.18182" id="svg_12" cy="58.57437" cx="38.78546" fill-opacity="null" stroke-width="null" fill="#7C85E1"/>
+   <ellipse stroke="#ffffff" ry="0.33912" rx="0.29516" id="svg_13" cy="18.228" cx="12.26351" stroke-width="null" fill="#ffffff"/>
+  </g>
+ </g>
+</svg>

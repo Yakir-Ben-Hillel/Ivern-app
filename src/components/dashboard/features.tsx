@@ -12,8 +12,7 @@ const Features: React.FC = () => {
             <div className='container-sm'>
               <h2 className='section-title mt-0'>Ivern</h2>
               <p className='section-paragraph'>
-                Bro ipsum dolor sit amet wacky bowl switch, dope doodle hot
-                dogging back country doin 420.
+                The video games thrift shop at the touch of your hand.
               </p>
               {!isMobile() && (
                 <div className='features-image'>
@@ -44,28 +43,6 @@ const Features: React.FC = () => {
                 <div className='feature-icon'>
                   <Svg
                     className='asset-light'
-                    src={require('./dist/images/feature-01-light.svg')}
-                  />
-                  <Svg
-                    className='asset-dark'
-                    src={require('./dist/images/feature-01-dark.svg')}
-                  />
-                </div>
-                <div className='feature-content'>
-                  <h3 className='feature-title mt-0'>Discover</h3>
-                  <p className='text-sm mb-0'>
-                    Lorem ipsum dolor sit amet, consecte adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua
-                    dui.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className='feature is-revealing'>
-              <div className='feature-inner'>
-                <div className='feature-icon'>
-                  <Svg
-                    className='asset-light'
                     src={require('./dist/images/feature-02-light.svg')}
                   />
                   <Svg
@@ -76,9 +53,8 @@ const Features: React.FC = () => {
                 <div className='feature-content'>
                   <h3 className='feature-title mt-0'>Discover</h3>
                   <p className='text-sm mb-0'>
-                    Lorem ipsum dolor sit amet, consecte adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua
-                    dui.
+                    Discover new games in a beautiful responsive UI thrift shop
+                    made for the best experience possible.
                   </p>
                 </div>
               </div>
@@ -88,19 +64,14 @@ const Features: React.FC = () => {
                 <div className='feature-icon'>
                   <Svg
                     className='asset-light'
-                    src={require('./dist/images/feature-03-light.svg')}
-                  />
-                  <Svg
-                    className='asset-dark'
-                    src={require('./dist/images/feature-03-dark.svg')}
+                    src={require('./dist/images/feature-01-light.svg')}
                   />
                 </div>
                 <div className='feature-content'>
-                  <h3 className='feature-title mt-0'>Discover</h3>
+                  <h3 className='feature-title mt-0'>Save up</h3>
                   <p className='text-sm mb-0'>
-                    Lorem ipsum dolor sit amet, consecte adipiscing elit, sed do
-                    eiusmod tempor incididunt ut labore et dolore magna aliqua
-                    dui.
+                    The money you spent on a game doesn't waste after you
+                    finished it, enjoy new games while saving up in the process.
                   </p>
                 </div>
               </div>
