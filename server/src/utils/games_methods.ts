@@ -18,40 +18,43 @@ export const postAllGames = async (req, res) => {
       });
       if (doc.data.length !== 0) {
         doc.data.forEach(async (game) => {
-          let artwork: number | string | null = null;
-          if (game.artworks) {
-            artwork = game.artworks[game.artworks.length - 1];
+          const resGame = await database.doc(`/games/${game.id}`).get();
+          if (!resGame.exists) {
+            let artwork: number | string | null = null;
+            if (game.artworks) {
+              artwork = game.artworks[game.artworks.length - 1];
+            }
+            const image = await axios({
+              //Getting cover url and making it logo_med.
+              url: 'https://api-v3.igdb.com/covers',
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'user-key': IGDB_API_KEY,
+              },
+              data: `fields url;where id=${game.cover};`,
+            });
+            const cover: string =
+              'https://' +
+              image.data[0].url.replace('thumb', 'logo_med').substring(2);
+            const platforms: string[] = [];
+            game.platforms.forEach((platform: number) => {
+              if (platform === 48) platforms.push('playstation');
+              else if (platform === 49) platforms.push('xbox');
+              else if (platform === 160) platforms.push('switch');
+            });
+            const savedGame = {
+              id: game.id,
+              name: game.name,
+              slug: game.slug,
+              popularity: game.popularity,
+              rating: game.rating,
+              cover,
+              platforms,
+              artwork,
+            };
+            await database.collection('/games').doc().set(savedGame);
           }
-          const image = await axios({
-            //Getting cover url and making it logo_med.
-            url: 'https://api-v3.igdb.com/covers',
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'user-key': IGDB_API_KEY,
-            },
-            data: `fields url;where id=${game.cover};`,
-          });
-          const cover: string =
-            'https://' +
-            image.data[0].url.replace('thumb', 'logo_med').substring(2);
-          const platforms: string[] = [];
-          game.platforms.forEach((platform: number) => {
-            if (platform === 48) platforms.push('playstation');
-            else if (platform === 49) platforms.push('xbox');
-            else if (platform === 160) platforms.push('switch');
-          });
-          const savedGame = {
-            id: game.id,
-            name: game.name,
-            slug: game.slug,
-            popularity: game.popularity,
-            rating: game.rating,
-            cover,
-            platforms,
-            artwork,
-          };
-          await database.collection('/games').doc().set(savedGame);
         });
         offset += 500;
       } else stop = true;

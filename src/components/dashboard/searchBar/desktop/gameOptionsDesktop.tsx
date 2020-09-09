@@ -42,7 +42,7 @@ const GamesOptions: React.FC<IGameOptions> = ({
       renderOption={(option) => (
         <React.Fragment>
           <img
-            src={'https://' + option.cover}
+            src={option.cover}
             style={{
               width: '45px',
               marginRight: '7px',

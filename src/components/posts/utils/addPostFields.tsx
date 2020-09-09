@@ -83,7 +83,7 @@ const AddPostFields: React.FC<IProps> = ({
           renderOption={(option) => (
             <React.Fragment>
               <img
-                src={'https://' + option.cover}
+                src={option.cover}
                 alt=''
                 style={{
                   width: '45px',
