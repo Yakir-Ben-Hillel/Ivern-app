@@ -1,7 +1,7 @@
 import { FBAuth, login, signup, signupWithGoogle } from './utils/sign_methods';
 import { getUser, userUpdate } from './utils/user_methods';
 import {
-  postAllPS4games,
+  postAllGames,
   searchUnfoundGame,
   searchGameInDatabase,
   addGameToDatabase,
@@ -42,7 +42,7 @@ app.post('/users/image', FBAuth, changeProfileImage);
 app.get('/games', getAllGames);
 app.get('/games/:gameName', searchGameInDatabase);
 app.get('/games/api/:gameName', searchUnfoundGame);
-app.post('/games', postAllPS4games);
+app.post('/games', postAllGames);
 app.post('/games/artworks', updateArtworks);
 app.post('/games/add', addGameToDatabase);
 app.post('/games/update', updateGamesFunc);

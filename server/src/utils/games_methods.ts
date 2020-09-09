@@ -2,62 +2,60 @@ import { IGDB_API_KEY } from '../firebase';
 import admin = require('firebase-admin');
 const axios = require('axios');
 const database = admin.firestore();
-export const postAllPS4games = async (req, res) => {
+export const postAllGames = async (req, res) => {
   try {
-    const doc = await axios({
-      url: 'https://api-v3.igdb.com/games',
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'user-key': IGDB_API_KEY,
-      },
-      data:
-        'fields name,cover,artworks,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
-    });
-    console.log(doc.data.length);
-    doc.data.forEach(async (game) => {
-      let artwork: number | string | null = null;
-      if (game.artworks) {
-        artwork = game.artworks[game.artworks.length - 1];
-      }
-      const image = await axios({
-        //Getting cover url and making it logo_med.
-        url: 'https://api-v3.igdb.com/covers',
+    let offset = 0;
+    let stop = false;
+    while (!stop) {
+      const doc = await axios({
+        url: 'https://api-v3.igdb.com/games',
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'user-key': IGDB_API_KEY,
         },
-        data: `fields url;where id=${game.cover};`,
+        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 500;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
       });
-      const cover: string =
-        'https://' +
-        image.data[0].url.replace('thumb', 'logo_med').substring(2);
-      // if (artwork) {
-      //   const artworkDoc = await axios({
-      //     //Getting cover url and making it logo_med.
-      //     url: 'https://api-v3.igdb.com/artworks',
-      //     method: 'POST',
-      //     headers: {
-      //       Accept: 'application/json',
-      //       'user-key': IGDB_API_KEY,
-      //     },
-      //     data: `fields image_id;where id=${artwork};`,
-      //   });
-      //   artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data[0].image_id}.jpg`;
-      // }
-
-      const savedGame = {
-        id: game.id,
-        name: game.name,
-        slug: game.slug,
-        popularity: game.popularity,
-        rating: game.rating,
-        cover: cover,
-        artwork: artwork,
-      };
-      await database.collection('/games').doc().set(savedGame);
-    });
+      if (doc.data.length !== 0) {
+        doc.data.forEach(async (game) => {
+          let artwork: number | string | null = null;
+          if (game.artworks) {
+            artwork = game.artworks[game.artworks.length - 1];
+          }
+          const image = await axios({
+            //Getting cover url and making it logo_med.
+            url: 'https://api-v3.igdb.com/covers',
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'user-key': IGDB_API_KEY,
+            },
+            data: `fields url;where id=${game.cover};`,
+          });
+          const cover: string =
+            'https://' +
+            image.data[0].url.replace('thumb', 'logo_med').substring(2);
+          const platforms: string[] = [];
+          game.platforms.forEach((platform: number) => {
+            if (platform === 48) platforms.push('playstation');
+            else if (platform === 49) platforms.push('xbox');
+            else if (platform === 160) platforms.push('switch');
+          });
+          const savedGame = {
+            id: game.id,
+            name: game.name,
+            slug: game.slug,
+            popularity: game.popularity,
+            rating: game.rating,
+            cover,
+            platforms,
+            artwork,
+          };
+          await database.collection('/games').doc().set(savedGame);
+        });
+        offset += 500;
+      } else stop = true;
+    }
     return res.status(200).json({ message: 'Games added successfully' });
   } catch (error) {
     console.log(error);
@@ -154,67 +152,68 @@ export const addGameToDatabase = async (req, res) => {
 };
 export const updateGames = async (context) => {
   try {
-    const doc = await axios({
-      url: 'https://api-v3.igdb.com/games',
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'user-key': IGDB_API_KEY,
-      },
-      data:
-        'fields name,artworks,cover,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
-    });
-    const batch = database.batch();
+    let offset = 0;
+    let stop = false;
     let counter = 0;
-    doc.data.forEach(async (game) => {
-      let artwork: number | string | null = null;
-      if (game.artworks) {
-        artwork = game.artworks[game.artworks.length - 1];
-      }
+    const batch = database.batch();
+    while (!stop) {
+      const doc = await axios({
+        url: 'https://api-v3.igdb.com/games',
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'user-key': IGDB_API_KEY,
+        },
+        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 500;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
+      });
+      if (doc.data.length > 0) {
+        // eslint-disable-next-line no-loop-func
+        doc.data.forEach(async (game) => {
+          let artwork: number | string | null = null;
+          if (game.artworks) {
+            artwork = game.artworks[game.artworks.length - 1];
+          }
+          if (artwork) {
+            const artworkDoc = await axios({
+              //Getting cover url and making it logo_med.
+              url: 'https://api-v3.igdb.com/artworks',
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'user-key': IGDB_API_KEY,
+              },
+              data: `fields image_id;where id=${artwork};`,
+            });
+            artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data[0].image_id}.jpg`;
+          }
+          const platforms: string[] = [];
+          game.platforms.forEach((platform: number) => {
+            if (platform === 48) platforms.push('playstation');
+            else if (platform === 49) platforms.push('xbox');
+            else if (platform === 160) platforms.push('switch');
+          });
 
-      // const image = await axios({
-      //   //Getting cover url and making it logo_med.
-      //   url: 'https://api-v3.igdb.com/covers',
-      //   method: 'POST',
-      //   headers: {
-      //     Accept: 'application/json',
-      //     'user-key': IGDB_API_KEY,
-      //   },
-      //   data: `fields url;where id=${game.cover};`,
-      // });
-      // const cover: string = image.data[0].url
-      //   .replace('thumb', 'logo_med')
-      //   .substring(2);
-      if (artwork) {
-        const artworkDoc = await axios({
-          //Getting cover url and making it logo_med.
-          url: 'https://api-v3.igdb.com/artworks',
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'user-key': IGDB_API_KEY,
-          },
-          data: `fields image_id;where id=${artwork};`,
+          const savedGame = {
+            id: game.id,
+            name: game.name,
+            slug: game.slug,
+            popularity: game.popularity,
+            rating: game.rating,
+            artwork,
+            platforms,
+          };
+
+          const gameDoc = await database.doc(`/games/${game.id}`).get();
+          if (gameDoc.exists)
+            batch.update(database.doc(`/games/${game.id}`), savedGame);
+          else {
+            batch.set(database.collection('/games').doc(), savedGame);
+            counter++;
+          }
         });
-        artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data[0].image_id}.jpg`;
-      }
-      const savedGame = {
-        id: game.id,
-        name: game.name,
-        slug: game.slug,
-        popularity: game.popularity,
-        rating: game.rating,
-        artwork: artwork,
-      };
-
-      const gameDoc = await database.doc(`/games/${game.id}`).get();
-      if (gameDoc.exists)
-        batch.update(database.doc(`/games/${game.id}`), savedGame);
-      else {
-        batch.set(database.collection('/games').doc(), savedGame);
-        counter++;
-      }
-    });
+        offset += 500;
+      } else stop = true;
+    }
     console.log('Games updated successfully, ' + counter + ' games added.');
     return await batch.commit();
   } catch (error) {
@@ -255,67 +254,81 @@ export const updateArtworks = async (req, res) => {
 };
 export const updateGamesFunc = async (req, res) => {
   try {
-    const doc = await axios({
-      url: 'https://api-v3.igdb.com/games',
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'user-key': IGDB_API_KEY,
-      },
-      data:
-        'fields name,cover,artworks,slug,popularity,rating;sort rating_count desc;limit 500;where (category = 0)&(rating_count>=30)& ((platforms = [48,6])|(platforms = 48));',
-    });
-    doc.data.forEach(async (game) => {
-      let artwork: number | string | null = null;
-      if (game.artworks) {
-        artwork = game.artworks[game.artworks.length - 1];
-      }
-      const image = await axios({
-        //Getting cover url and making it logo_med.
-        url: 'https://api-v3.igdb.com/covers',
+    let offset = 0;
+    let stop = false;
+    while (!stop) {
+      const doc = await axios({
+        url: 'https://api-v3.igdb.com/games',
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'user-key': IGDB_API_KEY,
         },
-        data: `fields url;where id=${game.cover};`,
+        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 500;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
       });
-      const cover: string = image.data[0].url
-        .replace('thumb', 'logo_med')
-        .substring(2);
-      if (artwork) {
-        const artworkDoc = await axios({
-          url: 'https://api-v3.igdb.com/artworks',
-          method: 'POST',
-          headers: {
-            Accept: 'application/json',
-            'user-key': IGDB_API_KEY,
-          },
-          data: `fields image_id;where id=${artwork};`,
-        });
-        artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data[0].image_id}.jpg`;
-      }
-      const savedGame = {
-        id: game.id,
-        name: game.name,
-        slug: game.slug,
-        popularity: game.popularity,
-        rating: game.rating,
-        cover: cover,
-        artwork: artwork,
-      };
+      if (doc.data.length > 0) {
+        doc.data.forEach(async (game) => {
+          let artwork: number | string | null = null;
+          if (game.artworks) {
+            artwork = game.artworks[game.artworks.length - 1];
+          }
+          const platforms: string[] = [];
+          game.platforms.forEach((platform: number) => {
+            if (platform === 48) platforms.push('playstation');
+            else if (platform === 49) platforms.push('xbox');
+            else if (platform === 160) platforms.push('switch');
+          });
+          const image = await axios({
+            //Getting cover url and making it logo_med.
+            url: 'https://api-v3.igdb.com/covers',
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'user-key': IGDB_API_KEY,
+            },
+            data: `fields url;where id=${game.cover};`,
+          });
+          const cover: string =
+            'https://' +
+            image.data[0].url.replace('thumb', 'logo_med').substring(2);
+          if (artwork) {
+            const artworkDoc = await axios({
+              url: 'https://api-v3.igdb.com/artworks',
+              method: 'POST',
+              headers: {
+                Accept: 'application/json',
+                'user-key': IGDB_API_KEY,
+              },
+              data: `fields image_id;where id=${artwork};`,
+            });
+            artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data[0].image_id}.jpg`;
+          }
+          const savedGame = {
+            id: game.id,
+            name: game.name,
+            slug: game.slug,
+            popularity: game.popularity,
+            rating: game.rating,
+            cover: cover,
+            artwork: artwork,
+          };
 
-      const gameDoc = await database
-        .collection('/games')
-        .where('id', '==', game.id)
-        .limit(1)
-        .get();
-      if (!gameDoc.empty) {
-        await database.doc(`/games/${gameDoc.docs[0].id}`).update(savedGame);
-      } else {
-        await database.collection('/games').doc().set(savedGame);
-      }
-    });
+          const gameDoc = await database
+            .collection('/games')
+            .where('id', '==', game.id)
+            .limit(1)
+            .get();
+          if (!gameDoc.empty) {
+            await database
+              .doc(`/games/${gameDoc.docs[0].id}`)
+              .update(savedGame);
+          } else {
+            await database.collection('/games').doc().set(savedGame);
+          }
+        });
+        offset += 500;
+      } else stop = true;
+    }
     return res
       .status(200)
       .json({ message: 'update has been made successfully.' });
