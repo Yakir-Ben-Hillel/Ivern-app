@@ -38,18 +38,18 @@ export const login = async (req, res) => {
       .auth()
       .signInWithEmailAndPassword(user.email, user.password);
     const token = await data.user?.getIdToken();
-    return res.json({ token });
+    return res.status(200).json({ token });
   } catch (error) {
     console.log(error);
     if (error.code === 'auth/wrong-password') {
-      return res.status(403).json({ password: 'The password is incorrect.' });
+      return res.status(403).json({ error: 'The password is incorrect.' });
     } else if (error.code === 'auth/user-not-found') {
       return res
         .status(403)
-        .json({ email: 'The user has not been found, please signup.' });
+        .json({ error: 'The user has not been found, please signup.' });
     } else if (error.code === 'auth/invalid-email') {
-      return res.status(400).json({ email: 'The email address is invalid.' });
-    } else return res.status(500).json({ general: 'Something went wrong!' });
+      return res.status(400).json({ error: 'The email address is invalid.' });
+    } else return res.status(500).json({ error: 'Something went wrong!' });
   }
 };
 export const signupWithGoogle = async (req, res) => {
@@ -84,12 +84,11 @@ export const signup = async (req, res) => {
   const newUser = {
     email: req.body.email,
     password: req.body.password,
-    confirmPassword: req.body.confirmPassword,
     createdAt: admin.firestore.Timestamp.fromDate(new Date()),
   };
   const doc = await database.doc(`/users/${newUser.email}`).get();
   if (doc.exists)
-    return res.status(400).json({ handle: 'This user already exists' });
+    return res.status(400).json({ error: 'This user already exists' });
   try {
     const data = await firebase
       .auth()
@@ -99,6 +98,7 @@ export const signup = async (req, res) => {
     const userCredentials = {
       email: newUser.email,
       createdAt: newUser.createdAt,
+      isNew: true,
       imageURL:
         'https://firebasestorage.googleapis.com/v0/b/ivern-app.appspot.com/o/no-img.png?alt=media',
       provider: 'EmailAndPassword',
@@ -108,18 +108,11 @@ export const signup = async (req, res) => {
     return res.status(201).json({ token });
   } catch (error) {
     console.error(error);
-    if (error.code === 'auth/email-already-in-use') {
-      return res.status(400).json({ email: 'Email is already is use.' });
-    } else if (error.code === 'auth/invalid-email') {
-      return res.status(400).json({ email: 'The email address is invalid.' });
-    } else if (error.code === 'auth/weak-password') {
-      return res
-        .status(400)
-        .json({ password: 'Password should be at least 6 characters' });
-    } else {
+    if (error.code) return res.status(400).json({ error: error.code });
+    else {
       return res
         .status(500)
-        .json({ general: 'Something went wrong, please try again.' });
+        .json({ error: 'Something went wrong, please try again.' });
     }
   }
 };

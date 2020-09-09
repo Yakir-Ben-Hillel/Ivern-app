@@ -10,7 +10,7 @@ import Menu from '@material-ui/core/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { Button, Avatar, Tooltip } from '@material-ui/core';
+import { Button, Avatar, Tooltip, ButtonBase } from '@material-ui/core';
 import {
   SonyPlaystation,
   MicrosoftXbox,
@@ -192,10 +192,12 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
     <div className={classes.grow}>
       <AppBar position='static' elevation={0} color='transparent'>
         <Toolbar variant='dense'>
-          <Svg
-            className='header-logo-image asset-light'
-            src={require('../components/dashboard/dist/images/logo-light.svg')}
-          />
+          <ButtonBase onClick={() => history.push('/')}>
+            <Svg
+              className='header-logo-image asset-light'
+              src={require('../components/dashboard/dist/images/logo-light.svg')}
+            />
+          </ButtonBase>
           <Typography className={classes.title} color='primary' variant='h5'>
             {'Ivern'}
           </Typography>

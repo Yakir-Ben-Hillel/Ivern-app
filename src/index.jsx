@@ -21,7 +21,9 @@ const renderApp = () => {
   }
 };
 firebase.auth().onAuthStateChanged((user) => {
-  if (user) store.dispatch(startSetUser(user.uid));
-  store.dispatch(startSetPosts());
+  if (user) {
+    store.dispatch(startSetUser(user.uid));
+    store.dispatch(startSetPosts());
+  }
   renderApp();
 });

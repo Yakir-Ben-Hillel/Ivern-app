@@ -89,6 +89,7 @@ const Login: React.FC = () => {
     firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
+      .then(() => history.goBack())
       .catch((error) => {
         whichMessageToShow(error.code);
       });

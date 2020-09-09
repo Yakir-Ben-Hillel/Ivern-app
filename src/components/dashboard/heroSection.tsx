@@ -31,7 +31,7 @@ const HeroSection: React.FC = () => {
               <a className='button button-primary' href='/search'>
                 Explore
               </a>
-              <div className='lights-toggle'>
+              {/* <div className='lights-toggle'>
                 <input
                   onChange={() => {
                     if (lights) {
@@ -58,7 +58,7 @@ const HeroSection: React.FC = () => {
                     </span>
                   </span>
                 </label>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className='hero-media'>

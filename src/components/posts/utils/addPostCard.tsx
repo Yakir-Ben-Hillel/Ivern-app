@@ -5,9 +5,7 @@ import {
   CardContent,
   CircularProgress,
   Typography,
-  Button,
 } from '@material-ui/core';
-import SaveIcon from '@material-ui/icons/Save';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
 import { useStyles } from '../postsManager';
 import Alert from '@material-ui/lab/Alert';
@@ -79,15 +77,6 @@ const AddPostCard: React.FC<IProps> = ({ imageURL, setImageURL }) => {
           The game cover will be used if a picture isn't provided.
         </Alert>
       </Card>
-      <Button
-        type="submit"
-        color="default"
-        variant="contained"
-        className={classes.button}
-      >
-        <SaveIcon className={classes.leftIcon} />
-        Save
-      </Button>
     </div>
   );
 };

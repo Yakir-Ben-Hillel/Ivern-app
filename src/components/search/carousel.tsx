@@ -114,7 +114,7 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
             <Typography variant='h6'>
               {userPosts.length > 0
                 ? 'More from the Seller'
-                : 'Seems like he is still playing his other games'}
+                : 'No other posts to show'}
             </Typography>
           )}
           {userPosts.length > 0 ? (

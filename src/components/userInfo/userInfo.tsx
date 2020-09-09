@@ -16,7 +16,6 @@ import {
   TextField,
 } from '@material-ui/core';
 import { User, AppState } from '../../@types/types';
-import { isNumber } from 'util';
 import { useHistory } from 'react-router';
 import { Skeleton } from '@material-ui/lab';
 import { UpdateUserAction } from '../../@types/action-types';
@@ -75,6 +74,12 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
     event.preventDefault();
     if (displayName === '' || phoneNumber === '')
       setErrorMessage('Please fill the required fields.');
+    if (
+      !phoneNumber.startsWith('05') ||
+      phoneNumber.length < 10 ||
+      (phoneNumber[3] === '-' && phoneNumber.length < 11)
+    )
+      setErrorMessage('Please insert a valid Phone Number.');
     else {
       if (phoneNumber[3] !== '-')
         setPhoneNumber(phoneNumber?.slice(0, 3) + '-' + phoneNumber?.slice(3));
@@ -108,10 +113,10 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
   return (
     <div>
       <PrimarySearchBar />
-      <div className="is-boxed has-animations">
-        <div className="body-wrap boxed-container">
+      <div className='is-boxed has-animations'>
+        <div className='body-wrap boxed-container'>
           <div className={classes.root}>
-            <Container maxWidth="md">
+            <Container maxWidth='md'>
               <Grid container spacing={3}>
                 <Grid item xs>
                   <Card className={classes.paper}>
@@ -120,29 +125,29 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                         <div>
                           <Skeleton
                             className={classes.avatar}
-                            variant="circle"
+                            variant='circle'
                           />
                           <Skeleton
-                            variant="text"
-                            width="20%"
+                            variant='text'
+                            width='20%'
                             style={{ margin: 'auto' }}
                           />
                         </div>
                       ) : (
                         <div>
                           <Avatar className={classes.avatar} src={imageURL} />
-                          <Typography variant="h6">
+                          <Typography variant='h6'>
                             {user?.displayName}
                           </Typography>
                           <input
-                            accept="image/*"
+                            accept='image/*'
                             className={classes.input}
-                            id="contained-button-file"
-                            type="file"
+                            id='contained-button-file'
+                            type='file'
                             onChange={imageUpload}
                           />
-                          <label htmlFor="contained-button-file">
-                            <Button color="primary" component="span">
+                          <label htmlFor='contained-button-file'>
+                            <Button color='primary' component='span'>
                               Upload Image
                             </Button>
                           </label>
@@ -155,7 +160,7 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                               <div key={index}>
                                 <Skeleton
                                   className={classes.skeleton}
-                                  variant="rect"
+                                  variant='rect'
                                   width={700}
                                   height={50}
                                 />
@@ -166,61 +171,57 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                       ) : (
                         <form onSubmit={onSubmit}>
                           <TextField
-                            variant="outlined"
-                            margin="normal"
+                            variant='outlined'
+                            margin='normal'
                             fullWidth
-                            id="displayName"
+                            id='displayName'
                             disabled
                             value={user?.email}
-                            label="Email"
-                            name="email"
+                            label='Email'
+                            name='email'
                           />
                           <TextField
-                            variant="outlined"
-                            margin="normal"
+                            variant='outlined'
+                            margin='normal'
                             fullWidth
-                            id="displayName"
+                            id='displayName'
                             value={displayName}
                             onChange={(
                               e: React.ChangeEvent<HTMLInputElement>
                             ) => setDisplayName(e.target.value)}
-                            label="Display Name"
-                            name="displayName"
-                            autoComplete="DisplayName"
+                            label='Display Name'
+                            name='displayName'
+                            autoComplete='DisplayName'
                           />
                           <TextField
-                            variant="outlined"
-                            margin="normal"
-                            placeholder="05 -"
+                            variant='outlined'
+                            margin='normal'
+                            placeholder='05 -'
                             fullWidth
-                            itemType="number"
-                            name="Phone Number"
-                            label="Phone Number"
-                            type="Phone Number"
-                            id="phone"
+                            itemType='number'
+                            name='Phone Number'
+                            label='Phone Number'
+                            type='Phone Number'
+                            id='phone'
                             value={phoneNumber}
                             onChange={(
                               e: React.ChangeEvent<HTMLInputElement>
                             ) => {
-                              if (
-                                (isNumber(e.target.value) ||
-                                  e.target.value === '') &&
-                                e.target.value.length <= 10
-                              )
+                              if (e.target.value.length <= 10)
                                 setPhoneNumber(e.target.value);
                             }}
-                            autoComplete="Phone Number"
+                            autoComplete='Phone Number'
                           />
                           {errorMessage && (
-                            <Typography color="secondary">
+                            <Typography color='secondary'>
                               {errorMessage}
                             </Typography>
                           )}
                           <Button
-                            type="submit"
+                            type='submit'
                             fullWidth
-                            variant="contained"
-                            color="primary"
+                            variant='contained'
+                            color='primary'
                           >
                             Save
                           </Button>

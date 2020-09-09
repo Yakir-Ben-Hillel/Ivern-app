@@ -1,17 +1,19 @@
 import React from 'react';
-import { Grid, Card, CardContent, Typography } from '@material-ui/core';
+import { Grid, Card, CardContent, Typography, Button } from '@material-ui/core';
 import AddPostCard from './addPostCard';
 import axios from 'axios';
-import { Game, Area, Post, AppState } from '../../../@types/types';
+import { Game, Area, Post, AppState, User } from '../../../@types/types';
 import AddPostFields from './addPostFields';
 import {
   startAddPost,
   startUpdatePost,
 } from '../../../redux/actions/userPosts';
+import SaveIcon from '@material-ui/icons/Save';
 import { useStyles } from '../postsManager';
 import { connect } from 'react-redux';
 import { AddPostAction, UpdatePostAction } from '../../../@types/action-types';
 interface IProps {
+  user: User;
   selectedPost: Post | undefined;
   postsList: Post[];
   startUpdatePost: (
@@ -47,6 +49,7 @@ const PostControl: React.FC<IProps> = ({
   startAddPost,
   startUpdatePost,
   selectedPost,
+  user,
   setSelectedPost,
   setEdit,
   postsList,
@@ -88,32 +91,33 @@ const PostControl: React.FC<IProps> = ({
       if (!area) setAreaError(true);
       if (description === '') setDescriptionError(true);
       if (price === '') setPriceError(true);
-      if (selectedPost) {
-        if ((game || edit) && area && description !== '' && price !== '') {
-          if (!edit && game) {
-            const addPostData = {
-              gameName: game.name,
-              gid: game.id.toString(),
-              artwork: game.artwork,
-              cover: imageURL !== '' ? imageURL : `https://${game.cover}`,
-              area: area.id.toString(),
-              sell: sellable,
-              exchange: swappable,
-              description,
-              platform,
-              price,
-            };
-            await startAddPost(addPostData);
-          } else {
-            const updatePostData = {
-              area: area.id.toString(),
-              exchange: swappable,
-              sell: sellable,
-              cover: imageURL,
-              price,
-              description,
-              platform,
-            };
+      if ((game || edit) && area && description !== '' && price !== '') {
+        if (!edit && game) {
+          const addPostData = {
+            gameName: game.name,
+            gid: game.id.toString(),
+            artwork: game.artwork,
+            cover: imageURL !== '' ? imageURL : `https://${game.cover}`,
+            area: area.id.toString(),
+            sell: sellable,
+            exchange: swappable,
+            description,
+            platform,
+            price,
+          };
+          const res = await startAddPost(addPostData);
+          setSelectedPost(res.post);
+        } else {
+          const updatePostData = {
+            area: area.id.toString(),
+            exchange: swappable,
+            sell: sellable,
+            cover: imageURL,
+            price,
+            description,
+            platform,
+          };
+          if (selectedPost) {
             const res = await startUpdatePost(selectedPost.pid, updatePostData);
             setSelectedPost(res.post);
             setEdit(false);
@@ -150,9 +154,9 @@ const PostControl: React.FC<IProps> = ({
       <Card className={classes.paper}>
         <CardContent className={classes.card}>
           <form onSubmit={onSubmit}>
-            <Grid container alignItems="center" spacing={3}>
+            <Grid container alignItems='center' spacing={3}>
               <Grid item xs>
-                <Typography className={classes.title} variant="h5">
+                <Typography className={classes.title} variant='h5'>
                   {edit ? 'Edit Post' : 'Upload Post'}
                 </Typography>
                 <AddPostFields
@@ -181,6 +185,27 @@ const PostControl: React.FC<IProps> = ({
               </Grid>
               <Grid item xs>
                 <AddPostCard imageURL={imageURL} setImageURL={setImageURL} />
+                <Grid container alignItems='flex-end' direction='column'>
+                  <Grid item xs>
+                    <Button
+                      type='submit'
+                      disabled={user.isNew}
+                      color='default'
+                      variant='contained'
+                      className={classes.button}
+                    >
+                      <SaveIcon className={classes.leftIcon} />
+                      Save
+                    </Button>
+                  </Grid>
+                  {user.isNew && (
+                    <Grid item xs>
+                      <Typography>
+                        {'Update user profile before uploading a post.'}
+                      </Typography>
+                    </Grid>
+                  )}
+                </Grid>
               </Grid>
             </Grid>
           </form>

@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import { firebase } from '../../firebase';
 import { useHistory } from 'react-router';
+import axios from 'axios';
 import React from 'react';
 function Copyright() {
   return (
@@ -53,28 +54,29 @@ export default function SignUp() {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [errorMessage, setErrorMessage] = React.useState('');
-  const whichMessageToShow = (errorCode: string) => {
-    switch (errorCode) {
-      case 'auth/invalid-email':
-        setErrorMessage('The Email address is invalid.');
-        break;
-      case 'auth/weak-password':
-        setErrorMessage('Password should be at least 6 characters.');
-        break;
-    }
-  };
 
-  const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    firebase
-      .auth()
-      .createUserWithEmailAndPassword(email, password)
-      .catch((error) => {
-        console.log(error.code);
-        console.log(error.message);
-        whichMessageToShow(error.code);
-      });
-    history.goBack();
+    try {
+      const signupRes = await axios.post(
+        'https://europe-west3-ivern-app.cloudfunctions.net/api/signup',
+        {
+          email,
+          password,
+          confirmPassword: password,
+        }
+      );
+      console.log(signupRes);
+      if (signupRes.status === 201) {
+        await firebase
+          .auth()
+          .signInWithEmailAndPassword(email, password)
+          .catch((error) => setErrorMessage(error));
+        history.replace('login/confirm');
+      } else setErrorMessage(signupRes.data.error);
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
     <Container component='main' maxWidth='xs'>
@@ -164,7 +166,7 @@ export default function SignUp() {
           </Button>
           <Grid container justify='flex-end'>
             <Grid item>
-              <Link href='/' variant='body2'>
+              <Link href='/login' variant='body2'>
                 Already have an account? Sign in
               </Link>
             </Grid>

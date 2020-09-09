@@ -38,9 +38,10 @@ export const addPost = async (request, res) => {
       return res.status(400).json({ error: 'Bad input.' });
     const doc = await database.collection('/posts').add(post);
     await database.doc(`/posts/${doc.id}`).update({ pid: doc.id });
+    const postData = (await database.doc(`/posts/${doc.id}`).get()).data();
     return res
       .status(200)
-      .json({ message: `Post ${doc.id} added successfully.`, data: post });
+      .json({ message: `Post ${doc.id} added successfully.`, data: postData });
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
