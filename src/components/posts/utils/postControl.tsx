@@ -1,5 +1,13 @@
 import React from 'react';
-import { Grid, Card, CardContent, Typography, Button } from '@material-ui/core';
+import {
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  IconButton,
+  Tooltip,
+} from '@material-ui/core';
 import AddPostCard from './addPostCard';
 import axios from 'axios';
 import { Game, Area, Post, AppState, User } from '../../../@types/types';
@@ -10,8 +18,10 @@ import {
 } from '../../../redux/actions/userPosts';
 import SaveIcon from '@material-ui/icons/Save';
 import { useStyles } from '../postsManager';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { connect } from 'react-redux';
 import { AddPostAction, UpdatePostAction } from '../../../@types/action-types';
+import { useHistory } from 'react-router-dom';
 interface IProps {
   user: User;
   selectedPost: Post | undefined;
@@ -84,6 +94,7 @@ const PostControl: React.FC<IProps> = ({
   }, [edit, selectedPost]);
   const gamesLoading = open && options.length === 0;
   const classes = useStyles();
+  const history = useHistory();
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
       event.preventDefault();
@@ -91,7 +102,13 @@ const PostControl: React.FC<IProps> = ({
       if (!area) setAreaError(true);
       if (description === '') setDescriptionError(true);
       if (price === '') setPriceError(true);
-      if ((game || edit) && area && description !== '' && price !== '') {
+      if (
+        (game || edit) &&
+        (swappable || sellable) &&
+        area &&
+        description !== '' &&
+        price !== ''
+      ) {
         if (!edit && game) {
           const addPostData = {
             gameName: game.name,
@@ -156,6 +173,14 @@ const PostControl: React.FC<IProps> = ({
           <form onSubmit={onSubmit}>
             <Grid container alignItems='center' spacing={3}>
               <Grid item xs>
+                <Tooltip arrow title='Click to go back'>
+                  <IconButton
+                    className={classes.backButton}
+                    onClick={() => history.goBack()}
+                  >
+                    <ArrowBackIcon />
+                  </IconButton>
+                </Tooltip>
                 <Typography className={classes.title} variant='h5'>
                   {edit ? 'Edit Post' : 'Upload Post'}
                 </Typography>

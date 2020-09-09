@@ -14,10 +14,13 @@ import {
   Container,
   Button,
   TextField,
+  Tooltip,
+  IconButton,
 } from '@material-ui/core';
 import { User, AppState } from '../../@types/types';
 import { useHistory } from 'react-router';
 import { Skeleton } from '@material-ui/lab';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import { UpdateUserAction } from '../../@types/action-types';
 import { startUpdateUser } from '../../redux/actions/userInfo';
 import { connect } from 'react-redux';
@@ -45,6 +48,12 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
         alignItems: 'center',
         textAlign: 'center',
         color: theme.palette.text.secondary,
+      },
+      backButton: {
+        display: 'flex',
+        position: 'relative',
+        right: '30px',
+        top: '-25px',
       },
       avatar: {
         width: theme.spacing(12),
@@ -121,6 +130,15 @@ const UserInfo: React.FC<IProps> = ({ user, startUpdateUser }) => {
                 <Grid item xs>
                   <Card className={classes.paper}>
                     <CardContent>
+                      <Tooltip arrow title='Click to go back'>
+                        <IconButton
+                          className={classes.backButton}
+                          onClick={() => history.goBack()}
+                        >
+                          <ArrowBackIcon />
+                        </IconButton>
+                      </Tooltip>
+
                       {loading ? (
                         <div>
                           <Skeleton

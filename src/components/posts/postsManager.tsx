@@ -56,6 +56,12 @@ export const useStyles = makeStyles((theme: Theme) =>
       margin: theme.spacing(1),
       marginBottom: theme.spacing(2),
     },
+    backButton: {
+      display: 'flex',
+      position: 'relative',
+      right: '30px',
+      top: '-25px',
+    },
     button: {
       margin: theme.spacing(1),
       marginTop: theme.spacing(2),
@@ -85,10 +91,10 @@ const PostManager: React.FC<IProps> = ({ posts, loading }) => {
         setSelectedPost={setSelectedPost}
         setEdit={setEdit}
       />
-      <div className="is-boxed has-animations">
-        <div className="body-wrap boxed-container">
+      <div className='is-boxed has-animations'>
+        <div className='body-wrap boxed-container'>
           <div className={classes.root}>
-            <Container maxWidth="lg">
+            <Container maxWidth='lg'>
               {selectedPost && !edit ? (
                 <PostView
                   selectedPost={selectedPost}

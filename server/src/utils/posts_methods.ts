@@ -99,6 +99,7 @@ export const getAllGamePosts = async (req, res) => {
     const posts = await database
       .collection('/posts')
       .where('gid', '==', req.params.gid)
+      .orderBy('createdAt', 'desc')
       .get();
     if (posts.empty)
       return res.status(404).json({ message: 'The game has no posts' });
@@ -124,6 +125,7 @@ export const getAllPlatformPosts = async (req, res) => {
     const posts = await database
       .collection('/posts')
       .where('platform', '==', platform)
+      .orderBy('createdAt', 'desc')
       .get();
     const data: any[] = [];
     posts.forEach((post) => data.push(post.data()));
@@ -138,6 +140,7 @@ export const getAllUserPosts = async (req, res) => {
     const posts = await database
       .collection('/posts')
       .where('uid', '==', req.params.uid)
+      .orderBy('createdAt', 'desc')
       .get();
     if (posts.empty)
       return res.status(404).json({ message: 'The user has no posts' });

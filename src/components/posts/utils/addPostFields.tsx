@@ -9,6 +9,9 @@ import {
   InputAdornment,
   FormControlLabel,
   Checkbox,
+  FormControl,
+  FormHelperText,
+  FormGroup,
 } from '@material-ui/core';
 import AreaOptions from '../../dashboard/searchBar/desktop/areaOptions';
 import PlatformSelect from '../../dashboard/searchBar/desktop/bootstrapInput';
@@ -60,6 +63,7 @@ const AddPostFields: React.FC<IProps> = ({
   priceError,
   descriptionError,
 }) => {
+  const checkboxesError = !swappable && !sellable;
   return (
     <div>
       {!edit && (
@@ -166,31 +170,38 @@ const AddPostFields: React.FC<IProps> = ({
         </Grid>
       </Grid>
       <Grid style={{ display: 'table' }} item xs>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={sellable}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setSellable(event.target.checked)
+        <FormControl error={checkboxesError}>
+          <FormGroup row>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={sellable}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setSellable(event.target.checked)
+                  }
+                  name='selling'
+                />
               }
-              name='selling'
+              label='Selling'
             />
-          }
-          label='Selling'
-        />
 
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={swappable}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                setSwappable(event.target.checked)
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={swappable}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    setSwappable(event.target.checked)
+                  }
+                  name='swapping'
+                />
               }
-              name='swapping'
+              label='Swapping'
             />
-          }
-          label='Swapping'
-        />
+          </FormGroup>
+          {checkboxesError && (
+            <FormHelperText>Must choose at least one option</FormHelperText>
+          )}
+        </FormControl>
       </Grid>
     </div>
   );
