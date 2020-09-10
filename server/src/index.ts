@@ -8,7 +8,8 @@ import {
   updateGames,
   getAllGames,
   updateArtworks,
-  updateGamesFunc,
+  updateCovers,
+  manualUpdateGames,
 } from './utils/games_methods';
 import {
   addPost,
@@ -44,8 +45,9 @@ app.get('/games/:gameName', searchGameInDatabase);
 app.get('/games/api/:gameName', searchUnfoundGame);
 app.post('/games', postAllGames);
 app.post('/games/artworks', updateArtworks);
+app.post('/games/covers', updateCovers);
 app.post('/games/add', addGameToDatabase);
-app.post('/games/update', updateGamesFunc);
+app.post('/games/update', manualUpdateGames);
 //Posts endpoints.
 app.get('/posts/get', getAllPosts);
 app.get('/posts/get/platform/:platform', getAllPlatformPosts);
