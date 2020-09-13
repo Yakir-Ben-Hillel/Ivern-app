@@ -5,7 +5,7 @@
 <img src='./src/components/dashboard/dist/images/IMG_0003.jpg' alt='' width='500px'/>
 
 Ivern is a Personal Project built for your pocket.<br/>
- Explore new video games, Sell your old ones, And Swap you old games for
+Explore new video games, sell your old ones, And even swap them for
 some new ones your heart desires.
 
 Ivern has an extensive gaming library, that's updating each day to make sure it has the most up to date video games on it.
@@ -25,7 +25,7 @@ Cloud Functions for API management<br/>
 Auto Games fetching and updating API<br/>
 Pub/Sub image uploading<br/>
 Socket.io messaging<br/>
-And much more!
+And much more!<br/>
 Right now Ivern supports only Israel for use but will be supported Worldwide soon after Deployment.<br/>
 
 All Rights reserved To David Yakir Ben Hillel as LICENSE.txt states.
