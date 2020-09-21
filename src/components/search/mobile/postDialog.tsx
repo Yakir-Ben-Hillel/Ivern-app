@@ -48,14 +48,20 @@ export const useStyles = makeStyles((theme: Theme) =>
       marginBottom: '5px',
     },
     helper: {
+      marginRight: theme.spacing(1),
+      marginBottom: theme.spacing(2),
+    },
+    userAvatarHelper: {
       borderLeft: `2px solid ${theme.palette.divider}`,
       paddingLeft: theme.spacing(1),
-      marginRight: theme.spacing(1),
     },
     infoSkeleton: {
       margin: 'auto',
       marginLeft: theme.spacing(4),
       marginRight: theme.spacing(2),
+    },
+    skeleton: {
+      marginBottom: theme.spacing(2),
     },
     userInfo: {
       display: 'flex',
@@ -128,14 +134,14 @@ const PostDialog: React.FC<IProps> = ({
               </Typography>
               <Typography color='textSecondary'>
                 <AccountBalanceWalletIcon fontSize='inherit' />
-                {`${openedPost?.price}₪`}
+                {`${openedPost?.price}.00₪`}
               </Typography>
             </Grid>
           </Grid>
-          <Grid container alignContent='center' direction='column'>
+          <Grid container direction='column'>
             {loading ? (
               <div>
-                <Grid container direction='row'>
+                <Grid className={classes.skeleton} container direction='row'>
                   <Grid className={classes.infoSkeleton} item xs>
                     <Skeleton variant='text' />
                     <Skeleton variant='text' />
@@ -158,7 +164,7 @@ const PostDialog: React.FC<IProps> = ({
                       {user?.phoneNumber}
                     </Typography>
                   </Grid>
-                  <Grid className={classes.helper} item>
+                  <Grid className={classes.userAvatarHelper} item>
                     <Avatar
                       className={classes.userAvatar}
                       src={user?.imageURL}

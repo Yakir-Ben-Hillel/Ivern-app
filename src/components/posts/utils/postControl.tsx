@@ -29,7 +29,9 @@ interface IProps {
   startUpdatePost: (
     pid: string,
     updateData: {
-      area: string;
+      areaName: string;
+      cityName: string;
+      cityID: string;
       exchange: boolean;
       sell: boolean;
       cover: string | undefined;
@@ -44,7 +46,8 @@ interface IProps {
     artwork: string | null;
     cover: string;
     areaName: string;
-    areaID: string;
+    cityName: string;
+    cityID: string;
     sell: boolean;
     exchange: boolean;
     description: string;
@@ -98,6 +101,7 @@ const PostControl: React.FC<IProps> = ({
   const history = useHistory();
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     try {
+      console.log(area);
       event.preventDefault();
       if (!game) setGameError(true);
       if (!area) setAreaError(true);
@@ -119,7 +123,8 @@ const PostControl: React.FC<IProps> = ({
             sell: sellable,
             exchange: swappable,
             areaName: area.area,
-            areaID: area.id.toString(),
+            cityName: area.name,
+            cityID: area.id.toString(),
             description,
             platform,
             price,
@@ -128,7 +133,9 @@ const PostControl: React.FC<IProps> = ({
           setSelectedPost(res.post);
         } else {
           const updatePostData = {
-            area: area.id.toString(),
+            areaName: area.area,
+            cityName: area.name,
+            cityID: area.id.toString(),
             exchange: swappable,
             sell: sellable,
             cover: imageURL,

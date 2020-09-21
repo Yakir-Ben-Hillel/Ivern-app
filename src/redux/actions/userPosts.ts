@@ -43,8 +43,10 @@ const loadingPosts = (loading: boolean): LoadingPostsAction => {
 export const startUpdatePost = (
   pid: string,
   updateData: {
-    area: string;
+    areaName: string;
+    cityID: string;
     exchange: boolean;
+    cityName:string;
     sell: boolean;
     cover: string | undefined;
     price: string;
@@ -74,7 +76,8 @@ export const startAddPost = (postData: {
   artwork: string | null;
   cover: string;
   areaName: string;
-  areaID: string;
+  cityName:string;
+  cityID: string;
   sell: boolean;
   exchange: boolean;
   description: string;

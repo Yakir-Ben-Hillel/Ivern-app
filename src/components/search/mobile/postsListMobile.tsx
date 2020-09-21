@@ -6,7 +6,6 @@ import {
   Typography,
   Tooltip,
 } from '@material-ui/core';
-import { israelAreas } from '../../dashboard/searchBar/desktop/areaOptions';
 import { Post, User } from '../../../@types/types';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
@@ -69,7 +68,7 @@ const PostsListMobile: React.FC<IProps> = ({
                 {` ${post.gameName}`}
               </Typography>
               <Typography variant='body2' color='textSecondary'>
-                {israelAreas[parseInt(post.areaID) - 1].name}
+                {post.cityName}
               </Typography>
             </Grid>
           </Grid>

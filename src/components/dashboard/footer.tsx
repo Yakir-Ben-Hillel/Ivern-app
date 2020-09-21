@@ -20,7 +20,7 @@ const Footer: React.FC = () => {
               />
             </a>
           </div>
-          <ul className='footer-links list-reset'>
+          {/* <ul className='footer-links list-reset'>
             <li>
               <a href='#'>Contact</a>
             </li>
@@ -33,7 +33,7 @@ const Footer: React.FC = () => {
             <li>
               <a href='#'>Support</a>
             </li>
-          </ul>
+          </ul> */}
           <ul className='footer-social-links list-reset'>
             <li>
               <a href='#'>

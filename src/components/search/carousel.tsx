@@ -64,13 +64,6 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
         margin: 'auto',
         maxWidth: theme.spacing(30),
       },
-      skeletonMobile: {
-        margin: 'auto',
-        marginTop: theme.spacing(2),
-        marginBottom: theme.spacing(3),
-        height: theme.spacing(22),
-        width: theme.spacing(30),
-      },
       caption: {
         marginTop: theme.spacing(1),
         marginLeft: theme.spacing(6),
@@ -79,29 +72,26 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
   );
   const classes = useStyles();
   const mobile = isMobile();
-  const skeletonMapping = mobile ? [0] : [0, 1, 2];
+  const skeletonMapping = [0, 1, 2];
   return (
     <div>
       {loading ? (
         <div>
-          <Grid container spacing={2}>
-            {skeletonMapping.map((index) => (
-              <div key={index}>
-                <Card
-                  className={
-                    mobile ? classes.skeletonMobile : classes.skeletonDesktop
-                  }
-                >
-                  <Skeleton
-                    variant='rect'
-                    width='100%'
-                    height='60%'
-                    style={{ marginBottom: '10px' }}
-                  />
-                  <Skeleton width='100%' />
-                </Card>
-              </div>
-            ))}
+          <Grid container alignContent='center' spacing={2}>
+            {!mobile &&
+              skeletonMapping.map((index) => (
+                <div key={index}>
+                  <Card className={classes.skeletonDesktop}>
+                    <Skeleton
+                      variant='rect'
+                      width='100%'
+                      height='60%'
+                      style={{ marginBottom: '10px', margin: 'auto' }}
+                    />
+                    <Skeleton width='100%' />
+                  </Card>
+                </div>
+              ))}
           </Grid>
         </div>
       ) : (

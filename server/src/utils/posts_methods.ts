@@ -27,7 +27,8 @@ export const addPost = async (request, res) => {
       cover: req.body.cover,
       artwork: req.body.artwork,
       areaName: req.body.areaName,
-      areaID: req.body.areaID,
+      cityName: req.body.cityName,
+      cityID: req.body.cityID,
       createdAt: admin.firestore.Timestamp.fromDate(new Date()),
     };
     if (
@@ -74,7 +75,9 @@ export const editPost = async (request, res) => {
       price: req.body.price,
       description: req.body.description,
       platform: req.body.platform,
-      area: req.body.area,
+      areaName: req.body.areaName,
+      cityName: req.body.cityName,
+      cityID: req.body.cityID,
       cover: req.body.cover,
     };
     const postRef = database.doc(`/posts/${req.params.pid}`);

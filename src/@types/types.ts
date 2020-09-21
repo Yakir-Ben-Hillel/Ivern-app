@@ -25,7 +25,8 @@ export interface Game {
 }
 export interface Post {
   areaName: string;
-  areaID: string;
+  cityName:string;
+  cityID: string;
   gid: string;
   pid: string;
   uid: string;

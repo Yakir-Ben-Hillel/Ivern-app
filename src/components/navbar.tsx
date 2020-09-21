@@ -111,6 +111,7 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
       anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
       id={menuId}
       keepMounted
+      dir='rtl'
       transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       open={isMenuOpen}
       onClose={handleMenuClose}

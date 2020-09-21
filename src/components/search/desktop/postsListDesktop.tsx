@@ -10,7 +10,6 @@ import {
   Avatar,
   Divider,
 } from '@material-ui/core';
-import { israelAreas } from '../../dashboard/searchBar/desktop/areaOptions';
 import PostsCarousel from '../carousel';
 import { Skeleton } from '@material-ui/lab';
 import PersonIcon from '@material-ui/icons/Person';
@@ -103,7 +102,7 @@ const PostsListDesktop: React.FC<IProps> = ({
                   {post.description}
                 </Typography>
                 <Typography variant='body2' color='textSecondary'>
-                  {israelAreas[parseInt(post.areaID) - 1].name}
+                  {post.cityName}
                 </Typography>
               </Grid>
             </Grid>
