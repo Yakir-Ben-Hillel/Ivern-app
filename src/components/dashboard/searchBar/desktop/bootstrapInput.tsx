@@ -29,7 +29,7 @@ const PlatformSelect: React.FC<IProps> = ({
       fullWidth={fullWidth ? true : false}
       value={platform}
       onChange={handleChange}
-      defaultValue='playstation'
+      defaultValue={platform}
       input={<BootstrapInput />}
     >
       <MenuItem value={'playstation'}>

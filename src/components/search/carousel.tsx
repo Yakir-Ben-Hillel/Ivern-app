@@ -10,6 +10,11 @@ import {
   CardContent,
   Grid,
 } from '@material-ui/core';
+import {
+  SonyPlaystation,
+  MicrosoftXbox,
+  NintendoSwitch,
+} from 'mdi-material-ui';
 import Carousel from 'react-multi-carousel';
 import { User, Post } from '../../@types/types';
 import { Skeleton } from '@material-ui/lab';
@@ -20,7 +25,17 @@ interface IProps {
   userPosts: Post[];
   loading: boolean;
 }
+
 const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
+  const platformIcon = (platform: string) => {
+    if (platform === 'playstation')
+      return <SonyPlaystation fontSize='inherit' />;
+    else if (platform === 'xbox') return <MicrosoftXbox fontSize='inherit' />;
+    else if (platform === 'switch')
+      return <NintendoSwitch fontSize='inherit' />;
+    else return undefined;
+  };
+
   const responsive = {
     desktop: {
       breakpoint: {
@@ -144,7 +159,8 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
                       />
                       <CardContent>
                         <Typography gutterBottom variant='caption'>
-                          {post.gameName}
+                          {platformIcon(post.platform)}
+                          {` ${post.gameName}`}
                         </Typography>
                       </CardContent>
                     </CardActionArea>

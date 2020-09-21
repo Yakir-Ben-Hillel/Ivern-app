@@ -38,7 +38,6 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     inputInput: {
       padding: theme.spacing(1, 1, 1, 0),
-      // vertical padding + font size from searchIcon
       paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
       transition: theme.transitions.create('width'),
       width: '100%',
@@ -198,10 +197,10 @@ const PrimarySearchAppBar: React.FC<IProps> = ({ user, loading }) => {
               className='header-logo-image asset-light'
               src={require('../components/dashboard/dist/images/logo-light.svg')}
             />
+            <Typography className={classes.title} color='primary' variant='h5'>
+              {'Ivern'}
+            </Typography>
           </ButtonBase>
-          <Typography className={classes.title} color='primary' variant='h5'>
-            {'Ivern'}
-          </Typography>
           <div className={classes.grow} />
           <div className={classes.sectionDesktop}>
             <Button

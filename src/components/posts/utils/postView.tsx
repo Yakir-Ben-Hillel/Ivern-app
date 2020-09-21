@@ -104,8 +104,7 @@ const PostView: React.FC<IProps> = ({
               </Typography>
               <Typography color='textSecondary'>
                 <LocalOfferIcon fontSize='inherit' />
-                {'Price: '}
-                {selectedPost.price}
+                {`Price: ${selectedPost.price}.00₪`}
               </Typography>
               <Button
                 color='default'
