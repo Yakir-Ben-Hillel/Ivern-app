@@ -43,7 +43,8 @@ interface IProps {
     gid: string;
     artwork: string | null;
     cover: string;
-    area: string;
+    areaName: string;
+    areaID: string;
     sell: boolean;
     exchange: boolean;
     description: string;
@@ -115,9 +116,10 @@ const PostControl: React.FC<IProps> = ({
             gid: game.id.toString(),
             artwork: game.artwork,
             cover: imageURL !== '' ? imageURL : game.cover,
-            area: area.id.toString(),
             sell: sellable,
             exchange: swappable,
+            areaName: area.area,
+            areaID: area.id.toString(),
             description,
             platform,
             price,
@@ -171,9 +173,9 @@ const PostControl: React.FC<IProps> = ({
       <Card className={classes.paper}>
         <CardContent className={classes.card}>
           <form onSubmit={onSubmit}>
-            <Grid container alignItems="center" spacing={3}>
+            <Grid container alignItems='center' spacing={3}>
               <Grid item xs>
-                <Tooltip arrow title="Click to go back">
+                <Tooltip arrow title='Click to go back'>
                   <IconButton
                     className={classes.backButton}
                     onClick={() => history.goBack()}
@@ -181,7 +183,7 @@ const PostControl: React.FC<IProps> = ({
                     <ArrowBackIcon />
                   </IconButton>
                 </Tooltip>
-                <Typography className={classes.title} variant="h5">
+                <Typography className={classes.title} variant='h5'>
                   {edit ? 'Edit Post' : 'Upload Post'}
                 </Typography>
                 <AddPostFields
@@ -210,13 +212,13 @@ const PostControl: React.FC<IProps> = ({
               </Grid>
               <Grid item xs>
                 <AddPostCard imageURL={imageURL} setImageURL={setImageURL} />
-                <Grid container alignItems="flex-end" direction="column">
+                <Grid container alignItems='flex-end' direction='column'>
                   <Grid item xs>
                     <Button
-                      type="submit"
+                      type='submit'
                       disabled={user.isNew}
-                      color="default"
-                      variant="contained"
+                      color='default'
+                      variant='contained'
                       className={classes.button}
                     >
                       <SaveIcon className={classes.leftIcon} />

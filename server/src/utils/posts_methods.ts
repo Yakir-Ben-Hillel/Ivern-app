@@ -26,7 +26,8 @@ export const addPost = async (request, res) => {
       price: req.body.price,
       cover: req.body.cover,
       artwork: req.body.artwork,
-      area: req.body.area,
+      areaName: req.body.areaName,
+      areaID: req.body.areaID,
       createdAt: admin.firestore.Timestamp.fromDate(new Date()),
     };
     if (
@@ -178,22 +179,36 @@ export const getAllPosts = async (req, res) => {
 export const getCustomPostsRequest = async (req, res) => {
   try {
     const requestedGames = req.query.games;
-    const requestedArea = req.query.areas;
+    const requestedArea = req.query.area;
     const requestedPlatform = req.query.platform;
     if (requestedGames && requestedArea) {
       let docsRef: any;
       if (Array.isArray(requestedGames)) {
-        docsRef = database
-          .collection('/posts')
-          .where('gid', 'in', requestedGames)
-          .where('platform', '==', requestedPlatform)
-          .where('area', '==', requestedArea);
+        if (isNaN(requestedArea))
+          docsRef = database
+            .collection('/posts')
+            .where('gid', 'in', requestedGames)
+            .where('platform', '==', requestedPlatform)
+            .where('areaName', '==', requestedArea);
+        else
+          docsRef = database
+            .collection('/posts')
+            .where('gid', 'in', requestedGames)
+            .where('platform', '==', requestedPlatform)
+            .where('areaID', '==', requestedArea);
       } else {
-        docsRef = database
-          .collection('/posts')
-          .where('gid', '==', requestedGames)
-          .where('platform', '==', requestedPlatform)
-          .where('area', '==', requestedArea);
+        if (isNaN(requestedArea))
+          docsRef = database
+            .collection('/posts')
+            .where('gid', '==', requestedGames)
+            .where('platform', '==', requestedPlatform)
+            .where('areaName', '==', requestedArea);
+        else
+          docsRef = database
+            .collection('/posts')
+            .where('gid', '==', requestedGames)
+            .where('platform', '==', requestedPlatform)
+            .where('areaID', '==', requestedArea);
       }
       const postsRef = await docsRef.get();
       const posts: any[] = [];

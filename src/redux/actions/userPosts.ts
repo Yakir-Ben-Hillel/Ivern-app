@@ -73,7 +73,8 @@ export const startAddPost = (postData: {
   gid: string;
   artwork: string | null;
   cover: string;
-  area: string;
+  areaName: string;
+  areaID: string;
   sell: boolean;
   exchange: boolean;
   description: string;

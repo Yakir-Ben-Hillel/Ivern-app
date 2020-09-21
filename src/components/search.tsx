@@ -36,7 +36,7 @@ export const Search: React.FC = (props: any) => {
           {
             params: {
               games: params.game,
-              areas: params.area,
+              area: params.area,
               platform: params.platform,
             },
           }

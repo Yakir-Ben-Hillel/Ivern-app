@@ -29,7 +29,6 @@ interface IGameOptions {
 }
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: '90%',
     alignItems: 'center',
     backgroundColor: theme.palette.background.paper,
   },
@@ -79,6 +78,7 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
   const [checked, setChecked] = React.useState<number[]>([]);
   const [search, setSearch] = React.useState<string>('');
   const [filteredOptions, setFilteredOptions] = React.useState<Game[]>(options);
+  const listRef = React.createRef<FixedSizeList>();
   const handleClose = () => {
     setOpen(false);
     setGamesDialogOpen(false);
@@ -113,7 +113,7 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
       <div>
         {game && (
           <ListItem
-            alignItems="center"
+            alignItems='center'
             key={gameIndex}
             style={style}
             onClick={handleCheck}
@@ -122,23 +122,23 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
             <ListItemIcon>
               <React.Fragment>
                 <img
-                  src={'https://' + game.cover}
+                  src={game.cover}
                   style={{
-                    width: '45px',
+                    width: '35px',
                     height: '45px',
                     marginRight: '7px',
                   }}
                 />
               </React.Fragment>
             </ListItemIcon>
-            <Typography variant="inherit">{game.name}</Typography>
-            {/* <ListItemSecondaryAction> */}
+            <Typography variant='inherit'>{game.name}</Typography>
             <Checkbox
               style={{
                 position: 'absolute',
                 right: 0,
+                marginLeft:'3px'
               }}
-              edge="end"
+              edge='end'
               onChange={handleCheck}
               checked={checked.includes(gameIndex) ? true : false}
             />
@@ -156,34 +156,35 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
           <AppBar className={classes.appBar}>
             <Toolbar>
               <IconButton
-                edge="start"
-                color="inherit"
+                edge='start'
+                color='inherit'
                 onClick={handleClose}
-                aria-label="close"
+                aria-label='close'
               >
                 <CloseIcon />
               </IconButton>
               <Typography
-                color="inherit"
-                variant="h6"
+                color='inherit'
+                variant='h6'
                 className={classes.title}
               >
                 Game Picker
               </Typography>
-              <Button color="inherit" onClick={handleClose}>
+              <Button color='inherit' onClick={handleClose}>
                 Save
               </Button>
             </Toolbar>
           </AppBar>
-          <Container maxWidth="xs">
-            <Paper component="form" className={classes.searchRoot}>
+          <Container maxWidth='xs'>
+            <Paper component='form' className={classes.searchRoot}>
               <IconButton
                 className={classes.iconButton}
                 disabled={search === ''}
-                aria-label="menu"
+                aria-label='menu'
                 onClick={() => {
                   setSearch('');
                   setFilteredOptions(options);
+                  listRef.current?.scrollToItem(0);
                 }}
               >
                 <CloseIcon />
@@ -199,25 +200,28 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
                         game.name.toLowerCase().includes(search.toLowerCase())
                       )
                     );
+                    listRef.current?.scrollToItem(0);
                 }}
                 className={classes.input}
-                placeholder="Search Games"
+                placeholder='Search Games'
                 inputProps={{ 'aria-label': 'search games' }}
               />
               <IconButton
-                type="submit"
+                type='submit'
                 className={classes.iconButton}
-                aria-label="search"
+                aria-label='search'
               >
                 <SearchIcon />
               </IconButton>
             </Paper>
             <FixedSizeList
+            style={{overflowX:'hidden'}}
+              ref={listRef}
               height={600}
-              width="100%"
+              width='100%'
               itemData={filteredOptions}
               itemCount={options.length}
-              itemSize={80}
+              itemSize={70}
               className={classes.root}
             >
               {renderRow}

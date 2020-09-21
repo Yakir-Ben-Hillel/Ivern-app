@@ -103,7 +103,7 @@ const PostsListDesktop: React.FC<IProps> = ({
                   {post.description}
                 </Typography>
                 <Typography variant='body2' color='textSecondary'>
-                  {israelAreas[parseInt(post.area) - 1].name}
+                  {israelAreas[parseInt(post.areaID) - 1].name}
                 </Typography>
               </Grid>
             </Grid>

@@ -24,7 +24,8 @@ export interface Game {
   artwork: string | null;
 }
 export interface Post {
-  area: string;
+  areaName: string;
+  areaID: string;
   gid: string;
   pid: string;
   uid: string;

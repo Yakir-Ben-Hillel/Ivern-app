@@ -73,7 +73,9 @@ export const Bar: React.FC = () => {
     if (games.length > 0 && area) {
       const queryParams = new URLSearchParams();
       games.forEach((game) => queryParams.append('game', `${game.id}`));
-      queryParams.append('area', `${area.id}`);
+      if (area.id >= 57) {
+        queryParams.append('area', `${area.area}`);
+      } else queryParams.append('area', `${area.id}`);
       queryParams.append('platform', platform);
       history.push({
         pathname: '/search',
