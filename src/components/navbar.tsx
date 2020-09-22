@@ -1,26 +1,26 @@
-import React from 'react';
-import { makeStyles, Theme, createStyles } from '@material-ui/core/styles';
+import { Avatar, Button, ButtonBase, Tooltip } from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import IconButton from '@material-ui/core/IconButton';
-import Typography from '@material-ui/core/Typography';
 import Badge from '@material-ui/core/Badge';
-import MenuItem from '@material-ui/core/MenuItem';
-import Menu from '@material-ui/core/Menu';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import AccountCircle from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { Button, Avatar, Tooltip, ButtonBase } from '@material-ui/core';
 import {
-  SonyPlaystation,
   MicrosoftXbox,
   NintendoSwitch,
+  SonyPlaystation,
 } from 'mdi-material-ui';
+import React from 'react';
 import Svg from 'react-inlinesvg';
-import { firebase } from '../firebase';
-import { useHistory } from 'react-router';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router';
 import { AppState, User } from '../@types/types';
+import { firebase } from '../firebase';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     grow: {

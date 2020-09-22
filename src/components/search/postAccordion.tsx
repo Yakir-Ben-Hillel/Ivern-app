@@ -1,10 +1,6 @@
-import React from 'react';
-import {
-  makeStyles,
-  Theme,
-  createStyles,
-} from '@material-ui/core';
+import { createStyles, makeStyles, Theme } from '@material-ui/core';
 import isMobile from 'is-mobile';
+import React from 'react';
 import { Post, User } from '../../@types/types';
 import PostsListDesktop from './desktop/postsListDesktop';
 import PostsListMobile from './mobile/postsListMobile';

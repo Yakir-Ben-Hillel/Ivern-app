@@ -1,13 +1,13 @@
+import axios from 'axios';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import {
+  LoadingUserAction,
   SetUserAction,
   UpdateUserAction,
-  LoadingUserAction,
 } from '../../@types/action-types';
-import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from 'redux';
-import { firebase } from '../../firebase';
 import { AppState, User } from '../../@types/types';
-import axios from 'axios';
+import { firebase } from '../../firebase';
 const setUser = (user: User): SetUserAction => {
   return {
     type: 'SET_USER',

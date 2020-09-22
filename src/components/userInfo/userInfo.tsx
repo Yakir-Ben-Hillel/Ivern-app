@@ -1,29 +1,29 @@
-import '../../scss/style.scss';
-import React from 'react';
-import axios from 'axios';
-import PrimarySearchBar from '../navbar';
 import {
-  Grid,
-  makeStyles,
-  Theme,
-  createStyles,
+  Avatar,
+  Button,
   Card,
   CardContent,
-  Avatar,
-  Typography,
   Container,
-  Button,
-  TextField,
-  Tooltip,
+  createStyles,
+  Grid,
   IconButton,
+  makeStyles,
+  TextField,
+  Theme,
+  Tooltip,
+  Typography,
 } from '@material-ui/core';
-import { User, AppState } from '../../@types/types';
-import { useHistory } from 'react-router';
-import { Skeleton } from '@material-ui/lab';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { UpdateUserAction } from '../../@types/action-types';
-import { startUpdateUser } from '../../redux/actions/userInfo';
+import { Skeleton } from '@material-ui/lab';
+import axios from 'axios';
+import React from 'react';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router';
+import { UpdateUserAction } from '../../@types/action-types';
+import { AppState, User } from '../../@types/types';
+import { startUpdateUser } from '../../redux/actions/userInfo';
+import '../../scss/style.scss';
+import PrimarySearchBar from '../navbar';
 interface IProps {
   user: User;
   startUpdateUser: (data: {

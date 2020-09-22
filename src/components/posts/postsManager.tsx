@@ -1,9 +1,9 @@
-import '../../scss/style.scss';
+import { Container, createStyles, makeStyles, Theme } from '@material-ui/core';
 import React from 'react';
-import PostAppBar from './utils/postBar';
-import { Container, makeStyles, Theme, createStyles } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { AppState, Post } from '../../@types/types';
+import '../../scss/style.scss';
+import PostAppBar from './utils/postBar';
 import PostControl from './utils/postControl';
 import PostView from './utils/postView';
 interface IProps {

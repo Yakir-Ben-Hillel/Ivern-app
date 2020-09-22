@@ -1,25 +1,25 @@
-import React from 'react';
 import {
-  makeStyles,
-  Theme,
-  createStyles,
-  Typography,
   Card,
   CardActionArea,
-  CardMedia,
   CardContent,
+  CardMedia,
+  createStyles,
   Grid,
+  makeStyles,
+  Theme,
+  Typography,
 } from '@material-ui/core';
+import { Skeleton } from '@material-ui/lab';
+import isMobile from 'is-mobile';
 import {
-  SonyPlaystation,
   MicrosoftXbox,
   NintendoSwitch,
+  SonyPlaystation,
 } from 'mdi-material-ui';
-import Carousel from 'react-multi-carousel';
-import { User, Post } from '../../@types/types';
-import { Skeleton } from '@material-ui/lab';
+import React from 'react';
 import Svg from 'react-inlinesvg';
-import isMobile from 'is-mobile';
+import Carousel from 'react-multi-carousel';
+import { Post, User } from '../../@types/types';
 interface IProps {
   user: User | null;
   userPosts: Post[];

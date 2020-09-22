@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
-import '../../scss/style.scss';
-import Svg from 'react-inlinesvg';
 import mobile from 'is-mobile';
+import React from 'react';
+import Svg from 'react-inlinesvg';
+import '../../scss/style.scss';
 
 interface IProps {
   lights: boolean;

@@ -1,35 +1,35 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
 import {
-  Dialog,
-  DialogContentText,
-  DialogContent,
+  AppBar,
   Button,
   createStyles,
-  Theme,
-  makeStyles,
-  Typography,
-  AppBar,
+  Dialog,
+  DialogContent,
+  DialogContentText,
+  Divider,
+  IconButton,
   List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
   Menu,
   MenuItem,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  Divider,
+  Theme,
   Toolbar,
-  IconButton,
+  Typography,
 } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
 import CloseIcon from '@material-ui/icons/Close';
 import {
-  SonyPlaystation,
   MicrosoftXbox,
   NintendoSwitch,
+  SonyPlaystation,
 } from 'mdi-material-ui';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { Area, Game } from '../../../../@types/types';
 import GameOptionsMobile from './gameOptionsMobile';
 import MobileArea from './mobileArea';
-import { Game, Area } from '../../../../@types/types';
 interface IGameOptions {
   options: Game[];
   games: Game[];

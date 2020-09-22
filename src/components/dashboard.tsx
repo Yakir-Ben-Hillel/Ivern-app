@@ -1,13 +1,13 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import React from 'react';
 import '../scss/style.scss';
-import sr from './scrollReveal';
-import SiteHeader from './dashboard/siteHeader';
-import HeroSection from './dashboard/heroSection';
 import Features from './dashboard/features';
-import SearchBar from './dashboard/searchBar';
 import Footer from './dashboard/footer';
+import HeroSection from './dashboard/heroSection';
+import SearchBar from './dashboard/searchBar';
+import SiteHeader from './dashboard/siteHeader';
 import PrimarySearchBar from './navbar';
+import sr from './scrollReveal';
 export const Dashboard: React.FC = () => {
   React.useEffect(() => {
     document.documentElement.classList.remove('no-js');
@@ -23,8 +23,8 @@ export const Dashboard: React.FC = () => {
   });
 
   return (
-    <div className="is-boxed has-animations">
-      <div className="body-wrap boxed-container">
+    <div className='is-boxed has-animations'>
+      <div className='body-wrap boxed-container'>
         <PrimarySearchBar />
         <SiteHeader />
         <main>

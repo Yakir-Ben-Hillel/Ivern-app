@@ -1,19 +1,19 @@
-import React from 'react';
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import {
+  AppBar,
+  Button,
+  IconButton,
+  ListSubheader,
+  Toolbar,
+  Typography,
+} from '@material-ui/core';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
+import React from 'react';
 import { Area } from '../../../../@types/types';
 import { israelAreas } from '../desktop/areaOptions';
-import {
-  AppBar,
-  Toolbar,
-  IconButton,
-  Typography,
-  Button,
-  ListSubheader,
-} from '@material-ui/core';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

@@ -1,11 +1,10 @@
-import React, { SetStateAction } from 'react';
+import { MenuItem, Select, withStyles } from '@material-ui/core';
 import InputBase from '@material-ui/core/InputBase';
 import {
-  SonyPlaystation,
   MicrosoftXbox,
-  NintendoSwitch,
+  NintendoSwitch, SonyPlaystation
 } from 'mdi-material-ui';
-import { Select, MenuItem, withStyles } from '@material-ui/core';
+import React, { SetStateAction } from 'react';
 interface IProps {
   platform: 'playstation' | 'xbox' | 'switch';
   setPlatform: React.Dispatch<

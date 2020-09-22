@@ -1,12 +1,12 @@
+import 'normalize.css/normalize.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import AppRouter from './router/AppRouter';
-import 'normalize.css/normalize.css';
-import { firebase } from './firebase';
-import configureStore from './redux/store/configureStore';
 import { Provider } from 'react-redux';
+import { firebase } from './firebase';
 import { startSetUser } from './redux/actions/userInfo';
 import { startSetPosts } from './redux/actions/userPosts';
+import configureStore from './redux/store/configureStore';
+import AppRouter from './router/AppRouter';
 const store = configureStore();
 const Application = () => (
   <Provider store={store}>

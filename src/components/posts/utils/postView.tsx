@@ -1,33 +1,33 @@
-import React from 'react';
 import {
-  Grid,
-  Card,
-  Typography,
-  CardContent,
-  Button,
-  CardActions,
   Avatar,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  Grid,
+  Typography,
 } from '@material-ui/core';
-import EditIcon from '@material-ui/icons/Edit';
-import DescriptionIcon from '@material-ui/icons/Description';
-import DeleteIcon from '@material-ui/icons/Delete';
-import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import DeleteIcon from '@material-ui/icons/Delete';
+import DescriptionIcon from '@material-ui/icons/Description';
+import EditIcon from '@material-ui/icons/Edit';
 import EventIcon from '@material-ui/icons/Event';
-import { useStyles } from '../postsManager';
-import { Post, AppState } from '../../../@types/types';
+import LocalOfferIcon from '@material-ui/icons/LocalOffer';
 import {
-  SonyPlaystation,
   MicrosoftXbox,
   NintendoSwitch,
+  SonyPlaystation,
 } from 'mdi-material-ui';
-import { startDeletePost } from '../../../redux/actions/userPosts';
+import React from 'react';
 import { connect } from 'react-redux';
 import { DeletePostAction } from '../../../@types/action-types';
+import { AppState, Post } from '../../../@types/types';
+import { startDeletePost } from '../../../redux/actions/userPosts';
+import { useStyles } from '../postsManager';
 interface IProps {
   selectedPost: Post;
   startDeletePost: (pid: string) => Promise<DeletePostAction>;

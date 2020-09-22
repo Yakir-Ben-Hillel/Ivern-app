@@ -1,19 +1,19 @@
-import React from 'react';
 import {
-  Paper,
-  Grid,
   ButtonBase,
-  Typography,
+  Grid,
+  Paper,
   Tooltip,
+  Typography,
 } from '@material-ui/core';
-import { Post, User } from '../../../@types/types';
-import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import {
-  SonyPlaystation,
   MicrosoftXbox,
   NintendoSwitch,
+  SonyPlaystation,
 } from 'mdi-material-ui';
+import React from 'react';
+import { Post, User } from '../../../@types/types';
 import { useStyles } from '../postAccordion';
 import PostDialog from './postDialog';
 interface IProps {

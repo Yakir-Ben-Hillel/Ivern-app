@@ -1,23 +1,23 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React from 'react';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import {
-  Typography,
-  ListItem,
+  AppBar,
+  Button,
   Checkbox,
+  Container,
+  IconButton,
+  InputBase,
+  ListItem,
   ListItemIcon,
   makeStyles,
-  AppBar,
   Paper,
   Toolbar,
-  InputBase,
-  IconButton,
-  Button,
-  Container,
+  Typography,
 } from '@material-ui/core';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
-import SearchIcon from '@material-ui/icons/Search';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import CloseIcon from '@material-ui/icons/Close';
+import SearchIcon from '@material-ui/icons/Search';
+import React from 'react';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 import { Game } from '../../../../@types/types';
 interface IGameOptions {
   options: Game[];
@@ -136,7 +136,7 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
               style={{
                 position: 'absolute',
                 right: 0,
-                marginLeft:'3px'
+                marginLeft: '3px',
               }}
               edge='end'
               onChange={handleCheck}
@@ -200,7 +200,7 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
                         game.name.toLowerCase().includes(search.toLowerCase())
                       )
                     );
-                    listRef.current?.scrollToItem(0);
+                  listRef.current?.scrollToItem(0);
                 }}
                 className={classes.input}
                 placeholder='Search Games'
@@ -215,7 +215,7 @@ const GamesOptionsMobile: React.FC<IGameOptions> = ({
               </IconButton>
             </Paper>
             <FixedSizeList
-            style={{overflowX:'hidden'}}
+              style={{ overflowX: 'hidden' }}
               ref={listRef}
               height={600}
               width='100%'

@@ -11,11 +11,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { firebase, googleAuthProvider } from '../../firebase';
+import axios from 'axios';
 import React from 'react';
 import { useHistory } from 'react-router';
+import { firebase, googleAuthProvider } from '../../firebase';
 import GoogleSignInButton from './buttons/googleSignIn';
-import axios from 'axios';
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>

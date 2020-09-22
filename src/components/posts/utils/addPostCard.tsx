@@ -1,15 +1,15 @@
-import React from 'react';
 import {
   Card,
   CardActionArea,
   CardContent,
   CircularProgress,
-  Typography,
+  Typography
 } from '@material-ui/core';
 import CloudUploadOutlinedIcon from '@material-ui/icons/CloudUploadOutlined';
-import { useStyles } from '../postsManager';
 import Alert from '@material-ui/lab/Alert';
 import axios from 'axios';
+import React from 'react';
+import { useStyles } from '../postsManager';
 interface IProps {
   imageURL: string | undefined;
   setImageURL: React.Dispatch<React.SetStateAction<string>>;

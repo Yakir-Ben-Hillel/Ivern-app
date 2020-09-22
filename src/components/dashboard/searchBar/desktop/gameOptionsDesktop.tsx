@@ -1,8 +1,8 @@
 /* eslint-disable jsx-a11y/alt-text */
-import React from 'react';
+import { Chip, TextField, Typography } from '@material-ui/core';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { Chip, Typography, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
+import React from 'react';
 import { Game } from '../../../../@types/types';
 interface IGameOptions {
   options: Game[];

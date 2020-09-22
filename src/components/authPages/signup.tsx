@@ -9,10 +9,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import { firebase } from '../../firebase';
-import { useHistory } from 'react-router';
 import axios from 'axios';
 import React from 'react';
+import { useHistory } from 'react-router';
+import { firebase } from '../../firebase';
 function Copyright() {
   return (
     <Typography variant='body2' color='textSecondary' align='center'>

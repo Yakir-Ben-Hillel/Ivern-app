@@ -1,18 +1,18 @@
-import React from 'react';
-import { Autocomplete } from '@material-ui/lab';
-import { Game, Area } from '../../../@types/types';
 import {
-  Typography,
-  TextField,
+  Checkbox,
   CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormHelperText,
   Grid,
   InputAdornment,
-  FormControlLabel,
-  Checkbox,
-  FormControl,
-  FormHelperText,
-  FormGroup,
+  TextField,
+  Typography,
 } from '@material-ui/core';
+import { Autocomplete } from '@material-ui/lab';
+import React from 'react';
+import { Area, Game } from '../../../@types/types';
 import AreaOptions from '../../dashboard/searchBar/desktop/areaOptions';
 import PlatformSelect from '../../dashboard/searchBar/desktop/bootstrapInput';
 interface IProps {

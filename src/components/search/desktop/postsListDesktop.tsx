@@ -1,28 +1,28 @@
-import React from 'react';
 import {
   Accordion,
-  AccordionSummary,
-  Grid,
-  ButtonBase,
-  Typography,
-  Tooltip,
   AccordionDetails,
+  AccordionSummary,
   Avatar,
+  ButtonBase,
   Divider,
+  Grid,
+  Tooltip,
+  Typography,
 } from '@material-ui/core';
-import PostsCarousel from '../carousel';
-import { Skeleton } from '@material-ui/lab';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import PersonIcon from '@material-ui/icons/Person';
 import PhoneIcon from '@material-ui/icons/Phone';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
-import { Post, User } from '../../../@types/types';
-import { useStyles } from '../postAccordion';
+import { Skeleton } from '@material-ui/lab';
 import {
-  SonyPlaystation,
   MicrosoftXbox,
   NintendoSwitch,
+  SonyPlaystation,
 } from 'mdi-material-ui';
+import React from 'react';
+import { Post, User } from '../../../@types/types';
+import PostsCarousel from '../carousel';
+import { useStyles } from '../postAccordion';
 interface IProps {
   post: Post;
   openedPost: Post | null;

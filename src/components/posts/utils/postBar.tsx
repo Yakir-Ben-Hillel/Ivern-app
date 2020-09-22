@@ -1,24 +1,24 @@
-import React from 'react';
 import {
-  makeStyles,
-  Theme,
+  AppBar,
   createStyles,
-  useTheme,
+  CssBaseline,
   Divider,
+  Drawer,
+  Hidden,
+  IconButton,
   List,
   ListItem,
   ListItemIcon,
   ListItemText,
-  CssBaseline,
-  AppBar,
+  makeStyles,
+  Theme,
   Toolbar,
-  IconButton,
   Typography,
-  Hidden,
-  Drawer,
+  useTheme,
 } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
 import AddIcon from '@material-ui/icons/Add';
+import MenuIcon from '@material-ui/icons/Menu';
+import React from 'react';
 import { Post } from '../../../@types/types';
 const drawerWidth = 240;
 const useStyles = makeStyles((theme: Theme) =>

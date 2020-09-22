@@ -1,15 +1,15 @@
-import { ThunkDispatch } from 'redux-thunk';
-import { AnyAction } from 'redux';
-import { firebase } from '../../firebase';
-import { Post } from '../../@types/types';
 import axios from 'axios';
+import { AnyAction } from 'redux';
+import { ThunkDispatch } from 'redux-thunk';
 import {
-  SetPostsAction,
-  LoadingPostsAction,
   AddPostAction,
-  UpdatePostAction,
   DeletePostAction,
+  LoadingPostsAction,
+  SetPostsAction,
+  UpdatePostAction,
 } from '../../@types/action-types';
+import { Post } from '../../@types/types';
+import { firebase } from '../../firebase';
 const setPosts = (posts: Post[]): SetPostsAction => {
   return {
     type: 'SET_POSTS',
@@ -46,7 +46,7 @@ export const startUpdatePost = (
     areaName: string;
     cityID: string;
     exchange: boolean;
-    cityName:string;
+    cityName: string;
     sell: boolean;
     cover: string | undefined;
     price: string;
@@ -76,7 +76,7 @@ export const startAddPost = (postData: {
   artwork: string | null;
   cover: string;
   areaName: string;
-  cityName:string;
+  cityName: string;
   cityID: string;
   sell: boolean;
   exchange: boolean;

@@ -1,13 +1,13 @@
-import React from 'react';
-import { makeStyles, createStyles } from '@material-ui/core/styles';
-import PostSkeleton from './postSkeleton';
-import 'react-multi-carousel/lib/styles.css';
 import { Paper } from '@material-ui/core';
-import axios from 'axios';
+import { createStyles, makeStyles } from '@material-ui/core/styles';
 import Pagination from '@material-ui/lab/Pagination';
+import axios from 'axios';
+import isMobile from 'is-mobile';
+import React from 'react';
+import 'react-multi-carousel/lib/styles.css';
 import { Post, User } from '../../@types/types';
 import PostAccordion from './postAccordion';
-import isMobile from 'is-mobile';
+import PostSkeleton from './postSkeleton';
 interface IProps {
   posts: Post[] | undefined;
   postsLoading: boolean;

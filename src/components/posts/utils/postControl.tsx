@@ -1,27 +1,27 @@
-import React from 'react';
 import {
-  Grid,
+  Button,
   Card,
   CardContent,
-  Typography,
-  Button,
+  Grid,
   IconButton,
   Tooltip,
+  Typography,
 } from '@material-ui/core';
-import AddPostCard from './addPostCard';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import SaveIcon from '@material-ui/icons/Save';
 import axios from 'axios';
-import { Game, Area, Post, AppState, User } from '../../../@types/types';
-import AddPostFields from './addPostFields';
+import React from 'react';
+import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
+import { AddPostAction, UpdatePostAction } from '../../../@types/action-types';
+import { AppState, Area, Game, Post, User } from '../../../@types/types';
 import {
   startAddPost,
   startUpdatePost,
 } from '../../../redux/actions/userPosts';
-import SaveIcon from '@material-ui/icons/Save';
 import { useStyles } from '../postsManager';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import { connect } from 'react-redux';
-import { AddPostAction, UpdatePostAction } from '../../../@types/action-types';
-import { useHistory } from 'react-router-dom';
+import AddPostCard from './addPostCard';
+import AddPostFields from './addPostFields';
 interface IProps {
   user: User;
   selectedPost: Post | undefined;

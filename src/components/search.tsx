@@ -1,14 +1,14 @@
-import React from 'react';
-import PrimarySearchAppBar from './navbar';
-import '../scss/style.scss';
+import { Typography } from '@material-ui/core';
+import axios, { AxiosResponse } from 'axios';
 import queryString from 'query-string';
+import React from 'react';
+import { Post } from '../@types/types';
+import '../scss/style.scss';
+import Footer from './dashboard/footer';
 import { Bar } from './dashboard/searchBar';
 import SiteHeader from './dashboard/siteHeader';
-import Footer from './dashboard/footer';
-import axios, { AxiosResponse } from 'axios';
+import PrimarySearchAppBar from './navbar';
 import PostsList from './search/postsList';
-import { Post } from '../@types/types';
-import { Typography } from '@material-ui/core';
 
 export const Search: React.FC = (props: any) => {
   const localLights = localStorage.getItem('lights');

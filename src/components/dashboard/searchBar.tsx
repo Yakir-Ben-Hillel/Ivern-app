@@ -1,24 +1,24 @@
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React from 'react';
-import '../../scss/style.scss';
 import {
-  Paper,
-  Grid,
-  makeStyles,
-  Theme,
   createStyles,
+  Grid,
   IconButton,
+  makeStyles,
+  Paper,
+  Theme,
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
-import { useHistory } from 'react-router-dom';
 import axios from 'axios';
+import isMobile from 'is-mobile';
+import React from 'react';
+import { useHistory } from 'react-router-dom';
+import { Area, Game } from '../../@types/types';
+import '../../scss/style.scss';
+import AreaOptions from './searchBar/desktop/areaOptions';
 import PlatformSelect from './searchBar/desktop/bootstrapInput';
 import GamesOptions from './searchBar/desktop/gameOptionsDesktop';
-import AreaOptions from './searchBar/desktop/areaOptions';
 import MobileSearch from './searchBar/mobile/mobileSearch';
-import { Area, Game } from '../../@types/types';
-import isMobile from 'is-mobile';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {

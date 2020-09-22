@@ -1,20 +1,20 @@
-import React from 'react';
 import {
+  Avatar,
+  createStyles,
   Dialog,
   Grid,
-  Avatar,
-  Typography,
   makeStyles,
   Theme,
-  createStyles,
+  Typography,
 } from '@material-ui/core';
-import { Post, User } from '../../../@types/types';
-import PostsCarousel from '../carousel';
-import { Skeleton } from '@material-ui/lab';
+import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import DescriptionIcon from '@material-ui/icons/Description';
 import PersonIcon from '@material-ui/icons/Person';
 import PhoneIcon from '@material-ui/icons/Phone';
-import DescriptionIcon from '@material-ui/icons/Description';
-import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import { Skeleton } from '@material-ui/lab';
+import React from 'react';
+import { Post, User } from '../../../@types/types';
+import PostsCarousel from '../carousel';
 interface IProps {
   post: Post;
   openedPost: Post | null;

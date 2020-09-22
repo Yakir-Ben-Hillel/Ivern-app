@@ -1,8 +1,7 @@
-import React from 'react';
-import '../../scss/style.scss';
-import Svg from 'react-inlinesvg';
 import isMobile from 'is-mobile';
-
+import React from 'react';
+import Svg from 'react-inlinesvg';
+import '../../scss/style.scss';
 const Features: React.FC = () => {
   return (
     <section className='features section'>

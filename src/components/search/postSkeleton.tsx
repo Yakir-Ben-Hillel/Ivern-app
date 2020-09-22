@@ -1,12 +1,12 @@
-import React from 'react';
 import {
-  Paper,
+  createStyles,
   Grid,
   makeStyles,
+  Paper,
   Theme,
-  createStyles,
 } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
+import React from 'react';
 const PostSkeleton: React.FC = () => {
   const useStyles = makeStyles((theme: Theme) =>
     createStyles({
