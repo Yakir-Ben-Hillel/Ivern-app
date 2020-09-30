@@ -91,7 +91,7 @@ const PostsListDesktop: React.FC<IProps> = ({
               <img className={classes.img} alt='complex' src={post.cover} />
             </ButtonBase>
           </Grid>
-          <Grid item xs={12} sm container>
+          <Grid item xs container>
             <Grid item xs container direction='row' spacing={2}>
               <Grid item xs>
                 <Typography gutterBottom variant='subtitle1'>

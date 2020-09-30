@@ -8,6 +8,7 @@ import SearchBar from './dashboard/searchBar';
 import SiteHeader from './dashboard/siteHeader';
 import PrimarySearchBar from './navbar';
 import sr from './scrollReveal';
+import ChatButton from './chats/chats';
 export const Dashboard: React.FC = () => {
   React.useEffect(() => {
     document.documentElement.classList.remove('no-js');
@@ -32,6 +33,7 @@ export const Dashboard: React.FC = () => {
           <Features />
           <SearchBar />
         </main>
+        <ChatButton />
         <Footer />
       </div>
     </div>

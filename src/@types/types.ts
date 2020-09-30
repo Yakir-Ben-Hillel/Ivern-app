@@ -25,7 +25,7 @@ export interface Game {
 }
 export interface Post {
   areaName: string;
-  cityName:string;
+  cityName: string;
   cityID: string;
   gid: string;
   pid: string;
@@ -53,4 +53,21 @@ export interface User {
   uid: string;
   isNew: boolean;
   createdAt: firebase.firestore.Timestamp;
+}
+export interface Message {
+  sender: string;
+  receiver: string;
+  text: string;
+  createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
+}
+export interface Chat {
+  interlocutor: User;
+  messages: Message[];
+  createdAt: {
+    _seconds: number;
+    _nanoseconds: number;
+  };
 }

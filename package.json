@@ -13,6 +13,7 @@
     "firebase-functions": "^3.8.0",
     "install": "^0.13.0",
     "is-mobile": "^2.2.2",
+    "material-ui-popup-state": "^1.6.1",
     "materialize-css": "^1.0.0-rc.2",
     "mdi-material-ui": "^6.16.0",
     "node-sass": "^4.14.1",
