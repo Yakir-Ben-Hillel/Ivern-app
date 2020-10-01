@@ -35,6 +35,7 @@ const ChatsAppBar: React.FC<Props> = ({
   setSelectedChat,
   popupState,
 }) => {
+  // eslint-disable-next-line
   const classes = useStyles();
   return (
     <div>

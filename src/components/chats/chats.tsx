@@ -86,7 +86,6 @@ const ChatButton: React.FC<IProps> = ({ isAuthenticated, user }) => {
     }
   }, [isAuthenticated, user]);
   const [selectedChat, setSelectedChat] = React.useState<Chat | undefined>();
-  React.useEffect(() => console.log(selectedChat), [selectedChat]);
   const classes = useStyles();
   return (
     <div>
