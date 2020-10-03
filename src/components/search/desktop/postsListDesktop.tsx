@@ -3,6 +3,7 @@ import {
   AccordionDetails,
   AccordionSummary,
   Avatar,
+  Button,
   ButtonBase,
   Divider,
   Grid,
@@ -12,6 +13,7 @@ import {
 import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import PersonIcon from '@material-ui/icons/Person';
 import PhoneIcon from '@material-ui/icons/Phone';
+import MessageIcon from '@material-ui/icons/Message';
 import SwapHorizIcon from '@material-ui/icons/SwapHoriz';
 import { Skeleton } from '@material-ui/lab';
 import {
@@ -20,22 +22,41 @@ import {
   SonyPlaystation,
 } from 'mdi-material-ui';
 import React from 'react';
-import { Post, User } from '../../../@types/types';
+import { AppState, Chat, Post, User } from '../../../@types/types';
+import {
+  startAddNewChat,
+  handleChatOpen,
+  setSelectedChat,
+} from '../../../redux/actions/userChats';
 import PostsCarousel from '../carousel';
 import { useStyles } from '../postAccordion';
+import { connect } from 'react-redux';
+import {
+  AddChatAction,
+  HandleChatOpenAction,
+  SetSelectedChatAction,
+} from '../../../@types/action-types';
 interface IProps {
   post: Post;
   openedPost: Post | null;
   user: User | null;
+  clientUser: User;
   userPosts: Post[];
   loading: boolean;
   setOpenedPost: React.Dispatch<React.SetStateAction<Post | null>>;
+  startAddNewChat: (interlocutorUID: string) => Promise<AddChatAction>;
+  handleChatOpen: (open: boolean) => HandleChatOpenAction;
+  setSelectedChat: (chat: Chat) => SetSelectedChatAction;
 }
 
 const PostsListDesktop: React.FC<IProps> = ({
   post,
   openedPost,
   user,
+  clientUser,
+  setSelectedChat,
+  startAddNewChat,
+  handleChatOpen,
   userPosts,
   loading,
   setOpenedPost,
@@ -45,6 +66,17 @@ const PostsListDesktop: React.FC<IProps> = ({
       setOpenedPost(post);
     } else {
       setOpenedPost(null);
+    }
+  };
+  const handleChatMake = async () => {
+    try {
+      if (user) {
+        const ChatRes = await startAddNewChat(user.uid);
+        setSelectedChat(ChatRes.chat);
+        handleChatOpen(true);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
   const today = new Date(Date.now());
@@ -164,6 +196,19 @@ const PostsListDesktop: React.FC<IProps> = ({
                   {user?.phoneNumber}
                 </Typography>
               </Grid>
+              {user && clientUser.uid !== user.uid && (
+                <Grid item>
+                  <Button
+                    color='inherit'
+                    className={classes.button}
+                    endIcon={<MessageIcon />}
+                    size='small'
+                    onClick={handleChatMake}
+                  >
+                    Message
+                  </Button>
+                </Grid>
+              )}
             </Grid>
           )}
         </div>
@@ -171,4 +216,13 @@ const PostsListDesktop: React.FC<IProps> = ({
     </Accordion>
   );
 };
-export default PostsListDesktop;
+const MapDispatchToProps = {
+  startAddNewChat,
+  handleChatOpen,
+  setSelectedChat,
+};
+const MapStateToProps = (state: AppState) => ({
+  clientUser: state.userInfo.user,
+});
+
+export default connect(MapStateToProps, MapDispatchToProps)(PostsListDesktop);

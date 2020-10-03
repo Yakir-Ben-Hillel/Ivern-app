@@ -10,13 +10,22 @@ import PeopleIcon from '@material-ui/icons/People';
 import React from 'react';
 import { connect } from 'react-redux';
 import { AppState, Chat, User } from '../../@types/types';
-import PopupState, { bindToggle, bindPopper } from 'material-ui-popup-state';
 import ChatsAppBar from './utils/chatsAppBar';
 import ChatsList from './utils/chatsList';
 import ChatRoom from './utils/chatRoom';
+import { handleChatOpen, setSelectedChat } from '../../redux/actions/userChats';
+import {
+  HandleChatOpenAction,
+  SetSelectedChatAction,
+} from '../../@types/action-types';
 interface IProps {
   isAuthenticated: boolean;
   user: User;
+  open: boolean;
+  chatsList: Chat[];
+  selectedChat: Chat | undefined;
+  setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
+  handleChatOpen: (open: boolean) => HandleChatOpenAction;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -42,93 +51,67 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ChatButton: React.FC<IProps> = ({ isAuthenticated, user }) => {
-  const receiverUid = 'T0AsGd126yUC6Yl3lKpn5vonsqF3';
+const ChatButton: React.FC<IProps> = ({
+  isAuthenticated,
+  user,
+  selectedChat,
+  chatsList,
+  open,
+  handleChatOpen,
+}) => {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+    handleChatOpen(!open);
+  };
+  const id = open ? 'simple-popper' : undefined;
 
-  const [chatsList, setChatsList] = React.useState<Chat[]>([]);
-  React.useEffect(() => {
-    if (isAuthenticated) {
-      const chats: Chat[] = [
-        {
-          interlocutor: user,
-          messages: [
-            {
-              sender: user.uid,
-              receiver: receiverUid,
-              text: 'האם גוד אוף וור זמין',
-              createdAt: { _seconds: 1000, _nanoseconds: 1000 },
-            },
-            {
-              sender: receiverUid,
-              receiver: user.uid,
-              text: 'כן,עולה 60 שקל',
-              createdAt: { _seconds: 1000, _nanoseconds: 1000 },
-            },
-            {
-              sender: user.uid,
-              receiver: receiverUid,
-              text: '?מאיפה אתה',
-              createdAt: { _seconds: 1000, _nanoseconds: 1000 },
-            },
-            {
-              sender: receiverUid,
-              receiver: user.uid,
-              text: 'רחובות',
-              createdAt: { _seconds: 1000, _nanoseconds: 1000 },
-            },
-          ],
-
-          createdAt: { _seconds: 1000, _nanoseconds: 1000 },
-        },
-      ];
-
-      setChatsList(chats);
-    }
-  }, [isAuthenticated, user]);
-  const [selectedChat, setSelectedChat] = React.useState<Chat | undefined>();
   const classes = useStyles();
   return (
     <div>
       {isAuthenticated && (
-        <PopupState variant='popper'>
-          {(popupState) => (
-            <div>
-              <Fab
-                className={classes.fab}
-                variant='extended'
-                size='medium'
-                {...bindToggle(popupState)}
-              >
-                <PeopleIcon className={classes.icon} />
-                Chat
-              </Fab>
+        <div>
+          <Fab
+            className={classes.fab}
+            variant='extended'
+            size='medium'
+            id={id}
+            onClick={handleClick}
+          >
+            <PeopleIcon className={classes.icon} />
+            Chat
+          </Fab>
 
-              <Popper placement='left-end' {...bindPopper(popupState)}>
-                <Paper className={classes.paper}>
-                  <ChatsAppBar
-                    selectedChat={selectedChat}
-                    setSelectedChat={setSelectedChat}
-                    popupState={popupState}
-                  />
-                  {selectedChat ? (
-                    <ChatRoom selectedChat={selectedChat} />
-                  ) : (
-                    <ChatsList
-                      chatsList={chatsList}
-                      setSelectedChat={setSelectedChat}
-                    />
-                  )}
-                </Paper>
-              </Popper>
-            </div>
-          )}
-        </PopupState>
+          <Popper id={id} open={open} anchorEl={anchorEl} placement='left-end'>
+            <Paper className={classes.paper}>
+              <ChatsAppBar
+                selectedChat={selectedChat}
+                setSelectedChat={setSelectedChat}
+              />
+              {selectedChat ? (
+                <ChatRoom selectedChat={selectedChat} />
+              ) : (
+                <ChatsList
+                  chatsList={chatsList}
+                  setSelectedChat={setSelectedChat}
+                />
+              )}
+            </Paper>
+          </Popper>
+        </div>
       )}
     </div>
   );
 };
+const MapDispatchToProps = {
+  handleChatOpen,
+  setSelectedChat,
+};
 const MapStateToProps = (state: AppState) => ({
   isAuthenticated: !!state.userInfo.user,
   user: state.userInfo.user,
+  open: state.userChats.open,
+  chatsList: state.userChats.chats,
+  selectedChat: state.userChats.selectedChat,
 });
-export default connect(MapStateToProps)(ChatButton);
+export default connect(MapStateToProps, MapDispatchToProps)(ChatButton);

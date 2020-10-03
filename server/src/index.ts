@@ -23,6 +23,13 @@ import {
   getAllPlatformPosts,
 } from './utils/posts_methods';
 import { changeProfileImage, uploadImage } from './utils/file_upload';
+import {
+  addChat,
+  addMessage,
+  deleteChat,
+  getAllChatMessages,
+  getAllUserChats,
+} from './utils/chat_methods';
 import functions = require('firebase-functions');
 import admin = require('firebase-admin');
 import express = require('express');
@@ -58,10 +65,14 @@ app.get('/posts/get/user/:uid', getAllUserPosts);
 app.post('/posts/add', FBAuth, addPost);
 app.post('/posts/edit/:pid', FBAuth, editPost);
 app.delete('/posts/delete/:pid', FBAuth, deletePost);
-
+//Chat endpoints.
+app.get('/chat/user', FBAuth, getAllUserChats);
+app.get('/chat/messages/get/:cid', FBAuth, getAllChatMessages);
+app.post('/chat', FBAuth, addChat);
+app.post('/chat/messages/add/:cid', FBAuth, addMessage);
+app.delete('/chat/delete/:cid', FBAuth, deleteChat);
 exports.api = functions.region('europe-west3').https.onRequest(app);
 exports.updateGamesEachDay = functions
   .region('europe-west3')
   .pubsub.schedule('0 0 * * *')
-  .timeZone('Israel/Tel_Aviv')
   .onRun(updateGames);

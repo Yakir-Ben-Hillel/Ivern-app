@@ -10,10 +10,13 @@ import {
   Typography,
   IconButton,
 } from '@material-ui/core';
-import { Chat } from '../../../@types/types';
+import { AppState, Chat } from '../../../@types/types';
 import MinimizeIcon from '@material-ui/icons/Minimize';
 import CloseIcon from '@material-ui/icons/Close';
-import { PopupState } from 'material-ui-popup-state/core';
+import { HandleChatOpenAction, SetSelectedChatAction } from '../../../@types/action-types';
+import { handleChatOpen } from '../../../redux/actions/userChats';
+import { connect } from 'react-redux';
+
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     menuButton: {
@@ -27,14 +30,10 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 interface Props {
   selectedChat: Chat | undefined;
-  setSelectedChat: React.Dispatch<React.SetStateAction<Chat | undefined>>;
-  popupState: PopupState;
+  setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
+  handleChatOpen: (open: boolean) => HandleChatOpenAction;
 }
-const ChatsAppBar: React.FC<Props> = ({
-  selectedChat,
-  setSelectedChat,
-  popupState,
-}) => {
+const ChatsAppBar: React.FC<Props> = ({ selectedChat, setSelectedChat }) => {
   // eslint-disable-next-line
   const classes = useStyles();
   return (
@@ -57,14 +56,14 @@ const ChatsAppBar: React.FC<Props> = ({
                   </Typography>
                 </Grid>
               </Grid>
-              <IconButton edge='end' onClick={() => popupState.close()}>
+              <IconButton edge='end' onClick={() => handleChatOpen(false)}>
                 <MinimizeIcon fontSize='default' />
               </IconButton>
               <IconButton
                 edge='end'
                 onClick={() => {
                   setSelectedChat(undefined);
-                  popupState.close();
+                  handleChatOpen(false);
                 }}
               >
                 <CloseIcon />
@@ -84,4 +83,10 @@ const ChatsAppBar: React.FC<Props> = ({
     </div>
   );
 };
-export default ChatsAppBar;
+const MapDispatchToProps = {
+  handleChatOpen,
+};
+const MapStateToProps = (state: AppState) => ({
+  open: state.userChats.open,
+});
+export default connect(MapStateToProps, MapDispatchToProps)(ChatsAppBar);

@@ -42,6 +42,9 @@ export const useStyles = makeStyles((theme: Theme) =>
       width: theme.spacing(12),
       height: theme.spacing(12),
     },
+    button: {
+      marginTop: theme.spacing(2),
+    },
   })
 );
 const PostAccordion: React.FC<IProps> = ({

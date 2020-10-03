@@ -8,6 +8,13 @@ export interface AppState {
     posts: Post[];
     loading: boolean;
   };
+  userChats: {
+    chats: Chat[];
+    loadingChats: boolean;
+    loadingMessages: boolean;
+    open: boolean;
+    selectedChat?: Chat;
+  };
 }
 export interface Area {
   name: string;
@@ -65,7 +72,9 @@ export interface Message {
 }
 export interface Chat {
   interlocutor: User;
-  messages: Message[];
+  lastMessage?: Message;
+  messages?: Message[];
+  cid: string;
   createdAt: {
     _seconds: number;
     _nanoseconds: number;

@@ -88,7 +88,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const ChatRoom: React.FC<Props> = ({ user, selectedChat }) => {
-  const { messages } = selectedChat;
   const [input, setInput] = React.useState('');
   const classes = useStyles();
   const inputRef = React.useRef<HTMLInputElement | null>(null);
@@ -109,7 +108,7 @@ const ChatRoom: React.FC<Props> = ({ user, selectedChat }) => {
   return (
     <div className={classes.root}>
       <List className={classes.messageList}>
-        {messages.map((message, index) => (
+        {selectedChat.messages?.map((message, index) => (
           <ListItem className={classes.messageRow} key={index}>
             <ListItemText
               style={{ marginTop: index === 0 ? 50 : 0 }}
