@@ -14,6 +14,7 @@ export interface AppState {
     loadingMessages: boolean;
     open: boolean;
     selectedChat?: Chat;
+    selectedChatMessages?: Message[];
   };
 }
 export interface Area {

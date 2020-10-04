@@ -27,7 +27,6 @@ export const startSetChats = () => {
         },
       }
     );
-    console.log(res.data);
     dispatch(loadingChats(false));
     return dispatch(setChats(res.data.data));
   };
@@ -86,6 +85,7 @@ const deleteChat = (cid: string): DeleteChatAction => {
 };
 export const startSetMessages = (cid: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+    // dispatch(loadingMessages(true));
     const idToken = await firebase.auth().currentUser?.getIdToken();
     const messagesRes = await axios.get(
       `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/messages/get/${cid}`,
@@ -95,36 +95,38 @@ export const startSetMessages = (cid: string) => {
         },
       }
     );
-    return dispatch(setMessages(messagesRes.data, cid));
+    return dispatch(setMessages(messagesRes.data.data));
   };
 };
-const setMessages = (messages: Message[], cid: string): SetMessagesAction => {
+export const setMessages = (messages: Message[]): SetMessagesAction => {
   return {
     type: 'SET_MESSAGES',
-    cid,
     messages,
   };
 };
 export const startAddMessage = (
   receiver: string,
   text: string,
-  cid: string
+  cid: string,
+  message?: Message
 ) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
-    const idToken = await firebase.auth().currentUser?.getIdToken();
-    const messageRes = await axios.post(
-      `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/messages/add/${cid}`,
-      {
-        receiver,
-        text,
-      },
-      {
-        headers: {
-          authorization: `Bearer ${idToken}`,
+    if (!message) {
+      const idToken = await firebase.auth().currentUser?.getIdToken();
+      const messageRes = await axios.post(
+        `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/messages/add/${cid}`,
+        {
+          receiver,
+          text,
         },
-      }
-    );
-    return dispatch(addMessage(messageRes.data, cid));
+        {
+          headers: {
+            authorization: `Bearer ${idToken}`,
+          },
+        }
+      );
+      return dispatch(addMessage(messageRes.data.data));
+    } else return dispatch(addMessage(message));
   };
 };
 export const setSelectedChat = (chat?: Chat): SetSelectedChatAction => {
@@ -133,10 +135,9 @@ export const setSelectedChat = (chat?: Chat): SetSelectedChatAction => {
     selectedChat: chat,
   };
 };
-const addMessage = (message: Message, cid: string): AddMessageAction => {
+export const addMessage = (message: Message): AddMessageAction => {
   return {
     type: 'ADD_MESSAGE',
-    cid,
     message,
   };
 };

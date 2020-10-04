@@ -72,7 +72,7 @@ export const getAllUserChats = async (req, res) => {
           .get();
         const filteredChat = {
           interlocutor: user.data(),
-          message: !lastText.empty ? lastText.docs[0].data() : undefined,
+          lastMessage: !lastText.empty ? lastText.docs[0].data() : undefined,
           createdAt: data.createdAt,
           cid: data.cid,
         };
@@ -100,7 +100,10 @@ export const addMessage = async (req, res) => {
     const chatRef = await database.doc(`/chats/${req.params.cid}`).get();
     if (!chatRef.exists)
       return res.status(400).json({ error: 'Chat does not exist.' });
-    await database.doc(`/chats/${req.params.cid}/messages`).set(message);
+    await database
+      .collection(`/chats/${req.params.cid}/messages`)
+      .doc()
+      .set(message);
     return res.status(200).json({ data: message });
   } catch (error) {
     console.log(error);
@@ -111,7 +114,7 @@ export const getAllChatMessages = async (req, res) => {
   try {
     const docs = await database
       .collection(`/chats/${req.params.cid}/messages`)
-      .orderBy('createdAt', 'desc')
+      .orderBy('createdAt', 'asc')
       .get();
     const messages: any[] = [];
     docs.forEach((message) => {

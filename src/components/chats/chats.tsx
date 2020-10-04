@@ -86,15 +86,13 @@ const ChatButton: React.FC<IProps> = ({
             <Paper className={classes.paper}>
               <ChatsAppBar
                 selectedChat={selectedChat}
-                setSelectedChat={setSelectedChat}
+                setAnchorEl={setAnchorEl}
+                anchorEl={anchorEl}
               />
               {selectedChat ? (
-                <ChatRoom selectedChat={selectedChat} />
+                <ChatRoom />
               ) : (
-                <ChatsList
-                  chatsList={chatsList}
-                  setSelectedChat={setSelectedChat}
-                />
+                <ChatsList />
               )}
             </Paper>
           </Popper>

@@ -13,8 +13,11 @@ import {
 import { AppState, Chat } from '../../../@types/types';
 import MinimizeIcon from '@material-ui/icons/Minimize';
 import CloseIcon from '@material-ui/icons/Close';
-import { HandleChatOpenAction, SetSelectedChatAction } from '../../../@types/action-types';
-import { handleChatOpen } from '../../../redux/actions/userChats';
+import {
+  HandleChatOpenAction,
+  SetSelectedChatAction,
+} from '../../../@types/action-types';
+import { handleChatOpen,setSelectedChat } from '../../../redux/actions/userChats';
 import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -30,10 +33,18 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 interface Props {
   selectedChat: Chat | undefined;
+  anchorEl: HTMLElement | null;
+  setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
   handleChatOpen: (open: boolean) => HandleChatOpenAction;
 }
-const ChatsAppBar: React.FC<Props> = ({ selectedChat, setSelectedChat }) => {
+const ChatsAppBar: React.FC<Props> = ({
+  selectedChat,
+  anchorEl,
+  setAnchorEl,
+  setSelectedChat,
+  handleChatOpen,
+}) => {
   // eslint-disable-next-line
   const classes = useStyles();
   return (
@@ -56,12 +67,19 @@ const ChatsAppBar: React.FC<Props> = ({ selectedChat, setSelectedChat }) => {
                   </Typography>
                 </Grid>
               </Grid>
-              <IconButton edge='end' onClick={() => handleChatOpen(false)}>
+              <IconButton
+                edge='end'
+                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                  setAnchorEl(anchorEl ? null : event.currentTarget);
+                  handleChatOpen(false);
+                }}
+              >
                 <MinimizeIcon fontSize='default' />
               </IconButton>
               <IconButton
                 edge='end'
-                onClick={() => {
+                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                  setAnchorEl(anchorEl ? null : event.currentTarget);
                   setSelectedChat(undefined);
                   handleChatOpen(false);
                 }}
@@ -85,6 +103,7 @@ const ChatsAppBar: React.FC<Props> = ({ selectedChat, setSelectedChat }) => {
 };
 const MapDispatchToProps = {
   handleChatOpen,
+  setSelectedChat,
 };
 const MapStateToProps = (state: AppState) => ({
   open: state.userChats.open,

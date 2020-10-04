@@ -31,7 +31,6 @@ export interface DeleteChatAction {
 }
 export interface AddMessageAction {
   type: typeof ADD_MESSAGE;
-  cid: string;
   message: Message;
 }
 export interface SetSelectedChatAction {
@@ -40,7 +39,6 @@ export interface SetSelectedChatAction {
 }
 export interface SetMessagesAction {
   type: typeof SET_MESSAGES;
-  cid: string;
   messages: Message[];
 }
 export interface SetUserAction {

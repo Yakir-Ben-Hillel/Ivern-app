@@ -13,9 +13,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { SetSelectedChatAction } from '../../../@types/action-types';
 import { AppState, Chat } from '../../../@types/types';
-
+import { setSelectedChat } from '../../../redux/actions/userChats';
 interface Props {
   chatsList: Chat[];
+  selectedChat?: Chat;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
 }
 const useStyles = makeStyles((theme: Theme) =>
@@ -35,7 +36,11 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
+const ChatsList: React.FC<Props> = ({
+  chatsList,
+  setSelectedChat,
+  selectedChat,
+}) => {
   const classes = useStyles();
   const handleListItemClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -44,7 +49,6 @@ const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
     if (index !== chatsList.length) setSelectedChat(chatsList[index]);
     else setSelectedChat(undefined);
   };
-
   return (
     <div>
       <List className={classes.root}>
@@ -66,7 +70,7 @@ const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
                 </ListItemAvatar>
                 <ListItemText
                   primary={chat.interlocutor.displayName}
-                  secondary={chat.lastMessage}
+                  secondary={chat.lastMessage?.text}
                 />
               </ListItem>
               <Divider variant='inset' component='li' />
@@ -76,8 +80,13 @@ const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
     </div>
   );
 };
+const MapDispatchToProps = {
+  setSelectedChat,
+};
 const MapStateToProps = (state: AppState) => ({
   isAuthenticated: !!state.userInfo.user,
   user: state.userInfo.user,
+  chatsList: state.userChats.chats,
+  selectedChat: state.userChats.selectedChat,
 });
-export default connect(MapStateToProps)(ChatsList);
+export default connect(MapStateToProps, MapDispatchToProps)(ChatsList);

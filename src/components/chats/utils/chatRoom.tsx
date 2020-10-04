@@ -7,18 +7,41 @@ import {
   ListItemText,
   Divider,
   IconButton,
+  CircularProgress,
   InputBase,
   Paper,
 } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AppState, User, Chat } from '../../../@types/types';
+import { AppState, User, Chat, Message } from '../../../@types/types';
 import SendIcon from '@material-ui/icons/Send';
 import Picker from 'emoji-picker-react';
 import MoodIcon from '@material-ui/icons/Mood';
+import {
+  startAddMessage,
+  startSetMessages,
+  addMessage,
+  loadingMessages,
+} from '../../../redux/actions/userChats';
+import {
+  AddMessageAction,
+  LoadingMessagesAction,
+  SetMessagesAction,
+} from '../../../@types/action-types';
+import { firebase } from '../../../firebase';
 interface Props {
   user: User;
-  selectedChat: Chat;
+  selectedChat: Chat | undefined;
+  messages: Message[] | undefined;
+  loading: boolean;
+  startAddMessage: (
+    receiver: string,
+    text: string,
+    cid: string
+  ) => Promise<AddMessageAction>;
+  addMessage: (message: Message) => AddMessageAction;
+  startSetMessages: (cid: string) => Promise<SetMessagesAction>;
+  loadingMessages: (loadingMessages: boolean) => LoadingMessagesAction;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -69,6 +92,7 @@ const useStyles = makeStyles((theme: Theme) =>
     inputRoot: {
       padding: '2px 4px',
       display: 'flex',
+      position: 'absolute',
       alignItems: 'center',
       borderRadius: '10px',
       marginBottom: '8px',
@@ -87,9 +111,42 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ChatRoom: React.FC<Props> = ({ user, selectedChat }) => {
+const ChatRoom: React.FC<Props> = ({
+  user,
+  selectedChat,
+  messages,
+  loading,
+  addMessage,
+  loadingMessages,
+  startAddMessage,
+  startSetMessages,
+}) => {
+  const [receivedMessage, setReceivedMessage] = React.useState<
+    Message | undefined
+  >();
   const [input, setInput] = React.useState('');
   const classes = useStyles();
+  const database = firebase.firestore();
+  React.useEffect(() => {
+    const unsubscribe = database
+      .collection(`/chats/${selectedChat?.cid}/messages`)
+      .onSnapshot((snapshot) => {
+        if (snapshot.docChanges().length === 1) {
+          const data = snapshot.docChanges()[0].doc.data();
+          const message: Message = {
+            sender: data.sender,
+            receiver: data.receiver,
+            text: data.text,
+            createdAt: data.createdAt,
+          };
+          if (message.sender === selectedChat?.interlocutor.uid)
+            addMessage(message);
+          setReceivedMessage(message);
+        }
+      });
+    return () => unsubscribe();
+  }, [addMessage, database, selectedChat]);
+
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   // eslint-disable-next-line
   const [chosenEmoji, setChosenEmoji] = React.useState(null);
@@ -98,73 +155,140 @@ const ChatRoom: React.FC<Props> = ({ user, selectedChat }) => {
     setChosenEmoji(emojiObject);
     setInput(input + emojiObject.emoji);
   };
-  const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const makeTime = (seconds: number) => {
+    const date = new Date(seconds * 1000);
+    const nowDate = new Date();
+    if (isNaN(date.getMinutes())) {
+      const minutes = nowDate.getMinutes();
+      const hours = nowDate.getHours();
+      const displayMinutes = minutes < 9 ? '0' + minutes : minutes;
+      return `${hours}:${displayMinutes}`;
+    } else {
+      const minutes = date.getMinutes();
+      const hours = date.getHours();
+      const displayMinutes = minutes < 9 ? '0' + minutes : minutes;
+      return `${hours}:${displayMinutes}`;
+    }
+  };
+  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (input !== '')
+      if (selectedChat)
+        await startAddMessage(
+          selectedChat.interlocutor.uid,
+          input,
+          selectedChat.cid
+        );
     setInput('');
   };
   React.useEffect(() => {
+    (async () => {
+      if (selectedChat) {
+        await startSetMessages(selectedChat.cid);
+        inputRef.current?.scrollIntoView({ block: 'nearest' });
+      }
+    })();
+  }, [loadingMessages, receivedMessage, selectedChat, startSetMessages]);
+  React.useEffect(() => {
     inputRef.current?.scrollIntoView({ block: 'nearest' });
   }, []);
+  React.useEffect(() => console.log(messages), [messages]);
   return (
     <div className={classes.root}>
-      <List className={classes.messageList}>
-        {selectedChat.messages?.map((message, index) => (
-          <ListItem className={classes.messageRow} key={index}>
-            <ListItemText
-              style={{ marginTop: index === 0 ? 50 : 0 }}
-              className={
-                message.sender === user.uid
-                  ? classes.messageTextMe
-                  : classes.messageTextYou
-              }
-              primary={message.text}
-              secondaryTypographyProps={{
-                color: message.sender !== user.uid ? 'inherit' : undefined,
-                variant: 'caption',
+      {loading ? (
+        <CircularProgress
+          style={{ position: 'absolute', left: '40%', bottom: '50%' }}
+          size={60}
+        />
+      ) : (
+        <div>
+          <List
+            className={classes.messageList}
+            style={{
+              bottom:
+                selectedChat?.messages?.length &&
+                selectedChat?.messages?.length < 4
+                  ? 0
+                  : undefined,
+            }}
+          >
+            {messages?.map((message, index) => (
+              <ListItem className={classes.messageRow} key={index}>
+                <ListItemText
+                  style={{ marginTop: index === 0 ? 50 : 0 }}
+                  className={
+                    message.sender === user.uid
+                      ? classes.messageTextMe
+                      : classes.messageTextYou
+                  }
+                  primary={message.text}
+                  secondaryTypographyProps={{
+                    color: message.sender !== user.uid ? 'inherit' : undefined,
+                    variant: 'caption',
+                  }}
+                  secondary={makeTime(message.createdAt._seconds)}
+                />
+              </ListItem>
+            ))}
+          </List>
+          {emojiOpen && (
+            <div style={{ marginLeft: '15px' }}>
+              <Picker disableSearchBar onEmojiClick={onEmojiClick} />
+            </div>
+          )}
+          <form onSubmit={onSubmit}>
+            <Paper
+              className={classes.inputRoot}
+              style={{
+                bottom:
+                  !messages?.length ||
+                  (messages?.length && messages?.length < 4)
+                    ? 0
+                    : undefined,
               }}
-              secondary='13:55'
-            />
-          </ListItem>
-        ))}
-      </List>
-      {emojiOpen && (
-        <div style={{ marginLeft: '15px' }}>
-          <Picker disableSearchBar onEmojiClick={onEmojiClick} />
+            >
+              <IconButton
+                onClick={() => setEmojiOpen(!emojiOpen)}
+                className={classes.iconButton}
+              >
+                <MoodIcon />
+              </IconButton>
+              <InputBase
+                ref={inputRef}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setInput(event.target.value)
+                }
+                value={input}
+                className={classes.input}
+                placeholder='Type a message'
+                inputProps={{ 'aria-label': 'type a message' }}
+              />
+              <Divider className={classes.divider} orientation='vertical' />
+              <IconButton
+                type='submit'
+                color='primary'
+                className={classes.iconButton}
+                aria-label='directions'
+              >
+                <SendIcon />
+              </IconButton>
+            </Paper>
+          </form>
         </div>
       )}
-      <form onSubmit={onSubmit}>
-        <Paper className={classes.inputRoot}>
-          <IconButton
-            onClick={() => setEmojiOpen(!emojiOpen)}
-            className={classes.iconButton}
-          >
-            <MoodIcon />
-          </IconButton>
-          <InputBase
-            ref={inputRef}
-            onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-              setInput(event.target.value)
-            }
-            value={input}
-            className={classes.input}
-            placeholder='Type a message'
-            inputProps={{ 'aria-label': 'type a message' }}
-          />
-          <Divider className={classes.divider} orientation='vertical' />
-          <IconButton
-            type='submit'
-            color='primary'
-            className={classes.iconButton}
-            aria-label='directions'
-          >
-            <SendIcon />
-          </IconButton>
-        </Paper>
-      </form>
     </div>
   );
 };
+const MapDispatchToProps = {
+  addMessage,
+  startSetMessages,
+  startAddMessage,
+  loadingMessages,
+};
 const MapStateToProps = (state: AppState) => ({
   user: state.userInfo.user,
+  loading: state.userChats.loadingMessages,
+  selectedChat: state.userChats.selectedChat,
+  messages: state.userChats.selectedChatMessages,
 });
-export default connect(MapStateToProps)(ChatRoom);
+export default connect(MapStateToProps, MapDispatchToProps)(ChatRoom);
