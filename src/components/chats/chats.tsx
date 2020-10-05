@@ -59,14 +59,15 @@ const ChatButton: React.FC<IProps> = ({
   open,
   handleChatOpen,
 }) => {
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+  const id = 'simple-popper';
+  const classes = useStyles();
+
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(anchorEl ? null : event.currentTarget);
+    const myElement = document.getElementById(id);
+    setAnchorEl(myElement);
     handleChatOpen(!open);
   };
-  const id = open ? 'simple-popper' : undefined;
-
-  const classes = useStyles();
   return (
     <div>
       {isAuthenticated && (
@@ -82,18 +83,10 @@ const ChatButton: React.FC<IProps> = ({
             Chat
           </Fab>
 
-          <Popper id={id} open={open} anchorEl={anchorEl} placement='left-end'>
+          <Popper open={open} anchorEl={anchorEl} placement='left-end'>
             <Paper className={classes.paper}>
-              <ChatsAppBar
-                selectedChat={selectedChat}
-                setAnchorEl={setAnchorEl}
-                anchorEl={anchorEl}
-              />
-              {selectedChat ? (
-                <ChatRoom />
-              ) : (
-                <ChatsList />
-              )}
+              <ChatsAppBar selectedChat={selectedChat} />
+              {selectedChat ? <ChatRoom /> : <ChatsList />}
             </Paper>
           </Popper>
         </div>

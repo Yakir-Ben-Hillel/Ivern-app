@@ -85,7 +85,7 @@ const deleteChat = (cid: string): DeleteChatAction => {
 };
 export const startSetMessages = (cid: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
-    // dispatch(loadingMessages(true));
+    dispatch(loadingMessages(true));
     const idToken = await firebase.auth().currentUser?.getIdToken();
     const messagesRes = await axios.get(
       `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/messages/get/${cid}`,
@@ -107,26 +107,23 @@ export const setMessages = (messages: Message[]): SetMessagesAction => {
 export const startAddMessage = (
   receiver: string,
   text: string,
-  cid: string,
-  message?: Message
+  cid: string
 ) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
-    if (!message) {
-      const idToken = await firebase.auth().currentUser?.getIdToken();
-      const messageRes = await axios.post(
-        `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/messages/add/${cid}`,
-        {
-          receiver,
-          text,
+    const idToken = await firebase.auth().currentUser?.getIdToken();
+    const messageRes = await axios.post(
+      `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/messages/add/${cid}`,
+      {
+        receiver,
+        text,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${idToken}`,
         },
-        {
-          headers: {
-            authorization: `Bearer ${idToken}`,
-          },
-        }
-      );
-      return dispatch(addMessage(messageRes.data.data));
-    } else return dispatch(addMessage(message));
+      }
+    );
+    return dispatch(addMessage(messageRes.data.data));
   };
 };
 export const setSelectedChat = (chat?: Chat): SetSelectedChatAction => {
@@ -155,7 +152,9 @@ export const loadingMessages = (
     loadingMessages,
   };
 };
-export const handleChatOpen = (open: boolean): HandleChatOpenAction => {
+export const handleChatOpen = (
+  open: boolean,
+): HandleChatOpenAction => {
   return {
     type: 'HANDLE_CHAT_OPEN',
     open,

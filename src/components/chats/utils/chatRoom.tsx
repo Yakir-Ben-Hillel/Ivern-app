@@ -20,6 +20,7 @@ import MoodIcon from '@material-ui/icons/Mood';
 import {
   startAddMessage,
   startSetMessages,
+  setMessages,
   addMessage,
   loadingMessages,
 } from '../../../redux/actions/userChats';
@@ -34,6 +35,7 @@ interface Props {
   selectedChat: Chat | undefined;
   messages: Message[] | undefined;
   loading: boolean;
+  setMessages: (messages: Message[]) => SetMessagesAction;
   startAddMessage: (
     receiver: string,
     text: string,
@@ -95,7 +97,6 @@ const useStyles = makeStyles((theme: Theme) =>
       position: 'absolute',
       alignItems: 'center',
       borderRadius: '10px',
-      marginBottom: '8px',
     },
     input: {
       marginLeft: theme.spacing(1),
@@ -116,6 +117,7 @@ const ChatRoom: React.FC<Props> = ({
   selectedChat,
   messages,
   loading,
+  setMessages,
   addMessage,
   loadingMessages,
   startAddMessage,
@@ -146,7 +148,11 @@ const ChatRoom: React.FC<Props> = ({
       });
     return () => unsubscribe();
   }, [addMessage, database, selectedChat]);
-
+  const isMessageInEnglish = (text: string) => {
+    const char = text[0].toLocaleLowerCase();
+    if (char >= 'a' && char <= 'z') return true;
+    else return false;
+  };
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   // eslint-disable-next-line
   const [chosenEmoji, setChosenEmoji] = React.useState(null);
@@ -183,22 +189,31 @@ const ChatRoom: React.FC<Props> = ({
   };
   React.useEffect(() => {
     (async () => {
-      if (selectedChat) {
+      if (!messages && selectedChat) {
         await startSetMessages(selectedChat.cid);
+        loadingMessages(false);
         inputRef.current?.scrollIntoView({ block: 'nearest' });
+      } else {
+        if (messages) {
+          setMessages(messages);
+          inputRef.current?.scrollIntoView({ block: 'nearest' });
+        }
       }
     })();
-  }, [loadingMessages, receivedMessage, selectedChat, startSetMessages]);
-  React.useEffect(() => {
-    inputRef.current?.scrollIntoView({ block: 'nearest' });
-  }, []);
-  React.useEffect(() => console.log(messages), [messages]);
+  }, [
+    loadingMessages,
+    messages,
+    receivedMessage,
+    selectedChat,
+    setMessages,
+    startSetMessages,
+  ]);
   return (
     <div className={classes.root}>
       {loading ? (
         <CircularProgress
-          style={{ position: 'absolute', left: '40%', bottom: '50%' }}
-          size={60}
+          style={{ position: 'absolute', left: '40%', bottom: '45%' }}
+          size={50}
         />
       ) : (
         <div>
@@ -215,7 +230,10 @@ const ChatRoom: React.FC<Props> = ({
             {messages?.map((message, index) => (
               <ListItem className={classes.messageRow} key={index}>
                 <ListItemText
-                  style={{ marginTop: index === 0 ? 50 : 0 }}
+                  style={{
+                    marginTop: index === 0 ? 50 : 0,
+                    direction: isMessageInEnglish(message.text) ? 'ltr' : 'rtl',
+                  }}
                   className={
                     message.sender === user.uid
                       ? classes.messageTextMe
@@ -281,6 +299,7 @@ const ChatRoom: React.FC<Props> = ({
 };
 const MapDispatchToProps = {
   addMessage,
+  setMessages,
   startSetMessages,
   startAddMessage,
   loadingMessages,

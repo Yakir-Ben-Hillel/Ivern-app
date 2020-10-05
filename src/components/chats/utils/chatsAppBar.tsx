@@ -17,7 +17,10 @@ import {
   HandleChatOpenAction,
   SetSelectedChatAction,
 } from '../../../@types/action-types';
-import { handleChatOpen,setSelectedChat } from '../../../redux/actions/userChats';
+import {
+  handleChatOpen,
+  setSelectedChat,
+} from '../../../redux/actions/userChats';
 import { connect } from 'react-redux';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -33,15 +36,11 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 interface Props {
   selectedChat: Chat | undefined;
-  anchorEl: HTMLElement | null;
-  setAnchorEl: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
   handleChatOpen: (open: boolean) => HandleChatOpenAction;
 }
 const ChatsAppBar: React.FC<Props> = ({
   selectedChat,
-  anchorEl,
-  setAnchorEl,
   setSelectedChat,
   handleChatOpen,
 }) => {
@@ -70,7 +69,6 @@ const ChatsAppBar: React.FC<Props> = ({
               <IconButton
                 edge='end'
                 onClick={(event: React.MouseEvent<HTMLElement>) => {
-                  setAnchorEl(anchorEl ? null : event.currentTarget);
                   handleChatOpen(false);
                 }}
               >
@@ -79,7 +77,6 @@ const ChatsAppBar: React.FC<Props> = ({
               <IconButton
                 edge='end'
                 onClick={(event: React.MouseEvent<HTMLElement>) => {
-                  setAnchorEl(anchorEl ? null : event.currentTarget);
                   setSelectedChat(undefined);
                   handleChatOpen(false);
                 }}
@@ -91,8 +88,8 @@ const ChatsAppBar: React.FC<Props> = ({
         </div>
       ) : (
         <AppBar position='fixed'>
-          <Toolbar>
-            <Typography variant='h6' noWrap color='inherit'>
+          <Toolbar variant='dense'>
+            <Typography variant='h6' color='inherit'>
               CHATS
             </Typography>
           </Toolbar>

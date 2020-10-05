@@ -42,6 +42,7 @@ interface IProps {
   user: User | null;
   clientUser: User;
   userPosts: Post[];
+  chats: Chat[];
   loading: boolean;
   setOpenedPost: React.Dispatch<React.SetStateAction<Post | null>>;
   startAddNewChat: (interlocutorUID: string) => Promise<AddChatAction>;
@@ -54,6 +55,7 @@ const PostsListDesktop: React.FC<IProps> = ({
   openedPost,
   user,
   clientUser,
+  chats,
   setSelectedChat,
   startAddNewChat,
   handleChatOpen,
@@ -68,11 +70,19 @@ const PostsListDesktop: React.FC<IProps> = ({
       setOpenedPost(null);
     }
   };
-  const handleChatMake = async () => {
+  const handleChatMake = async (event: React.MouseEvent<HTMLElement>) => {
     try {
       if (user) {
-        const ChatRes = await startAddNewChat(user.uid);
-        setSelectedChat(ChatRes.chat);
+        const chat = chats.find((chat) => {
+          return chat.interlocutor.uid === user.uid;
+        });
+        console.log(chat);
+        if (chat) {
+          setSelectedChat(chat);
+        } else {
+          const ChatRes = await startAddNewChat(user.uid);
+          setSelectedChat(ChatRes.chat);
+        }
         handleChatOpen(true);
       }
     } catch (error) {
@@ -223,6 +233,7 @@ const MapDispatchToProps = {
 };
 const MapStateToProps = (state: AppState) => ({
   clientUser: state.userInfo.user,
+  chats: state.userChats.chats,
 });
 
 export default connect(MapStateToProps, MapDispatchToProps)(PostsListDesktop);

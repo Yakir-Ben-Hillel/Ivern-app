@@ -49,6 +49,12 @@ const ChatsList: React.FC<Props> = ({
     if (index !== chatsList.length) setSelectedChat(chatsList[index]);
     else setSelectedChat(undefined);
   };
+  const isMessageInEnglish = (text: string) => {
+    const char = text[0].toLocaleLowerCase();
+    if (char >= 'a' && char <= 'z') return true;
+    else return false;
+  };
+
   return (
     <div>
       <List className={classes.root}>
@@ -69,6 +75,13 @@ const ChatsList: React.FC<Props> = ({
                   />
                 </ListItemAvatar>
                 <ListItemText
+                  secondaryTypographyProps={{
+                    dir:
+                      chat.lastMessage?.text &&
+                      isMessageInEnglish(chat.lastMessage?.text)
+                        ? 'ltr'
+                        : 'rtl',
+                  }}
                   primary={chat.interlocutor.displayName}
                   secondary={chat.lastMessage?.text}
                 />
