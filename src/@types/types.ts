@@ -13,6 +13,7 @@ export interface AppState {
     loadingChats: boolean;
     loadingMessages: boolean;
     open: boolean;
+    unreadChats: number;
     selectedChat?: Chat;
     selectedChatMessages?: Message[];
   };
@@ -75,6 +76,7 @@ export interface Chat {
   interlocutor: User;
   lastMessage?: Message;
   messages?: Message[];
+  unreadMessages: number;
   cid: string;
   createdAt: {
     _seconds: number;

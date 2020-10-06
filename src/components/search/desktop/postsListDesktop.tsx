@@ -70,13 +70,12 @@ const PostsListDesktop: React.FC<IProps> = ({
       setOpenedPost(null);
     }
   };
-  const handleChatMake = async (event: React.MouseEvent<HTMLElement>) => {
+  const handleChatMake = async () => {
     try {
       if (user) {
         const chat = chats.find((chat) => {
           return chat.interlocutor.uid === user.uid;
         });
-        console.log(chat);
         if (chat) {
           setSelectedChat(chat);
         } else {

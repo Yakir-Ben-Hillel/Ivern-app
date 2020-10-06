@@ -14,18 +14,18 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "axios": "^0.19.2",
-    "busboy": "^0.3.1",
-    "cors": "^2.8.5",
-    "firebase-functions-test": "^0.1.6",
     "@firebase/firestore-types": "^1.11.0",
     "@types/busboy": "^0.2.3",
     "@types/cors": "^2.8.6",
     "@types/testing-library__dom": "^7.5.0",
+    "axios": "^0.19.2",
+    "busboy": "^0.3.1",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
-    "firebase": "^7.15.5",
+    "firebase": "^7.22.0",
     "firebase-admin": "^8.6.0",
     "firebase-functions": "^3.3.0",
+    "firebase-functions-test": "^0.1.6",
     "loadash": "^1.0.0"
   },
   "devDependencies": {

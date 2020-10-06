@@ -32,42 +32,10 @@ const HeroSection: React.FC = () => {
               <a className='button button-primary' href='/search'>
                 Explore
               </a>
-              {/* <div className='lights-toggle'>
-                <input
-                  onChange={() => {
-                    if (lights) {
-                      document.body.classList.add('lights-off');
-                      localStorage.setItem('lights', 'false');
-                      SwitchLights(false);
-                    } else {
-                      document.body.classList.remove('lights-off');
-                      localStorage.setItem('lights', 'true');
-                      SwitchLights(true);
-                    }
-                  }}
-                  id='lights-toggle'
-                  type='checkbox'
-                  name='lights-toggle'
-                  className='switch'
-                  checked={lights}
-                />
-                <label htmlFor='lights-toggle' className='text-xs'>
-                  <span>
-                    Turn me{' '}
-                    <span className='label-text'>
-                      {lights ? 'dark' : 'light'}
-                    </span>
-                  </span>
-                </label>
-              </div> */}
             </div>
           </div>
           <div className='hero-media'>
             <div className='header-illustration'>
-              {/* <Svg
-              src={require('./dist/images/header-illustration-light.svg')}
-              className="header-illustration-image asset-light"
-            /> */}
               {!lights && (
                 <Svg
                   className='header-illustration-image asset-dark'

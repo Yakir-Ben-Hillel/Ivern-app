@@ -3,6 +3,7 @@ import {
   createStyles,
   Dialog,
   Grid,
+  IconButton,
   makeStyles,
   Theme,
   Typography,
@@ -11,6 +12,7 @@ import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PersonIcon from '@material-ui/icons/Person';
 import PhoneIcon from '@material-ui/icons/Phone';
+import CloseIcon from '@material-ui/icons/Close';
 import { Skeleton } from '@material-ui/lab';
 import React from 'react';
 import { Post, User } from '../../../@types/types';
@@ -35,6 +37,9 @@ export const useStyles = makeStyles((theme: Theme) =>
       backgroundColor: theme.palette.background.default,
       flexGrow: 1,
     },
+    gridBase: {
+      paddingBottom: theme.spacing(1),
+    },
     hebrew: {
       direction: 'rtl',
       marginRight: theme.spacing(2),
@@ -51,8 +56,12 @@ export const useStyles = makeStyles((theme: Theme) =>
       marginRight: theme.spacing(1),
       marginBottom: theme.spacing(2),
     },
+    closeIcon: {
+      position: 'absolute',
+    },
     userAvatarHelper: {
       borderLeft: `2px solid ${theme.palette.divider}`,
+      marginRight: theme.spacing(1),
       paddingLeft: theme.spacing(1),
     },
     infoSkeleton: {
@@ -95,7 +104,10 @@ const PostDialog: React.FC<IProps> = ({
         aria-labelledby='simple-dialog-title'
         open={dialogOpen}
       >
-        <Grid container alignItems='center'>
+        <IconButton className={classes.closeIcon} onClick={handleClickClose}>
+          <CloseIcon />
+        </IconButton>
+        <Grid className={classes.gridBase} container alignItems='center'>
           <Grid item xs={12}>
             <div>
               {openedPost?.artwork ? (

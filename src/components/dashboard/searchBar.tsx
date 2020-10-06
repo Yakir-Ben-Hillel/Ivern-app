@@ -43,7 +43,7 @@ const SearchBar: React.FC = () => {
           <div className='cta-header text-center'>
             <h2 className='section-title mt-0'>What are you waiting for?</h2>
             <p className='section-paragraph'>
-              Search for a specific games you desire on the platform you love
+              Search for the specific games you desire on the platform you love
               the most.
             </p>
             <div className='cta-cta'>

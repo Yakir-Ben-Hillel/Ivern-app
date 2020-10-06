@@ -5,6 +5,7 @@ const chatsReducerDefaultState: {
   loadingChats: boolean;
   selectedChat: Chat | undefined;
   selectedChatMessages: Message[] | undefined;
+  unreadChats: number;
   loadingMessages: boolean;
   open: boolean;
 } = {
@@ -12,6 +13,7 @@ const chatsReducerDefaultState: {
   loadingChats: false,
   selectedChat: undefined,
   selectedChatMessages: undefined,
+  unreadChats: 0,
   loadingMessages: false,
   open: false,
 };
@@ -40,6 +42,20 @@ export default (state = chatsReducerDefaultState, action: ChatActionTypes) => {
     }
     case 'SET_SELECTED_CHAT':
       return { ...state, selectedChat: action.selectedChat };
+    case 'SET_UNREAD_CHATS':
+      return { ...state, unreadChats: action.unreadChats };
+    case 'SET_UNREAD_MESSAGES': {
+      const index = state.chats.findIndex((chat) => chat.cid === action.cid);
+      if (index !== -1) {
+        const newChat = {
+          ...state.chats[index],
+          unreadMessages: action.unreadMessages,
+        };
+        const newStateChats = state.chats;
+        newStateChats[index] = newChat;
+        return { ...state, chats: newStateChats };
+      } else return { ...state };
+    }
     case 'LOADING_CHATS':
       return { ...state, loadingChats: action.loadingChats };
     case 'LOADING_MESSAGES':

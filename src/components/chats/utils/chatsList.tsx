@@ -1,13 +1,15 @@
 import {
   Avatar,
+  Badge,
   createStyles,
-  makeStyles,
-  Theme,
-  ListItemAvatar,
+  Divider,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemText,
-  Divider,
+  makeStyles,
+  Theme,
+  withStyles,
 } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -16,7 +18,6 @@ import { AppState, Chat } from '../../../@types/types';
 import { setSelectedChat } from '../../../redux/actions/userChats';
 interface Props {
   chatsList: Chat[];
-  selectedChat?: Chat;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
 }
 const useStyles = makeStyles((theme: Theme) =>
@@ -35,17 +36,16 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
-const ChatsList: React.FC<Props> = ({
-  chatsList,
-  setSelectedChat,
-  selectedChat,
-}) => {
+const StyledBadge = withStyles((theme: Theme) =>
+  createStyles({
+    badge: {
+      top: 35,
+    },
+  })
+)(Badge);
+const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
   const classes = useStyles();
-  const handleListItemClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    index: number
-  ) => {
+  const handleListItemClick = (index: number) => {
     if (index !== chatsList.length) setSelectedChat(chatsList[index]);
     else setSelectedChat(undefined);
   };
@@ -64,7 +64,7 @@ const ChatsList: React.FC<Props> = ({
               <ListItem
                 alignItems='flex-start'
                 button
-                onClick={(event) => handleListItemClick(event, index)}
+                onClick={() => handleListItemClick(index)}
                 style={{ marginTop: index === 0 ? 40 : 0 }}
               >
                 <ListItemAvatar>
@@ -85,6 +85,7 @@ const ChatsList: React.FC<Props> = ({
                   primary={chat.interlocutor.displayName}
                   secondary={chat.lastMessage?.text}
                 />
+                <StyledBadge badgeContent={chat.unreadMessages} color='secondary'  />
               </ListItem>
               <Divider variant='inset' component='li' />
             </div>
@@ -97,9 +98,7 @@ const MapDispatchToProps = {
   setSelectedChat,
 };
 const MapStateToProps = (state: AppState) => ({
-  isAuthenticated: !!state.userInfo.user,
   user: state.userInfo.user,
   chatsList: state.userChats.chats,
-  selectedChat: state.userChats.selectedChat,
 });
 export default connect(MapStateToProps, MapDispatchToProps)(ChatsList);

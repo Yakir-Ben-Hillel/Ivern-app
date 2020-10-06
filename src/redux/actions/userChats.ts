@@ -11,6 +11,8 @@ import {
   LoadingMessagesAction,
   HandleChatOpenAction,
   SetSelectedChatAction,
+  SetUnreadChatsAction,
+  SetUnreadMessagesAction,
 } from '../../@types/action-types';
 import { Chat, Message } from '../../@types/types';
 import { firebase } from '../../firebase';
@@ -27,8 +29,9 @@ export const startSetChats = () => {
         },
       }
     );
+    dispatch(setUnreadChats(res.data.data.unreadChats));
     dispatch(loadingChats(false));
-    return dispatch(setChats(res.data.data));
+    return dispatch(setChats(res.data.data.chats));
   };
 };
 const setChats = (chats: Chat[]): SetChatsAction => {
@@ -152,11 +155,25 @@ export const loadingMessages = (
     loadingMessages,
   };
 };
-export const handleChatOpen = (
-  open: boolean,
-): HandleChatOpenAction => {
+export const handleChatOpen = (open: boolean): HandleChatOpenAction => {
   return {
     type: 'HANDLE_CHAT_OPEN',
     open,
+  };
+};
+export const setUnreadChats = (unreadChats: number): SetUnreadChatsAction => {
+  return {
+    type: 'SET_UNREAD_CHATS',
+    unreadChats,
+  };
+};
+export const setUnreadMessages = (
+  unreadMessages: number,
+  cid: string
+): SetUnreadMessagesAction => {
+  return {
+    type: 'SET_UNREAD_MESSAGES',
+    unreadMessages,
+    cid,
   };
 };

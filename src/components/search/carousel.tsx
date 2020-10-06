@@ -81,7 +81,7 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
       },
       caption: {
         marginTop: theme.spacing(1),
-        marginLeft: theme.spacing(6),
+        marginLeft: theme.spacing(7),
       },
     })
   );
@@ -124,21 +124,18 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
           )}
           {userPosts.length > 0 ? (
             <Carousel
-              additionalTransfrom={0}
               arrows
               autoPlay={mobile}
               autoPlaySpeed={2500}
-              infinite
+              infinite={userPosts.length > 1}
               ssr
               centerMode={false}
-              className=''
               containerClass='container-with-dots'
               draggable
               keyBoardControl
               minimumTouchDrag={80}
               responsive={responsive}
               showDots={false}
-              sliderClass=''
               slidesToSlide={1}
               swipeable
             >

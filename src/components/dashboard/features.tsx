@@ -11,7 +11,7 @@ const Features: React.FC = () => {
             <div className='container-sm'>
               <h2 className='section-title mt-0'>Ivern</h2>
               <p className='section-paragraph'>
-                The video games thrift shop at the touch of your hand.
+                Your video games thrift shop.
               </p>
               {!isMobile() && (
                 <div className='features-image'>

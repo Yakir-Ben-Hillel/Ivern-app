@@ -1,39 +1,25 @@
-import React from 'react';
 import {
   AppBar,
-  createStyles,
-  makeStyles,
-  Theme,
   Avatar,
   Grid,
+  IconButton,
   Toolbar,
   Typography,
-  IconButton,
 } from '@material-ui/core';
-import { AppState, Chat } from '../../../@types/types';
-import MinimizeIcon from '@material-ui/icons/Minimize';
 import CloseIcon from '@material-ui/icons/Close';
+import MinimizeIcon from '@material-ui/icons/Minimize';
+import React from 'react';
+import { connect } from 'react-redux';
 import {
   HandleChatOpenAction,
   SetSelectedChatAction,
 } from '../../../@types/action-types';
+import { AppState, Chat } from '../../../@types/types';
 import {
   handleChatOpen,
   setSelectedChat,
 } from '../../../redux/actions/userChats';
-import { connect } from 'react-redux';
 
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    menuButton: {
-      marginRight: theme.spacing(2),
-    },
-    toolbar: theme.mixins.toolbar,
-    cover: {
-      marginRight: theme.spacing(1),
-    },
-  })
-);
 interface Props {
   selectedChat: Chat | undefined;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
@@ -44,8 +30,6 @@ const ChatsAppBar: React.FC<Props> = ({
   setSelectedChat,
   handleChatOpen,
 }) => {
-  // eslint-disable-next-line
-  const classes = useStyles();
   return (
     <div>
       {selectedChat ? (
@@ -68,7 +52,7 @@ const ChatsAppBar: React.FC<Props> = ({
               </Grid>
               <IconButton
                 edge='end'
-                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                onClick={() => {
                   handleChatOpen(false);
                 }}
               >
@@ -76,7 +60,7 @@ const ChatsAppBar: React.FC<Props> = ({
               </IconButton>
               <IconButton
                 edge='end'
-                onClick={(event: React.MouseEvent<HTMLElement>) => {
+                onClick={() => {
                   setSelectedChat(undefined);
                   handleChatOpen(false);
                 }}
