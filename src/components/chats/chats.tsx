@@ -18,13 +18,18 @@ import {
   handleChatOpen,
   setSelectedChat,
   setUnreadMessages,
+  setChats,
+  startAddNewExistingChat,
+  setUnreadChats,
 } from '../../redux/actions/userChats';
 import { firebase } from '../../firebase';
-
 import {
   HandleChatOpenAction,
+  SetChatsAction,
   SetSelectedChatAction,
   SetUnreadMessagesAction,
+  SetUnreadChatsAction,
+  AddChatAction,
 } from '../../@types/action-types';
 interface IProps {
   isAuthenticated: boolean;
@@ -33,10 +38,13 @@ interface IProps {
   unreadChats: number;
   chatsList: Chat[];
   selectedChat: Chat | undefined;
+  setChats: (chats: Chat[]) => SetChatsAction;
   setUnreadMessages: (
     unreadMessages: number,
     cid: string
   ) => SetUnreadMessagesAction;
+  startAddNewExistingChat: (cid: string) => Promise<AddChatAction>;
+  setUnreadChats: (unreadChats: number) => SetUnreadChatsAction;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
   handleChatOpen: (open: boolean) => HandleChatOpenAction;
 }
@@ -71,7 +79,10 @@ const ChatButton: React.FC<IProps> = ({
   unreadChats,
   chatsList,
   open,
+  setChats,
   setUnreadMessages,
+  startAddNewExistingChat,
+  setUnreadChats,
   handleChatOpen,
 }) => {
   const database = firebase.firestore();
@@ -79,24 +90,60 @@ const ChatButton: React.FC<IProps> = ({
   const id = 'simple-popper';
   const classes = useStyles();
   React.useEffect(() => {
-    const unsubscribe = database.collection(`/chats`).onSnapshot((snapshot) => {
-      const data = snapshot.docChanges()[0].doc.data();
-      if (snapshot.docChanges()[0].type === 'modified') {
-        if (data.lastMessage && user.uid === data.lastMessage.receiver) {
-          const chat = chatsList.find((chat) => chat.cid === data.cid);
-          if (chat) {
-            setUnreadMessages(chat.unreadMessages + 1, chat.cid);
-          }
-        }
-      }
-    });
-    return () => unsubscribe();
-  }, [chatsList, database, setUnreadMessages, user]);
+    if (user) {
+      const unsubscribe = database
+        .collection(`/chats`)
+        .where('participants', 'array-contains', user.uid)
+        .onSnapshot((snapshot) => {
+          snapshot.docChanges().forEach(async (change) => {
+            if (snapshot.docChanges()[0].type === 'modified') {
+              const data = change.doc.data();
+              if (data.lastMessage && user.uid === data.lastMessage.receiver) {
+                const chat = chatsList.find((chat) => chat.cid === data.cid);
+                //chat is the current data at the client.
+                if (chat) {
+                  const index = chatsList.findIndex(
+                    (chat) => chat.cid === data.cid
+                  );
+                  chat.lastMessage = data.lastMessage;
+                  const newChats = chatsList;
+                  newChats[index] = chat;
+                  if (selectedChat?.cid !== chat.cid) {
+                    if (chat.unreadMessages === 0)
+                      setUnreadChats(unreadChats + 1);
+                    setUnreadMessages(chat.unreadMessages + 1, chat.cid);
+                  }
+                  setChats(newChats);
+                } else {
+                  //Got a message from  a new chat.
+                  await startAddNewExistingChat(data.cid);
+                }
+              }
+            }
+          });
+        });
+      return () => unsubscribe();
+    }
+  }, [
+    chatsList,
+    database,
+    selectedChat,
+    setChats,
+    setUnreadChats,
+    setUnreadMessages,
+    startAddNewExistingChat,
+    unreadChats,
+    user,
+  ]);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     const myElement = document.getElementById(id);
     setAnchorEl(myElement);
     handleChatOpen(!open);
   };
+  React.useEffect(() => {
+    const myElement = document.getElementById(id);
+    setAnchorEl(myElement);
+  }, [open]);
   return (
     <div>
       {isAuthenticated && (
@@ -134,7 +181,10 @@ const ChatButton: React.FC<IProps> = ({
 const MapDispatchToProps = {
   handleChatOpen,
   setSelectedChat,
+  startAddNewExistingChat,
+  setChats,
   setUnreadMessages,
+  setUnreadChats,
 };
 const MapStateToProps = (state: AppState) => ({
   isAuthenticated: !!state.userInfo.user,

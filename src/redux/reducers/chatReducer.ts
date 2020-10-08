@@ -29,9 +29,7 @@ export default (state = chatsReducerDefaultState, action: ChatActionTypes) => {
         chats: state.chats.filter((chat) => chat.cid !== action.cid),
       };
     case 'SET_MESSAGES': {
-      if (state.selectedChat) {
-        return { ...state, selectedChatMessages: action.messages };
-      } else return { ...state };
+      return { ...state, selectedChatMessages: action.messages };
     }
     case 'ADD_MESSAGE': {
       if (state.selectedChatMessages) {

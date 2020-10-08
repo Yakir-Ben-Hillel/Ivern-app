@@ -41,7 +41,7 @@ export interface SetSelectedChatAction {
 }
 export interface SetMessagesAction {
   type: typeof SET_MESSAGES;
-  messages: Message[];
+  messages?: Message[];
 }
 export interface SetUserAction {
   type: typeof SET_USER;

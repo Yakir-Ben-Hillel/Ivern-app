@@ -35,7 +35,7 @@ interface Props {
   selectedChat: Chat | undefined;
   messages: Message[] | undefined;
   loading: boolean;
-  setMessages: (messages: Message[]) => SetMessagesAction;
+  setMessages: (messages?: Message[]) => SetMessagesAction;
   startAddMessage: (
     receiver: string,
     text: string,
@@ -164,17 +164,18 @@ const ChatRoom: React.FC<Props> = ({
   const makeTime = (seconds: number) => {
     const date = new Date(seconds * 1000);
     const nowDate = new Date();
+    let minutes: number;
+    let hours: number;
     if (isNaN(date.getMinutes())) {
-      const minutes = nowDate.getMinutes();
-      const hours = nowDate.getHours();
-      const displayMinutes = minutes < 9 ? '0' + minutes : minutes;
-      return `${hours}:${displayMinutes}`;
+      minutes = nowDate.getMinutes();
+      hours = nowDate.getHours();
     } else {
-      const minutes = date.getMinutes();
-      const hours = date.getHours();
-      const displayMinutes = minutes < 9 ? '0' + minutes : minutes;
-      return `${hours}:${displayMinutes}`;
+      minutes = date.getMinutes();
+      hours = date.getHours();
     }
+    const displayHours = hours === 0 ? '0' + hours : hours;
+    const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
+    return `${displayHours}:${displayMinutes}`;
   };
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -286,7 +287,7 @@ const ChatRoom: React.FC<Props> = ({
                 type='submit'
                 color='primary'
                 className={classes.iconButton}
-                aria-label='directions'
+                aria-label='send'
               >
                 <SendIcon />
               </IconButton>

@@ -13,12 +13,23 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
-import { SetSelectedChatAction } from '../../../@types/action-types';
+import {
+  SetSelectedChatAction,
+  SetUnreadChatsAction,
+  SetUnreadMessagesAction,
+} from '../../../@types/action-types';
 import { AppState, Chat } from '../../../@types/types';
-import { setSelectedChat } from '../../../redux/actions/userChats';
+import {
+  setSelectedChat,
+  setUnreadChats,
+  startResetUnreadMessages,
+} from '../../../redux/actions/userChats';
 interface Props {
   chatsList: Chat[];
+  unreadChats: number;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
+  startResetUnreadMessages: (cid: string) => Promise<SetUnreadMessagesAction>;
+  setUnreadChats: (unreadChats: number) => SetUnreadChatsAction;
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,11 +54,22 @@ const StyledBadge = withStyles((theme: Theme) =>
     },
   })
 )(Badge);
-const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
+const ChatsList: React.FC<Props> = ({
+  chatsList,
+  setSelectedChat,
+  setUnreadChats,
+  unreadChats,
+  startResetUnreadMessages,
+}) => {
   const classes = useStyles();
-  const handleListItemClick = (index: number) => {
-    if (index !== chatsList.length) setSelectedChat(chatsList[index]);
-    else setSelectedChat(undefined);
+  const handleListItemClick = async (index: number) => {
+    if (index !== chatsList.length) {
+      if (chatsList[index].unreadMessages > 0) {
+        await startResetUnreadMessages(chatsList[index].cid);
+        setUnreadChats(unreadChats - 1);
+      }
+      setSelectedChat(chatsList[index]);
+    } else setSelectedChat(undefined);
   };
   const isMessageInEnglish = (text: string) => {
     const char = text[0].toLocaleLowerCase();
@@ -85,7 +107,10 @@ const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
                   primary={chat.interlocutor.displayName}
                   secondary={chat.lastMessage?.text}
                 />
-                <StyledBadge badgeContent={chat.unreadMessages} color='secondary'  />
+                <StyledBadge
+                  badgeContent={chat.unreadMessages}
+                  color='secondary'
+                />
               </ListItem>
               <Divider variant='inset' component='li' />
             </div>
@@ -96,9 +121,12 @@ const ChatsList: React.FC<Props> = ({ chatsList, setSelectedChat }) => {
 };
 const MapDispatchToProps = {
   setSelectedChat,
+  startResetUnreadMessages,
+  setUnreadChats,
 };
 const MapStateToProps = (state: AppState) => ({
   user: state.userInfo.user,
   chatsList: state.userChats.chats,
+  unreadChats: state.userChats.unreadChats,
 });
 export default connect(MapStateToProps, MapDispatchToProps)(ChatsList);

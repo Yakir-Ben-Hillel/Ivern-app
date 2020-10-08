@@ -5,25 +5,77 @@ const database = admin.firestore();
 export const addChat = async (request, res) => {
   try {
     const req = request as RequestCustom;
+    const participants = [req.user.uid, req.body.participant2];
+    const unreadMessages = [0, 0];
     const chat = {
-      participant1: { uid: req.user.uid, unreadMessages: 0 },
-      participant2: { uid: req.body.participant2, unreadMessages: 0 },
+      participants,
+      unreadMessages,
       createdAt: admin.firestore.Timestamp.fromDate(new Date()),
     };
     const participant1 = await database
-      .doc(`/users/${chat.participant1.uid}`)
+      .doc(`/users/${chat.participants[0]}`)
       .get();
     const participant2 = await database
-      .doc(`/users/${chat.participant2.uid}`)
+      .doc(`/users/${chat.participants[1]}`)
       .get();
     if (participant1.exists && participant2.exists) {
       const doc = await database.collection('/chats').add(chat);
       await database.doc(`/chats/${doc.id}`).update({ cid: doc.id });
-      return res.status(200).json({ data: { ...chat, cid: doc.id } });
+      const data = (await database.doc(`/chats/${doc.id}`).get()).data();
+      let interlocutor: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>;
+      if (data) {
+        if (req.user.uid !== data.participants[0]) {
+          interlocutor = participant1;
+        } else {
+          interlocutor = participant2;
+        }
+        const filteredChat = {
+          interlocutor: interlocutor.data(),
+          lastMessage: undefined,
+          createdAt: data.createdAt,
+          cid: data.cid,
+          unreadMessages: 0,
+        };
+        return res.status(200).json({ ...filteredChat });
+      } else return res.status(500).json({ message: 'Database error' });
     } else
       return res
         .status(400)
         .json({ error: 'One of the users does not exist.' });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error });
+  }
+};
+export const getChat = async (req, res) => {
+  try {
+    const chat = await database.doc(`/chats/${req.params.cid}`).get();
+    const data = chat.data();
+    if (!chat.exists || !data)
+      return res.status(400).json({ error: 'Chat does not exist.' });
+    let interlocutor: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>;
+    let unreadMessages: number;
+    if (req.user.uid !== data.participants[0]) {
+      //Participant1 is the interlocutor.
+      interlocutor = await database.doc(`/users/${data.participants[0]}`).get();
+      unreadMessages = data.unreadMessages[1];
+    } else {
+      interlocutor = await database.doc(`/users/${data.participants[1]}`).get();
+      unreadMessages = data.unreadMessages[0];
+    }
+    const lastText = await database
+      .collection(`/chats/${data.cid}/messages`)
+      .orderBy('createdAt', 'desc')
+      .limit(1)
+      .get();
+    const filteredChat = {
+      interlocutor: interlocutor.data(),
+      lastMessage: !lastText.empty ? lastText.docs[0].data() : undefined,
+      createdAt: data.createdAt,
+      cid: data.cid,
+      unreadMessages,
+    };
+    return res.status(200).json({ ...filteredChat });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });
@@ -50,14 +102,15 @@ export const chatMessagesHasBeenRead = async (req, res) => {
     if (!chat.exists)
       return res.status(400).json({ error: 'Chat does not exist.' });
     const data = chat.data();
-    if (data?.participant1.uid === req.user.uid)
-      await chat.ref.update({
-        participant1: { uid: data?.participant1.uid, unreadMessages: 0 },
-      });
-    else
-      await chat.ref.update({
-        participant2: { uid: data?.participant2.uid, unreadMessages: 0 },
-      });
+    const participants = data?.participants;
+    let unreadMessages: number[];
+    if (participants[0] === req.user.uid)
+      unreadMessages = [0, data?.unreadMessages[1]];
+    else unreadMessages = [data?.unreadMessages[0], 0];
+
+    await chat.ref.update({
+      unreadMessages,
+    });
 
     return res
       .status(200)
@@ -70,44 +123,40 @@ export const chatMessagesHasBeenRead = async (req, res) => {
 export const getAllUserChats = async (req, res) => {
   try {
     const uid = req.user.uid;
-    const docs1 = await database
+    const chats = await database
       .collection('/chats')
-      .where('participant1.uid', '==', uid)
-      .orderBy('createdAt', 'desc')
+      .where('participants', 'array-contains', uid)
       .get();
-    const docs2 = await database
-      .collection('/chats')
-      .where('participant2.uid', '==', uid)
-      .orderBy('createdAt', 'desc')
-      .get();
-    const chats = [...docs1.docs, ...docs2.docs];
     let counter = 0;
-    const unresolved_chats = chats.map(async (chat) => {
+    const unresolved_chats = chats.docs.map(async (chat) => {
       try {
         const data = chat.data();
-        let user: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>;
+        let interlocutor: FirebaseFirestore.DocumentSnapshot<FirebaseFirestore.DocumentData>;
         let unreadMessages = 0;
-        if (uid !== data.participant1.uid) {
-          user = await database.doc(`/users/${data.participant1.uid}`).get();
-          unreadMessages = data.participant1.unreadMessages;
+        if (uid !== data.participants[0]) {
+          interlocutor = await database
+            .doc(`/users/${data.participants[0]}`)
+            .get();
+          unreadMessages = data.unreadMessages[1];
         } else {
-          user = await database.doc(`/users/${data.participant2.uid}`).get();
-          unreadMessages = data.participant2.unreadMessages;
+          interlocutor = await database
+            .doc(`/users/${data.participants[1]}`)
+            .get();
+          unreadMessages = data.unreadMessages[0];
         }
         const lastText = await database
           .collection(`/chats/${data.cid}/messages`)
           .orderBy('createdAt', 'desc')
           .limit(1)
           .get();
-        const filteredChat = {
-          interlocutor: user.data(),
+        if (unreadMessages > 0) counter++;
+        return {
+          interlocutor: interlocutor.data(),
           lastMessage: !lastText.empty ? lastText.docs[0].data() : undefined,
           createdAt: data.createdAt,
           cid: data.cid,
           unreadMessages,
         };
-        if (unreadMessages > 0) counter++;
-        return filteredChat;
       } catch (error) {
         console.log(error);
         return res.status(500).json({ error });
@@ -139,22 +188,17 @@ export const addMessage = async (req, res) => {
       .collection(`/chats/${req.params.cid}/messages`)
       .doc()
       .set(message);
-    if (data?.participant1.uid === req.user.uid) {
-      const unreadMessages = data?.participant1.unreadMessages;
-      await chat.ref.update({
-        participant1: {
-          uid: data?.participant1.uid,
-          unreadMessages: unreadMessages + 1,
-        },
-        lastMessage: message,
-      });
-    } else
-      await chat.ref.update({
-        participant2: {
-          uid: data?.participant2.uid,
-          unreadMessages: data?.participant2.unreadMessages + 1,
-        },
-      });
+    let unreadMessages: number[];
+    if (data?.participants[0] === req.body.receiver) {
+      unreadMessages = [data?.unreadMessages[0] + 1, data?.unreadMessages[1]];
+    } else {
+      unreadMessages = [data?.unreadMessages[0], data?.unreadMessages[1] + 1];
+    }
+
+    await chat.ref.update({
+      unreadMessages,
+      lastMessage: message,
+    });
     return res.status(200).json({ data: message });
   } catch (error) {
     console.log(error);
@@ -172,6 +216,33 @@ export const getAllChatMessages = async (req, res) => {
       messages.push(message.data());
     });
     return res.status(200).json({ data: messages });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error });
+  }
+};
+export const resetUserUnreadMessages = async (req, res) => {
+  try {
+    const chat = await database.doc(`/chats/${req.params.cid}`).get();
+    if (!chat.exists)
+      return res.status(400).json({ error: 'Chat does not exist.' });
+    const data = chat.data();
+
+    const array = data?.participants;
+    if (array[0].uid === req.body.receiver)
+      array[0] = {
+        uid: array[0].uid,
+        unreadMessages: 0,
+      };
+    else
+      array[1] = {
+        uid: array[1].uid,
+        unreadMessages: 0,
+      };
+    await chat.ref.update({
+      participants: array,
+    });
+    return res.status(200).json({ message: 'unreadMessages has been reset.' });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });

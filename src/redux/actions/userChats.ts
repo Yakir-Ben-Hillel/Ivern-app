@@ -34,10 +34,24 @@ export const startSetChats = () => {
     return dispatch(setChats(res.data.data.chats));
   };
 };
-const setChats = (chats: Chat[]): SetChatsAction => {
+export const setChats = (chats: Chat[]): SetChatsAction => {
   return {
     type: 'SET_CHATS',
     chats,
+  };
+};
+export const startAddNewExistingChat = (cid: string) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+    const idToken = await firebase.auth().currentUser?.getIdToken();
+    const chatRes = await axios.get(
+      `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/${cid}`,
+      {
+        headers: {
+          authorization: `Bearer ${idToken}`,
+        },
+      }
+    );
+    return dispatch(addNewChat(chatRes.data));
   };
 };
 export const startAddNewChat = (interlocutorUID: string) => {
@@ -57,7 +71,7 @@ export const startAddNewChat = (interlocutorUID: string) => {
         },
       }
     );
-    return dispatch(addNewChat(chatMakeRes.data.data));
+    return dispatch(addNewChat(chatMakeRes.data));
   };
 };
 const addNewChat = (chat: Chat): AddChatAction => {
@@ -101,7 +115,7 @@ export const startSetMessages = (cid: string) => {
     return dispatch(setMessages(messagesRes.data.data));
   };
 };
-export const setMessages = (messages: Message[]): SetMessagesAction => {
+export const setMessages = (messages?: Message[]): SetMessagesAction => {
   return {
     type: 'SET_MESSAGES',
     messages,
@@ -129,6 +143,22 @@ export const startAddMessage = (
     return dispatch(addMessage(messageRes.data.data));
   };
 };
+export const startResetUnreadMessages = (cid: string) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+    const idToken = await firebase.auth().currentUser?.getIdToken();
+    await axios.post(
+      `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/reset/${cid}`,
+      {},
+      {
+        headers: {
+          authorization: `Bearer ${idToken}`,
+        },
+      }
+    );
+    return dispatch(setUnreadMessages(0, cid));
+  };
+};
+
 export const setSelectedChat = (chat?: Chat): SetSelectedChatAction => {
   return {
     type: 'SET_SELECTED_CHAT',

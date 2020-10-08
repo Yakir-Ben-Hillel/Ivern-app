@@ -13,21 +13,31 @@ import { connect } from 'react-redux';
 import {
   HandleChatOpenAction,
   SetSelectedChatAction,
+  SetMessagesAction,
+  DeleteChatAction,
 } from '../../../@types/action-types';
-import { AppState, Chat } from '../../../@types/types';
+import { AppState, Chat, Message } from '../../../@types/types';
 import {
+  setMessages,
   handleChatOpen,
   setSelectedChat,
+  startDeleteChat,
 } from '../../../redux/actions/userChats';
 
 interface Props {
   selectedChat: Chat | undefined;
+  messages: Message[] | undefined;
+  startDeleteChat: (cid: string) => Promise<DeleteChatAction>;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
   handleChatOpen: (open: boolean) => HandleChatOpenAction;
+  setMessages: (messages?: Message[]) => SetMessagesAction;
 }
 const ChatsAppBar: React.FC<Props> = ({
   selectedChat,
+  startDeleteChat,
   setSelectedChat,
+  messages,
+  setMessages,
   handleChatOpen,
 }) => {
   return (
@@ -54,14 +64,18 @@ const ChatsAppBar: React.FC<Props> = ({
                 edge='end'
                 onClick={() => {
                   handleChatOpen(false);
+                  setMessages(undefined);
                 }}
               >
                 <MinimizeIcon fontSize='default' />
               </IconButton>
               <IconButton
                 edge='end'
-                onClick={() => {
+                onClick={async () => {
+                  if (!messages || messages.length === 0)
+                    await startDeleteChat(selectedChat.cid);
                   setSelectedChat(undefined);
+                  setMessages(undefined);
                   handleChatOpen(false);
                 }}
               >
@@ -84,9 +98,12 @@ const ChatsAppBar: React.FC<Props> = ({
 };
 const MapDispatchToProps = {
   handleChatOpen,
+  startDeleteChat,
   setSelectedChat,
+  setMessages,
 };
 const MapStateToProps = (state: AppState) => ({
   open: state.userChats.open,
+  messages: state.userChats.selectedChatMessages,
 });
 export default connect(MapStateToProps, MapDispatchToProps)(ChatsAppBar);
