@@ -126,6 +126,7 @@ export const getAllUserChats = async (req, res) => {
     const chats = await database
       .collection('/chats')
       .where('participants', 'array-contains', uid)
+      .orderBy('lastMessage.createdAt', 'desc')
       .get();
     let counter = 0;
     const unresolved_chats = chats.docs.map(async (chat) => {
@@ -144,15 +145,11 @@ export const getAllUserChats = async (req, res) => {
             .get();
           unreadMessages = data.unreadMessages[0];
         }
-        const lastText = await database
-          .collection(`/chats/${data.cid}/messages`)
-          .orderBy('createdAt', 'desc')
-          .limit(1)
-          .get();
+        const lastText = data.lastMessage;
         if (unreadMessages > 0) counter++;
         return {
           interlocutor: interlocutor.data(),
-          lastMessage: !lastText.empty ? lastText.docs[0].data() : undefined,
+          lastMessage: lastText ? lastText : undefined,
           createdAt: data.createdAt,
           cid: data.cid,
           unreadMessages,
@@ -173,12 +170,22 @@ export const getAllUserChats = async (req, res) => {
 };
 export const addMessage = async (req, res) => {
   try {
-    const message = {
-      sender: req.user.uid,
-      receiver: req.body.receiver,
-      text: req.body.text,
-      createdAt: admin.firestore.Timestamp.fromDate(new Date()),
-    };
+    let message;
+    if (req.body.imageURL)
+      message = {
+        sender: req.user.uid,
+        receiver: req.body.receiver,
+        text: req.body.text,
+        imageURL: req.body.imageURL,
+        createdAt: admin.firestore.Timestamp.fromDate(new Date()),
+      };
+    else
+      message = {
+        sender: req.user.uid,
+        receiver: req.body.receiver,
+        text: req.body.text,
+        createdAt: admin.firestore.Timestamp.fromDate(new Date()),
+      };
     const chat = await database.doc(`/chats/${req.params.cid}`).get();
     if (!chat.exists)
       return res.status(400).json({ error: 'Chat does not exist.' });

@@ -7,6 +7,12 @@ const chatsReducerDefaultState: {
   selectedChatMessages: Message[] | undefined;
   unreadChats: number;
   loadingMessages: boolean;
+  newChatMessage:
+    | {
+        text: string;
+        imageURL?: string;
+      }
+    | undefined;
   open: boolean;
 } = {
   chats: [],
@@ -14,13 +20,17 @@ const chatsReducerDefaultState: {
   selectedChat: undefined,
   selectedChatMessages: undefined,
   unreadChats: 0,
+  newChatMessage: undefined,
   loadingMessages: false,
   open: false,
 };
 export default (state = chatsReducerDefaultState, action: ChatActionTypes) => {
   switch (action.type) {
-    case 'ADD_CHAT':
-      return { ...state, chats: [...state.chats, action.chat] };
+    case 'ADD_CHAT': {
+      if (action.new) {
+        return { ...state, chats: [action.chat, ...state.chats] };
+      } else return { ...state, chats: [...state.chats, action.chat] };
+    }
     case 'SET_CHATS':
       return { ...state, chats: [...action.chats] };
     case 'DELETE_CHAT':
@@ -53,6 +63,14 @@ export default (state = chatsReducerDefaultState, action: ChatActionTypes) => {
         newStateChats[index] = newChat;
         return { ...state, chats: newStateChats };
       } else return { ...state };
+    }
+    case 'SET_NEW_CHAT_MESSAGE': {
+      if (action.text && action.imageURL)
+        return {
+          ...state,
+          newChatMessage: { text: action.text, imageURL: action.imageURL },
+        };
+      else return { ...state, newChatMessage: undefined };
     }
     case 'LOADING_CHATS':
       return { ...state, loadingChats: action.loadingChats };

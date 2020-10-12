@@ -90,13 +90,20 @@ const ChatButton: React.FC<IProps> = ({
   const id = 'simple-popper';
   const classes = useStyles();
   React.useEffect(() => {
+    chatsList.forEach((chat) => {
+      const img = new Image();
+      img.src = chat.interlocutor.imageURL;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  React.useEffect(() => {
     if (user) {
       const unsubscribe = database
         .collection(`/chats`)
         .where('participants', 'array-contains', user.uid)
         .onSnapshot((snapshot) => {
           snapshot.docChanges().forEach(async (change) => {
-            if (snapshot.docChanges()[0].type === 'modified') {
+            if (change.type === 'modified') {
               const data = change.doc.data();
               if (data.lastMessage && user.uid === data.lastMessage.receiver) {
                 const chat = chatsList.find((chat) => chat.cid === data.cid);
@@ -107,7 +114,11 @@ const ChatButton: React.FC<IProps> = ({
                   );
                   chat.lastMessage = data.lastMessage;
                   const newChats = chatsList;
-                  newChats[index] = chat;
+                  //Put the chat at the top of the chats list.
+                  if (index !== 0) {
+                    newChats.splice(index, 1);
+                    newChats.unshift(chat);
+                  }
                   if (selectedChat?.cid !== chat.cid) {
                     if (chat.unreadMessages === 0)
                       setUnreadChats(unreadChats + 1);

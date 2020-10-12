@@ -35,10 +35,7 @@ const updateUser = (
   };
 };
 export const startSetUser = (uid: string) => {
-  return async (
-    dispatch: ThunkDispatch<{}, {}, AnyAction>,
-    getState: () => AppState
-  ) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     dispatch(loadingUser(true));
     const user = await axios.get(
       `https://europe-west3-ivern-app.cloudfunctions.net/api/user/${uid}`

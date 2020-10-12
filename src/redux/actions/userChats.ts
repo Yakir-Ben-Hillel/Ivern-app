@@ -13,8 +13,9 @@ import {
   SetSelectedChatAction,
   SetUnreadChatsAction,
   SetUnreadMessagesAction,
+  SetNewChatText,
 } from '../../@types/action-types';
-import { Chat, Message } from '../../@types/types';
+import { AppState, Chat, Message } from '../../@types/types';
 import { firebase } from '../../firebase';
 
 export const startSetChats = () => {
@@ -77,6 +78,7 @@ export const startAddNewChat = (interlocutorUID: string) => {
 const addNewChat = (chat: Chat): AddChatAction => {
   return {
     type: 'ADD_CHAT',
+    new: true,
     chat,
   };
 };
@@ -124,15 +126,20 @@ export const setMessages = (messages?: Message[]): SetMessagesAction => {
 export const startAddMessage = (
   receiver: string,
   text: string,
-  cid: string
+  cid: string,
+  imageURL?: string
 ) => {
-  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+  return async (
+    dispatch: ThunkDispatch<{}, {}, AnyAction>,
+    getState: () => AppState
+  ) => {
     const idToken = await firebase.auth().currentUser?.getIdToken();
     const messageRes = await axios.post(
       `https://europe-west3-ivern-app.cloudfunctions.net/api/chat/messages/add/${cid}`,
       {
         receiver,
         text,
+        imageURL,
       },
       {
         headers: {
@@ -140,6 +147,11 @@ export const startAddMessage = (
         },
       }
     );
+    const state = getState();
+    const index = state.userChats.chats.findIndex((chat) => chat.cid === cid);
+    const chats = state.userChats.chats;
+    chats[index].lastMessage = messageRes.data.data;
+    dispatch(setChats(chats));
     return dispatch(addMessage(messageRes.data.data));
   };
 };
@@ -195,6 +207,20 @@ export const setUnreadChats = (unreadChats: number): SetUnreadChatsAction => {
   return {
     type: 'SET_UNREAD_CHATS',
     unreadChats,
+  };
+};
+export const setNewChatText = (
+  data:
+    | {
+        text: string;
+        imageURL: string;
+      }
+    | undefined
+): SetNewChatText => {
+  return {
+    type: 'SET_NEW_CHAT_MESSAGE',
+    text: data?.text,
+    imageURL: data?.imageURL,
   };
 };
 export const setUnreadMessages = (

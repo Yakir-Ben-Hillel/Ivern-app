@@ -14,6 +14,7 @@ import {
   HandleChatOpenAction,
   SetSelectedChatAction,
   SetMessagesAction,
+  SetNewChatText,
   DeleteChatAction,
 } from '../../../@types/action-types';
 import { AppState, Chat, Message } from '../../../@types/types';
@@ -21,6 +22,7 @@ import {
   setMessages,
   handleChatOpen,
   setSelectedChat,
+  setNewChatText,
   startDeleteChat,
 } from '../../../redux/actions/userChats';
 
@@ -29,11 +31,15 @@ interface Props {
   messages: Message[] | undefined;
   startDeleteChat: (cid: string) => Promise<DeleteChatAction>;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
+  setNewChatText: (
+    data: { text: string; imageURL: string } | undefined
+  ) => SetNewChatText;
   handleChatOpen: (open: boolean) => HandleChatOpenAction;
   setMessages: (messages?: Message[]) => SetMessagesAction;
 }
 const ChatsAppBar: React.FC<Props> = ({
   selectedChat,
+  setNewChatText,
   startDeleteChat,
   setSelectedChat,
   messages,
@@ -64,6 +70,7 @@ const ChatsAppBar: React.FC<Props> = ({
                 edge='end'
                 onClick={() => {
                   handleChatOpen(false);
+                  setNewChatText(undefined);
                   setMessages(undefined);
                 }}
               >
@@ -75,6 +82,7 @@ const ChatsAppBar: React.FC<Props> = ({
                   if (!messages || messages.length === 0)
                     await startDeleteChat(selectedChat.cid);
                   setSelectedChat(undefined);
+                  setNewChatText(undefined);
                   setMessages(undefined);
                   handleChatOpen(false);
                 }}
@@ -99,6 +107,7 @@ const ChatsAppBar: React.FC<Props> = ({
 const MapDispatchToProps = {
   handleChatOpen,
   startDeleteChat,
+  setNewChatText,
   setSelectedChat,
   setMessages,
 };

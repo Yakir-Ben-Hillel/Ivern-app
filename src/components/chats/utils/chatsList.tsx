@@ -9,9 +9,11 @@ import {
   ListItemText,
   makeStyles,
   Theme,
+  Typography,
   withStyles,
 } from '@material-ui/core';
 import React from 'react';
+import { makeTime } from './chatRoom';
 import { connect } from 'react-redux';
 import {
   SetSelectedChatAction,
@@ -45,12 +47,24 @@ const useStyles = makeStyles((theme: Theme) =>
     typography: {
       padding: theme.spacing(2),
     },
+    secondaryDetails: {
+      marginTop: '7px',
+    },
+    lastMessage: {
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
+    timeTypography: {
+      position: 'absolute',
+      right: 0,
+    },
   })
 );
 const StyledBadge = withStyles((theme: Theme) =>
   createStyles({
     badge: {
-      top: 35,
+      top: 20,
     },
   })
 )(Badge);
@@ -97,6 +111,7 @@ const ChatsList: React.FC<Props> = ({
                   />
                 </ListItemAvatar>
                 <ListItemText
+                  className={classes.lastMessage}
                   secondaryTypographyProps={{
                     dir:
                       chat.lastMessage?.text &&
@@ -107,10 +122,21 @@ const ChatsList: React.FC<Props> = ({
                   primary={chat.interlocutor.displayName}
                   secondary={chat.lastMessage?.text}
                 />
-                <StyledBadge
-                  badgeContent={chat.unreadMessages}
-                  color='secondary'
-                />
+                <div className={classes.secondaryDetails}>
+                  {chat.lastMessage && (
+                    <Typography
+                      className={classes.timeTypography}
+                      variant='caption'
+                      color='textSecondary'
+                    >
+                      {makeTime(chat.lastMessage.createdAt._seconds)}
+                    </Typography>
+                  )}
+                  <StyledBadge
+                    badgeContent={chat.unreadMessages}
+                    color='secondary'
+                  />
+                </div>
               </ListItem>
               <Divider variant='inset' component='li' />
             </div>

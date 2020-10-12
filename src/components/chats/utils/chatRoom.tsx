@@ -10,6 +10,7 @@ import {
   CircularProgress,
   InputBase,
   Paper,
+  Typography,
 } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
@@ -39,11 +40,13 @@ interface Props {
   startAddMessage: (
     receiver: string,
     text: string,
-    cid: string
+    cid: string,
+    imageURL?: string
   ) => Promise<AddMessageAction>;
   addMessage: (message: Message) => AddMessageAction;
   startSetMessages: (cid: string) => Promise<SetMessagesAction>;
   loadingMessages: (loadingMessages: boolean) => LoadingMessagesAction;
+  givenMessage?: { text: string; imageURL: string };
 }
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -67,6 +70,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '9px 14px',
       fontSize: '1.6rem',
       marginBottom: '5px',
+      wordBreak: 'break-word',
       background: '#0048AA',
       color: '#eee',
       border: '1px solid #0048AA',
@@ -79,6 +83,7 @@ const useStyles = makeStyles((theme: Theme) =>
       padding: '9px 14px',
       fontSize: '1.6rem',
       marginBottom: '5px',
+      wordBreak: 'break-word',
       background: '#eee',
       color: '#111',
       border: '1px solid #ddd',
@@ -111,7 +116,22 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-
+export const makeTime = (seconds: number) => {
+  const date = new Date(seconds * 1000);
+  const nowDate = new Date();
+  let minutes: number;
+  let hours: number;
+  if (isNaN(date.getMinutes())) {
+    minutes = nowDate.getMinutes();
+    hours = nowDate.getHours();
+  } else {
+    minutes = date.getMinutes();
+    hours = date.getHours();
+  }
+  const displayHours = hours === 0 ? '0' + hours : hours;
+  const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
+  return `${displayHours}:${displayMinutes}`;
+};
 const ChatRoom: React.FC<Props> = ({
   user,
   selectedChat,
@@ -122,11 +142,17 @@ const ChatRoom: React.FC<Props> = ({
   loadingMessages,
   startAddMessage,
   startSetMessages,
+  givenMessage,
 }) => {
   const [receivedMessage, setReceivedMessage] = React.useState<
     Message | undefined
   >();
-  const [input, setInput] = React.useState('');
+  const [input, setInput] = React.useState(
+    givenMessage ? givenMessage.text : ''
+  );
+  const [imageURL, setImageURL] = React.useState(
+    givenMessage ? givenMessage.imageURL : undefined
+  );
   const classes = useStyles();
   const database = firebase.firestore();
   React.useEffect(() => {
@@ -154,28 +180,14 @@ const ChatRoom: React.FC<Props> = ({
     else return false;
   };
   const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const formRef = React.useRef<HTMLFormElement | null>(null);
+
   // eslint-disable-next-line
   const [chosenEmoji, setChosenEmoji] = React.useState(null);
   const [emojiOpen, setEmojiOpen] = React.useState(false);
   const onEmojiClick = (event: any, emojiObject: any) => {
     setChosenEmoji(emojiObject);
     setInput(input + emojiObject.emoji);
-  };
-  const makeTime = (seconds: number) => {
-    const date = new Date(seconds * 1000);
-    const nowDate = new Date();
-    let minutes: number;
-    let hours: number;
-    if (isNaN(date.getMinutes())) {
-      minutes = nowDate.getMinutes();
-      hours = nowDate.getHours();
-    } else {
-      minutes = date.getMinutes();
-      hours = date.getHours();
-    }
-    const displayHours = hours === 0 ? '0' + hours : hours;
-    const displayMinutes = minutes < 10 ? '0' + minutes : minutes;
-    return `${displayHours}:${displayMinutes}`;
   };
   const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -184,18 +196,22 @@ const ChatRoom: React.FC<Props> = ({
         await startAddMessage(
           selectedChat.interlocutor.uid,
           input,
-          selectedChat.cid
+          selectedChat.cid,
+          imageURL
         );
     setInput('');
+    if (imageURL) setImageURL(undefined);
   };
   React.useEffect(() => {
     (async () => {
       if (!messages && selectedChat) {
+        //First loading from database.
         await startSetMessages(selectedChat.cid);
         loadingMessages(false);
         inputRef.current?.scrollIntoView({ block: 'nearest' });
       } else {
         if (messages) {
+          //messages are already at the client.
           setMessages(messages);
           inputRef.current?.scrollIntoView({ block: 'nearest' });
         }
@@ -218,36 +234,44 @@ const ChatRoom: React.FC<Props> = ({
         />
       ) : (
         <div>
-          <List
-            className={classes.messageList}
-            style={{
-              bottom:
-                selectedChat?.messages?.length &&
-                selectedChat?.messages?.length < 4
-                  ? 0
-                  : undefined,
-            }}
-          >
+          <List className={classes.messageList}>
             {messages?.map((message, index) => (
-              <ListItem className={classes.messageRow} key={index}>
-                <ListItemText
-                  style={{
-                    marginTop: index === 0 ? 50 : 0,
-                    direction: isMessageInEnglish(message.text) ? 'ltr' : 'rtl',
-                  }}
-                  className={
-                    message.sender === user.uid
-                      ? classes.messageTextMe
-                      : classes.messageTextYou
-                  }
-                  primary={message.text}
-                  secondaryTypographyProps={{
-                    color: message.sender !== user.uid ? 'inherit' : undefined,
-                    variant: 'caption',
-                  }}
-                  secondary={makeTime(message.createdAt._seconds)}
-                />
-              </ListItem>
+              <div key={index}>
+                <ListItem className={classes.messageRow} key={index}>
+                  <ListItemText
+                    style={{
+                      marginTop: index === 0 ? 50 : 0,
+                      direction: isMessageInEnglish(message.text)
+                        ? 'ltr'
+                        : 'rtl',
+                    }}
+                    className={
+                      message.sender === user.uid
+                        ? classes.messageTextMe
+                        : classes.messageTextYou
+                    }
+                    primary={
+                      <React.Fragment>
+                        {message.imageURL && (
+                          <img
+                            src={message.imageURL}
+                            alt=''
+                            width='100%'
+                            height='100%'
+                          />
+                        )}
+                        <Typography>{message.text}</Typography>
+                      </React.Fragment>
+                    }
+                    secondaryTypographyProps={{
+                      color:
+                        message.sender !== user.uid ? 'inherit' : undefined,
+                      variant: 'caption',
+                    }}
+                    secondary={makeTime(message.createdAt._seconds)}
+                  />
+                </ListItem>
+              </div>
             ))}
           </List>
           {emojiOpen && (
@@ -255,13 +279,15 @@ const ChatRoom: React.FC<Props> = ({
               <Picker disableSearchBar onEmojiClick={onEmojiClick} />
             </div>
           )}
-          <form onSubmit={onSubmit}>
+          <form ref={formRef} onSubmit={onSubmit}>
             <Paper
               className={classes.inputRoot}
               style={{
                 bottom:
                   !messages?.length ||
-                  (messages?.length && messages?.length < 4)
+                  (messages?.length &&
+                    messages?.length < 4 &&
+                    !messages.some((message) => message.imageURL))
                     ? 0
                     : undefined,
               }}
@@ -278,6 +304,9 @@ const ChatRoom: React.FC<Props> = ({
                   setInput(event.target.value)
                 }
                 value={input}
+                multiline
+                autoFocus
+                type='input'
                 className={classes.input}
                 placeholder='Type a message'
                 inputProps={{ 'aria-label': 'type a message' }}
@@ -310,5 +339,6 @@ const MapStateToProps = (state: AppState) => ({
   loading: state.userChats.loadingMessages,
   selectedChat: state.userChats.selectedChat,
   messages: state.userChats.selectedChatMessages,
+  givenMessage: state.userChats.newChatMessage,
 });
 export default connect(MapStateToProps, MapDispatchToProps)(ChatRoom);

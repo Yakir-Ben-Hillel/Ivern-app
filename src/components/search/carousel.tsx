@@ -19,14 +19,45 @@ import {
 import React from 'react';
 import Svg from 'react-inlinesvg';
 import Carousel from 'react-multi-carousel';
-import { Post, User } from '../../@types/types';
+import { connect } from 'react-redux';
+import {
+  AddChatAction,
+  HandleChatOpenAction,
+  SetSelectedChatAction,
+  SetNewChatText,
+} from '../../@types/action-types';
+import { AppState, Chat, Post, User } from '../../@types/types';
+import {
+  setSelectedChat,
+  setNewChatText,
+  startAddNewChat,
+  handleChatOpen,
+} from '../../redux/actions/userChats';
 interface IProps {
   user: User | null;
+  clientUser: User;
   userPosts: Post[];
   loading: boolean;
+  chats: Chat[];
+  startAddNewChat: (interlocutorUID: string) => Promise<AddChatAction>;
+  handleChatOpen: (open: boolean) => HandleChatOpenAction;
+  setSelectedChat: (chat: Chat) => SetSelectedChatAction;
+  setNewChatText: (
+    data: { text: string; imageURL: string } | undefined
+  ) => SetNewChatText;
 }
 
-const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
+const PostsCarousel: React.FC<IProps> = ({
+  user,
+  clientUser,
+  userPosts,
+  loading,
+  chats,
+  setSelectedChat,
+  setNewChatText,
+  startAddNewChat,
+  handleChatOpen,
+}) => {
   const platformIcon = (platform: string) => {
     if (platform === 'playstation')
       return <SonyPlaystation fontSize='inherit' />;
@@ -85,6 +116,27 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
       },
     })
   );
+  const handleChatMake = async (post: Post) => {
+    try {
+      if (user) {
+        const chat = chats.find((chat) => {
+          return chat.interlocutor.uid === user.uid;
+        });
+        if (chat) {
+          setSelectedChat(chat);
+        } else {
+          const ChatRes = await startAddNewChat(user.uid);
+          setSelectedChat(ChatRes.chat);
+        }
+        const text = `Hi is ${post.gameName} still available?`;
+        setNewChatText({ text, imageURL: post.cover });
+        handleChatOpen(true);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const classes = useStyles();
   const mobile = isMobile();
   const skeletonMapping = [0, 1, 2];
@@ -146,7 +198,11 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
                       mobile ? classes.cardMobile : classes.cardDesktop
                     }
                   >
-                    <CardActionArea>
+                    <CardActionArea
+                      onClick={() => {
+                        if (user?.uid !== clientUser.uid) handleChatMake(post);
+                      }}
+                    >
                       <CardMedia
                         component='img'
                         alt={post.gameName}
@@ -161,11 +217,6 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
                         </Typography>
                       </CardContent>
                     </CardActionArea>
-                    {/* <CardActions>
-        <Button size="small" color="primary">
-          Send Message
-        </Button>
-      </CardActions> */}
                   </Card>
                 </div>
               ))}
@@ -186,4 +237,15 @@ const PostsCarousel: React.FC<IProps> = ({ user, userPosts, loading }) => {
     </div>
   );
 };
-export default PostsCarousel;
+const MapDispatchToProps = {
+  startAddNewChat,
+  handleChatOpen,
+  setSelectedChat,
+  setNewChatText,
+};
+const MapStateToProps = (state: AppState) => ({
+  chats: state.userChats.chats,
+  clientUser: state.userInfo.user,
+});
+
+export default connect(MapStateToProps, MapDispatchToProps)(PostsCarousel);

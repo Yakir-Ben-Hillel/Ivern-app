@@ -19,9 +19,11 @@ const HANDLE_CHAT_OPEN = 'HANDLE_CHAT_OPEN';
 const SET_SELECTED_CHAT = 'SET_SELECTED_CHAT';
 const SET_UNREAD_CHATS = 'SET_UNREAD_CHATS';
 const SET_UNREAD_MESSAGES = 'SET_UNREAD_MESSAGES';
+const SET_NEW_CHAT_MESSAGE = 'SET_NEW_CHAT_MESSAGE';
 export interface AddChatAction {
   type: typeof ADD_CHAT;
   chat: Chat;
+  new?: boolean;
 }
 export interface SetChatsAction {
   type: typeof SET_CHATS;
@@ -101,6 +103,11 @@ export interface SetUnreadMessagesAction {
   unreadMessages: number;
   cid: string;
 }
+export interface SetNewChatText {
+  type: typeof SET_NEW_CHAT_MESSAGE;
+  text?: string;
+  imageURL?: string;
+}
 export type AuthActionTypes =
   | SetUserAction
   | UpdateUserAction
@@ -120,6 +127,7 @@ export type ChatActionTypes =
   | SetUnreadChatsAction
   | SetUnreadMessagesAction
   | SetSelectedChatAction
+  | SetNewChatText
   | LoadingChatsAction
   | LoadingMessagesAction
   | HandleChatOpenAction;

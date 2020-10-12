@@ -14,6 +14,10 @@ export interface AppState {
     loadingMessages: boolean;
     open: boolean;
     unreadChats: number;
+    newChatMessage?: {
+      text: string;
+      imageURL: string;
+    };
     selectedChat?: Chat;
     selectedChatMessages?: Message[];
   };
@@ -67,6 +71,7 @@ export interface Message {
   sender: string;
   receiver: string;
   text: string;
+  imageURL?: string;
   createdAt: {
     _seconds: number;
     _nanoseconds: number;
