@@ -7,6 +7,7 @@ export const postAllGames = async (req, res) => {
     let offset = 0;
     let stop = false;
     let counter = 0;
+    let batch = database.batch();
     while (!stop) {
       const doc = await axios({
         url: 'https://api-v3.igdb.com/games',
@@ -15,11 +16,11 @@ export const postAllGames = async (req, res) => {
           Accept: 'application/json',
           'user-key': IGDB_API_KEY,
         },
-        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 500;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
+        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
       });
       if (doc.data.length !== 0) {
         // eslint-disable-next-line no-loop-func
-        doc.data.forEach(async (game) => {
+        const docs = doc.data.map(async (game) => {
           try {
             let artwork: number | string | null = null;
             if (game.artworks) {
@@ -41,16 +42,17 @@ export const postAllGames = async (req, res) => {
               platforms,
               artwork,
             };
-            await database
-              .collection('/games')
-              .doc()
-              .set(savedGame)
-              .then(() => (counter = counter + 1));
+            counter = counter + 1;
+            return batch.set(database.collection('/games').doc(), savedGame);
           } catch (error) {
             console.log(error);
+            return new Error(error);
           }
         });
-        offset += 500;
+        await Promise.all(docs);
+        await batch.commit();
+        batch = database.batch();
+        offset += 250;
       } else stop = true;
     }
     return res
@@ -92,9 +94,8 @@ export const getAllGames = async (req, res) => {
       .collection('/games')
       .orderBy('rating', 'desc')
       .get();
-    const gamesData: any[] = [];
-    gamesCollections.forEach((game) => {
-      gamesData.push(game.data());
+    const gamesData = gamesCollections.docs.map((game) => {
+      return game.data();
     });
     return res.status(200).json({ games: gamesData });
   } catch (error) {
@@ -111,13 +112,63 @@ export const searchUnfoundGame = async (req, res) => {
         Accept: 'application/json',
         'user-key': IGDB_API_KEY,
       },
-      data: `fields name,cover,slug,popularity,rating;search "${req.params.gameName}";where (category = 0)&(popularity > 1)&((platforms = [48,6])|(platforms = 48));`,
+      data: `fields name,cover,artworks,slug,popularity,rating,platforms;search "${req.params.gameName}";where (category = 0)&((platforms = [48,6])|(platforms = 48));`,
     });
-    if (!doc)
+    if (doc.data) {
+      const gameDoc = doc.data[0];
+      const platforms: string[] = [];
+      gameDoc.platforms.forEach((platform: number) => {
+        if (platform === 48) platforms.push('playstation');
+        else if (platform === 49) platforms.push('xbox');
+        else if (platform === 160) platforms.push('switch');
+      });
+      let artwork: number | string | null = null;
+      if (gameDoc.artworks) {
+        artwork = gameDoc.artworks[gameDoc.artworks.length - 1];
+        const artworkDoc = await axios({
+          url: 'https://api-v3.igdb.com/artworks',
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'user-key': IGDB_API_KEY,
+          },
+          data: `fields image_id;where id=${artwork};`,
+        });
+        artwork = `https://images.igdb.com/igdb/image/upload/t_1080p/${artworkDoc.data[0].image_id}.jpg`;
+      }
+
+      const image = await axios({
+        //Getting cover url and making it logo_med.
+        url: 'https://api-v3.igdb.com/covers',
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'user-key': IGDB_API_KEY,
+        },
+        data: `fields url;where id=${gameDoc.cover};`,
+      });
+      const cover: string =
+        'https://' +
+        image.data[0].url.replace('thumb', 'logo_med').substring(2);
+
+      const savedGame = {
+        id: gameDoc.id,
+        name: gameDoc.name,
+        slug: gameDoc.slug,
+        popularity: gameDoc.popularity ? gameDoc.popularity : 0,
+        rating: gameDoc.rating ? gameDoc.rating : 0,
+        artwork,
+        cover,
+        platforms,
+      };
+      const docRef = database.collection('/games').doc();
+      await docRef.set(savedGame);
+      const game = (await docRef.get()).data();
+      return res.status(200).json({ data: game });
+    } else
       return res
         .status(400)
         .json({ message: 'Game does not found,try with a different name.' });
-    else return res.status(200).json(doc.data);
   } catch (error) {
     console.log(error);
     return res.status(500).json(error);
@@ -154,7 +205,7 @@ export const updateGames = async (context) => {
     let offset = 0;
     let stop = false;
     let counter = 0;
-    const batch = database.batch();
+    let batch = database.batch();
     while (!stop) {
       const doc = await axios({
         url: 'https://api-v3.igdb.com/games',
@@ -163,11 +214,15 @@ export const updateGames = async (context) => {
           Accept: 'application/json',
           'user-key': IGDB_API_KEY,
         },
-        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 500;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
+        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
       });
       if (doc.data.length > 0) {
         // eslint-disable-next-line no-loop-func
         const docs = doc.data.map(async (game) => {
+          let artwork: number | string | null = null;
+          if (game.artworks) {
+            artwork = game.artworks[game.artworks.length - 1];
+          }
           const platforms: string[] = [];
           game.platforms.forEach((platform: number) => {
             if (platform === 48) platforms.push('playstation');
@@ -179,25 +234,44 @@ export const updateGames = async (context) => {
             id: game.id,
             name: game.name,
             slug: game.slug,
-            popularity: game.popularity,
+            popularity: game.popularity ? game.popularity : 0,
             rating: game.rating,
+            cover: game.cover,
+            artwork,
             platforms,
           };
 
-          const gameDoc = await database.doc(`/games/${game.id}`).get();
-          if (gameDoc.exists)
-            return batch.update(database.doc(`/games/${game.id}`), savedGame);
+          const gameDoc = await database
+            .collection(`/games`)
+            .where('id', '==', savedGame.id)
+            .limit(1)
+            .get();
+          if (!gameDoc.empty)
+            return batch.update(
+              database.doc(`/games/${gameDoc.docs[0].id}`),
+              savedGame
+            );
           else {
             counter++;
             return batch.set(database.collection('/games').doc(), savedGame);
           }
         });
-        offset += 500;
         await Promise.all(docs);
+        await batch.commit();
+        batch = database.batch();
+        offset += 250;
       } else stop = true;
     }
-    console.log('Games updated successfully, ' + counter + ' games added.');
-    return await batch.commit();
+    await axios({
+      url: 'https://europe-west3-ivern-app.cloudfunctions.net/api/games/covers',
+      method: 'POST',
+    });
+    await axios({
+      url:
+        'https://europe-west3-ivern-app.cloudfunctions.net/api/games/artworks',
+      method: 'POST',
+    });
+    return 'Games updated successfully, ' + counter + ' games added.';
   } catch (error) {
     console.log(error);
     return new Error(error);
@@ -273,6 +347,7 @@ export const manualUpdateGames = async (req, res) => {
   try {
     let offset = 0;
     let stop = false;
+    let batch = database.batch();
     while (!stop) {
       const doc = await axios({
         url: 'https://api-v3.igdb.com/games',
@@ -281,11 +356,11 @@ export const manualUpdateGames = async (req, res) => {
           Accept: 'application/json',
           'user-key': IGDB_API_KEY,
         },
-        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 500;where (category = 0)&(rating_count>=10)& (platforms = (48,49,130));`,
+        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=10)& (platforms = (48,49,130));`,
       });
       if (doc.data.length > 0) {
         // eslint-disable-next-line no-loop-func
-        doc.data.forEach(async (game) => {
+        const docs: any[] = doc.data.map(async (game) => {
           let artwork: number | string | null = null;
           if (game.artworks) {
             artwork = game.artworks[game.artworks.length - 1];
@@ -300,28 +375,43 @@ export const manualUpdateGames = async (req, res) => {
             id: game.id,
             name: game.name,
             slug: game.slug,
-            popularity: game.popularity,
+            popularity: game.popularity ? game.popularity : 0,
             rating: game.rating,
             cover: game.cover,
-            artwork: artwork,
+            artwork,
+            platforms,
           };
 
           const gameDoc = await database
-            .collection('/games')
-            .where('id', '==', game.id)
+            .collection(`/games`)
+            .where('id', '==', savedGame.id)
             .limit(1)
             .get();
+
           if (!gameDoc.empty) {
-            await database
-              .doc(`/games/${gameDoc.docs[0].id}`)
-              .update(savedGame);
+            return batch.update(
+              database.doc(`/games/${gameDoc.docs[0].id}`),
+              savedGame
+            );
           } else {
-            await database.collection('/games').doc().set(savedGame);
+            return batch.set(database.collection('/games').doc(), savedGame);
           }
         });
-        offset += 500;
+        await Promise.all(docs);
+        await batch.commit();
+        batch = database.batch();
+        offset += 250;
       } else stop = true;
     }
+    await axios({
+      url: 'https://europe-west3-ivern-app.cloudfunctions.net/api/games/covers',
+      method: 'POST',
+    });
+    await axios({
+      url:
+        'https://europe-west3-ivern-app.cloudfunctions.net/api/games/artworks',
+      method: 'POST',
+    });
     return res
       .status(200)
       .json({ message: 'update has been made successfully.' });

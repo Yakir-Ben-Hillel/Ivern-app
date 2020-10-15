@@ -51,6 +51,13 @@ const useStyles = makeStyles((theme: Theme) =>
     typography: {
       padding: theme.spacing(2),
     },
+    noMessagesTypography: {
+      display: 'flex-root',
+      marginTop: '40px',
+      position: 'absolute',
+      width: '100%',
+      textAlign: 'center',
+    },
     secondaryDetails: {
       marginTop: '7px',
     },
@@ -100,7 +107,7 @@ const ChatsList: React.FC<Props> = ({
   return (
     <div>
       <List className={classes.root}>
-        {chatsList.length > 0 &&
+        {chatsList.length > 0 ? (
           chatsList.map((chat, index) => (
             <div key={index}>
               <ListItem
@@ -164,7 +171,24 @@ const ChatsList: React.FC<Props> = ({
               </ListItem>
               <Divider variant='inset' component='li' />
             </div>
-          ))}
+          ))
+        ) : (
+          //'https://www.freepik.com/vectors/people' People vector created by rawpixel.com - www.freepik.com
+          <div>
+            <Typography
+              className={classes.noMessagesTypography}
+              variant='inherit'
+            >
+              No chats to show
+            </Typography>
+            <img
+              src={require('./37264.jpg')}
+              alt='people chatting'
+              width='100%'
+              height='100%'
+            />
+          </div>
+        )}
       </List>
     </div>
   );

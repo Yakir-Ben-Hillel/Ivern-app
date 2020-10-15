@@ -52,7 +52,7 @@ app.post('/users/image', FBAuth, changeProfileImage);
 //Games endpoints.
 app.get('/games', getAllGames);
 app.get('/games/:gameName', searchGameInDatabase);
-app.get('/games/api/:gameName', searchUnfoundGame);
+app.get('/games/unfound/:gameName', searchUnfoundGame);
 app.post('/games', postAllGames);
 app.post('/games/artworks', updateArtworks);
 app.post('/games/covers', updateCovers);
@@ -76,7 +76,13 @@ app.post('/chat', FBAuth, addChat);
 app.post('/chat/reset/:cid', FBAuth, chatMessagesHasBeenRead);
 app.post('/chat/messages/add/:cid', FBAuth, addMessage);
 app.delete('/chat/delete/:cid', FBAuth, deleteChat);
-exports.api = functions.region('europe-west3').https.onRequest(app);
+exports.api = functions
+  .region('europe-west3')
+  .runWith({
+    timeoutSeconds: 300,
+    memory: '1GB',
+  })
+  .https.onRequest(app);
 exports.updateGamesEachDay = functions
   .region('europe-west3')
   .pubsub.schedule('0 0 * * *')
