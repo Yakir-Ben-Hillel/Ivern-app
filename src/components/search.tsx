@@ -9,7 +9,7 @@ import { Bar } from './dashboard/searchBar';
 import SiteHeader from './dashboard/siteHeader';
 import PrimarySearchAppBar from './navbar';
 import PostsList from './search/postsList';
-import ChatButton from './chats/chats';
+import ChatButton from './chats/chatDesktop';
 export const Search: React.FC = (props: any) => {
   const localLights = localStorage.getItem('lights');
   if (localLights === 'false') {

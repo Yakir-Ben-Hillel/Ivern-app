@@ -5,6 +5,7 @@ import { AppState } from '../@types/types';
 import FirstTimeLogin from '../components/authPages/firstTimeLogin';
 import Login from '../components/authPages/loginPage';
 import Signup from '../components/authPages/signup';
+import chatMobile from '../components/chats/chatMobile';
 import { Dashboard } from '../components/dashboard';
 import PostsManager from '../components/posts/postsManager';
 import { Search } from '../components/search';
@@ -26,6 +27,7 @@ const AppRouter: React.FC<IProps> = ({ isAuthenticated }) => {
             <Route exact path='/login/confirm' component={FirstTimeLogin} />
             <Route exact path='/user/post' component={PostsManager} />
             <Route exact path='/user' component={UserInfo} />
+            <Route exact path='/chat' component={chatMobile} />
           </Switch>
         )}
         <Route path='/search' component={Search} />

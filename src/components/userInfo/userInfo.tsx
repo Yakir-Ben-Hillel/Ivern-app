@@ -20,7 +20,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { useHistory } from 'react-router';
 import { UpdateUserAction } from '../../@types/action-types';
-import ChatButton from '../chats/chats';
+import ChatButton from '../chats/chatDesktop';
 import { AppState, User } from '../../@types/types';
 import { startUpdateUser } from '../../redux/actions/userInfo';
 import '../../scss/style.scss';

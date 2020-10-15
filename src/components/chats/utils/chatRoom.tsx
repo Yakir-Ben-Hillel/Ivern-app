@@ -17,6 +17,8 @@ import { connect } from 'react-redux';
 import { AppState, User, Chat, Message } from '../../../@types/types';
 import SendIcon from '@material-ui/icons/Send';
 import Picker from 'emoji-picker-react';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import axios from 'axios';
 import MoodIcon from '@material-ui/icons/Mood';
 import {
   startAddMessage,
@@ -31,6 +33,7 @@ import {
   SetMessagesAction,
 } from '../../../@types/action-types';
 import { firebase } from '../../../firebase';
+import isMobile from 'is-mobile';
 interface Props {
   user: User;
   selectedChat: Chat | undefined;
@@ -99,6 +102,7 @@ const useStyles = makeStyles((theme: Theme) =>
     inputRoot: {
       padding: '2px 4px',
       display: 'flex',
+      marginRight: theme.spacing(1),
       position: 'absolute',
       alignItems: 'center',
       borderRadius: '10px',
@@ -106,6 +110,9 @@ const useStyles = makeStyles((theme: Theme) =>
     input: {
       marginLeft: theme.spacing(1),
       flex: 1,
+    },
+    upload: {
+      display: 'none',
     },
     iconButton: {
       padding: 10,
@@ -153,7 +160,14 @@ const ChatRoom: React.FC<Props> = ({
   const [imageURL, setImageURL] = React.useState(
     givenMessage ? givenMessage.imageURL : undefined
   );
+  const inputRef = React.useRef<HTMLInputElement | null>(null);
+  const buttonRef = React.useRef<HTMLButtonElement | null>(null);
+  // eslint-disable-next-line
+  const [position, setPosition] = React.useState(false);
+  const [chosenEmoji, setChosenEmoji] = React.useState(null);
+  const [emojiOpen, setEmojiOpen] = React.useState(false);
   const classes = useStyles();
+  const mobile = isMobile();
   const database = firebase.firestore();
   React.useEffect(() => {
     const unsubscribe = database
@@ -175,23 +189,37 @@ const ChatRoom: React.FC<Props> = ({
     return () => unsubscribe();
   }, [addMessage, database, selectedChat]);
   const isMessageInEnglish = (text: string) => {
-    const char = text[0].toLocaleLowerCase();
-    if (char >= 'a' && char <= 'z') return true;
-    else return false;
+    if (text) {
+      const char = text[0].toLocaleLowerCase();
+      if (char >= 'a' && char <= 'z') return true;
+      else return false;
+    } else return false;
   };
-  const inputRef = React.useRef<HTMLInputElement | null>(null);
-  const formRef = React.useRef<HTMLFormElement | null>(null);
-
-  // eslint-disable-next-line
-  const [chosenEmoji, setChosenEmoji] = React.useState(null);
-  const [emojiOpen, setEmojiOpen] = React.useState(false);
   const onEmojiClick = (event: any, emojiObject: any) => {
     setChosenEmoji(emojiObject);
     setInput(input + emojiObject.emoji);
   };
-  const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const imageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const formData = new FormData();
+      const newFile = event.target.files[0];
+      formData.append('image', newFile);
+      const res = await axios.post(
+        'https://europe-west3-ivern-app.cloudfunctions.net/api/image',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
+      setImageURL(res.data.imageURL);
+      buttonRef.current?.click();
+    }
+  };
+  const onSubmit = async (event: any) => {
     event.preventDefault();
-    if (input !== '')
+    if (input !== '' || imageURL)
       if (selectedChat)
         await startAddMessage(
           selectedChat.interlocutor.uid,
@@ -202,6 +230,7 @@ const ChatRoom: React.FC<Props> = ({
     setInput('');
     if (imageURL) setImageURL(undefined);
   };
+
   React.useEffect(() => {
     (async () => {
       if (!messages && selectedChat) {
@@ -234,7 +263,16 @@ const ChatRoom: React.FC<Props> = ({
         />
       ) : (
         <div>
-          <List className={classes.messageList}>
+          <List
+            ref={(r) => {
+              if (r) {
+                if (mobile) {
+                  setPosition(r.scrollHeight < window.screen.availHeight * 0.9);
+                } else setPosition(!messages?.length || r.scrollHeight < 370);
+              }
+            }}
+            className={classes.messageList}
+          >
             {messages?.map((message, index) => (
               <div key={index}>
                 <ListItem className={classes.messageRow} key={index}>
@@ -279,19 +317,29 @@ const ChatRoom: React.FC<Props> = ({
               <Picker disableSearchBar onEmojiClick={onEmojiClick} />
             </div>
           )}
-          <form ref={formRef} onSubmit={onSubmit}>
+          <form onSubmit={onSubmit}>
             <Paper
               className={classes.inputRoot}
               style={{
-                bottom:
-                  !messages?.length ||
-                  (messages?.length &&
-                    messages?.length < 4 &&
-                    !messages.some((message) => message.imageURL))
-                    ? 0
-                    : undefined,
+                bottom: position ? 0 : undefined,
               }}
             >
+              <input
+                accept='image/*'
+                className={classes.upload}
+                id='icon-button-file'
+                onChange={imageUpload}
+                type='file'
+              />
+              <label htmlFor='icon-button-file'>
+                <IconButton
+                  color='primary'
+                  aria-label='upload picture'
+                  component='span'
+                >
+                  <PhotoCamera />
+                </IconButton>
+              </label>
               <IconButton
                 onClick={() => setEmojiOpen(!emojiOpen)}
                 className={classes.iconButton}
@@ -313,6 +361,7 @@ const ChatRoom: React.FC<Props> = ({
               />
               <Divider className={classes.divider} orientation='vertical' />
               <IconButton
+                ref={buttonRef}
                 type='submit'
                 color='primary'
                 className={classes.iconButton}

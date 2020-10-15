@@ -167,7 +167,7 @@ export const updateGames = async (context) => {
       });
       if (doc.data.length > 0) {
         // eslint-disable-next-line no-loop-func
-        doc.data.forEach(async (game) => {
+        const docs = doc.data.map(async (game) => {
           const platforms: string[] = [];
           game.platforms.forEach((platform: number) => {
             if (platform === 48) platforms.push('playstation');
@@ -186,13 +186,14 @@ export const updateGames = async (context) => {
 
           const gameDoc = await database.doc(`/games/${game.id}`).get();
           if (gameDoc.exists)
-            batch.update(database.doc(`/games/${game.id}`), savedGame);
+            return batch.update(database.doc(`/games/${game.id}`), savedGame);
           else {
-            batch.set(database.collection('/games').doc(), savedGame);
             counter++;
+            return batch.set(database.collection('/games').doc(), savedGame);
           }
         });
         offset += 500;
+        await Promise.all(docs);
       } else stop = true;
     }
     console.log('Games updated successfully, ' + counter + ' games added.');
@@ -205,7 +206,7 @@ export const updateGames = async (context) => {
 export const updateArtworks = async (req, res) => {
   try {
     const games = await database.collection('/games').get();
-    games.docs.forEach(async (game) => {
+    const docs = games.docs.map(async (game) => {
       try {
         const gameData = game.data();
         if (gameData.artwork && typeof gameData.artwork === 'number') {
@@ -226,6 +227,7 @@ export const updateArtworks = async (req, res) => {
         return error;
       }
     });
+    await Promise.all(docs);
     return res.status(200).json({ message: 'Artworks updated successfully.' });
   } catch (error) {
     console.log(error);
@@ -235,7 +237,7 @@ export const updateArtworks = async (req, res) => {
 export const updateCovers = async (req, res) => {
   try {
     const games = await database.collection('/games').get();
-    games.docs.forEach(async (game) => {
+    const docs = games.docs.map(async (game) => {
       try {
         const gameData = game.data();
         if (typeof gameData.cover === 'number') {
@@ -259,6 +261,7 @@ export const updateCovers = async (req, res) => {
         return error;
       }
     });
+    await Promise.all(docs);
     return res.status(200).json({ message: 'Covers updated successfully.' });
   } catch (error) {
     console.log(error);

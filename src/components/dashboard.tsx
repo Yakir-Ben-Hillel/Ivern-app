@@ -8,7 +8,7 @@ import SearchBar from './dashboard/searchBar';
 import SiteHeader from './dashboard/siteHeader';
 import PrimarySearchBar from './navbar';
 import sr from './scrollReveal';
-import ChatButton from './chats/chats';
+import ChatButton from './chats/chatDesktop';
 export const Dashboard: React.FC = () => {
   React.useEffect(() => {
     document.documentElement.classList.remove('no-js');

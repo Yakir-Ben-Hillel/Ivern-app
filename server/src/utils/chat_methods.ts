@@ -1,4 +1,5 @@
 import { RequestCustom } from './user_methods';
+import { EventContext } from 'firebase-functions';
 import admin = require('firebase-admin');
 const database = admin.firestore();
 
@@ -94,6 +95,24 @@ export const deleteChat = async (req, res) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error });
+  }
+};
+export const deleteEmptyChats = async (context: EventContext) => {
+  try {
+    const batch = database.batch();
+    const collection = await database.collection('/chats').get();
+    const array = collection.docs.map(async (chat) => {
+      const messages = await database
+        .collection(`/chats/${chat.id}/messages`)
+        .get();
+      if (messages.empty) return batch.delete(chat.ref);
+      else return;
+    });
+    await Promise.all(array);
+    return await batch.commit();
+  } catch (error) {
+    console.log(error);
+    return new Error(error);
   }
 };
 export const chatMessagesHasBeenRead = async (req, res) => {

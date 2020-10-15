@@ -20,6 +20,7 @@ import React from 'react';
 import Svg from 'react-inlinesvg';
 import Carousel from 'react-multi-carousel';
 import { connect } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import {
   AddChatAction,
   HandleChatOpenAction,
@@ -130,7 +131,8 @@ const PostsCarousel: React.FC<IProps> = ({
         }
         const text = `Hi is ${post.gameName} still available?`;
         setNewChatText({ text, imageURL: post.cover });
-        handleChatOpen(true);
+        if (mobile) history.push('/chat');
+        else handleChatOpen(true);
       }
     } catch (error) {
       console.log(error);
@@ -139,6 +141,7 @@ const PostsCarousel: React.FC<IProps> = ({
 
   const classes = useStyles();
   const mobile = isMobile();
+  const history = useHistory();
   const skeletonMapping = [0, 1, 2];
   return (
     <div>

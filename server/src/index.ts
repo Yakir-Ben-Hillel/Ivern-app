@@ -28,6 +28,7 @@ import {
   addMessage,
   chatMessagesHasBeenRead,
   deleteChat,
+  deleteEmptyChats,
   getAllChatMessages,
   getAllUserChats,
   getChat,
@@ -80,3 +81,7 @@ exports.updateGamesEachDay = functions
   .region('europe-west3')
   .pubsub.schedule('0 0 * * *')
   .onRun(updateGames);
+exports.deleteEmptyChats = functions
+  .region('europe-west3')
+  .pubsub.schedule('0 * * * *')
+  .onRun(deleteEmptyChats);

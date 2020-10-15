@@ -1,40 +1,28 @@
-import {
-  createStyles,
-  Fab,
-  makeStyles,
-  Theme,
-  Popper,
-  Paper,
-  Badge,
-} from '@material-ui/core';
-import PeopleIcon from '@material-ui/icons/People';
+import { Container } from '@material-ui/core';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AppState, Chat, User } from '../../@types/types';
-import ChatsAppBar from './utils/chatsAppBar';
-import ChatsList from './utils/chatsList';
-import ChatRoom from './utils/chatRoom';
 import {
-  handleChatOpen,
-  setSelectedChat,
-  setUnreadMessages,
-  setChats,
-  startAddNewExistingChat,
-  setUnreadChats,
-} from '../../redux/actions/userChats';
-import { firebase } from '../../firebase';
-import {
-  HandleChatOpenAction,
+  AddChatAction,
   SetChatsAction,
   SetSelectedChatAction,
-  SetUnreadMessagesAction,
   SetUnreadChatsAction,
-  AddChatAction,
+  SetUnreadMessagesAction,
 } from '../../@types/action-types';
+import { AppState, Chat, User } from '../../@types/types';
+import { firebase } from '../../firebase';
+import {
+  handleChatOpen,
+  setChats,
+  setSelectedChat,
+  setUnreadChats,
+  setUnreadMessages,
+  startAddNewExistingChat,
+} from '../../redux/actions/userChats';
+import ChatRoom from './utils/chatRoom';
+import ChatsMobileBar from './utils/mobile/chatsMobileBar';
+import ChatsList from './utils/chatsList';
 interface IProps {
-  isAuthenticated: boolean;
   user: User;
-  open: boolean;
   unreadChats: number;
   chatsList: Chat[];
   selectedChat: Chat | undefined;
@@ -46,56 +34,18 @@ interface IProps {
   startAddNewExistingChat: (cid: string) => Promise<AddChatAction>;
   setUnreadChats: (unreadChats: number) => SetUnreadChatsAction;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
-  handleChatOpen: (open: boolean) => HandleChatOpenAction;
 }
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    fab: {
-      position: 'fixed',
-      bottom: theme.spacing(2),
-      right: theme.spacing(6),
-    },
-    icon: {
-      marginRight: theme.spacing(1),
-    },
-    typography: {
-      padding: theme.spacing(2),
-    },
-    paper: {
-      padding: theme.spacing(1),
-      width: 350,
-      overflow: 'auto',
-      position: 'relative',
-      maxWidth: 560,
-      height: 455,
-    },
-  })
-);
-
-const ChatButton: React.FC<IProps> = ({
-  isAuthenticated,
+const ChatMobile: React.FC<IProps> = ({
   user,
   selectedChat,
   unreadChats,
   chatsList,
-  open,
   setChats,
   setUnreadMessages,
   startAddNewExistingChat,
   setUnreadChats,
-  handleChatOpen,
 }) => {
   const database = firebase.firestore();
-  const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
-  const id = 'simple-popper';
-  const classes = useStyles();
-  React.useEffect(() => {
-    chatsList.forEach((chat) => {
-      const img = new Image();
-      img.src = chat.interlocutor.imageURL;
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   React.useEffect(() => {
     if (user) {
       const unsubscribe = database
@@ -146,46 +96,12 @@ const ChatButton: React.FC<IProps> = ({
     unreadChats,
     user,
   ]);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    const myElement = document.getElementById(id);
-    setAnchorEl(myElement);
-    handleChatOpen(!open);
-  };
-  React.useEffect(() => {
-    const myElement = document.getElementById(id);
-    setAnchorEl(myElement);
-  }, [open]);
   return (
     <div>
-      {isAuthenticated && (
-        <div>
-          <Fab
-            className={classes.fab}
-            variant='extended'
-            size='medium'
-            id={id}
-            onClick={handleClick}
-          >
-            <Badge
-              badgeContent={unreadChats}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              color='secondary'
-            >
-              <PeopleIcon className={classes.icon} />
-            </Badge>
-            Chat
-          </Fab>
-          <Popper open={open} anchorEl={anchorEl} placement='left-end'>
-            <Paper className={classes.paper}>
-              <ChatsAppBar selectedChat={selectedChat} />
-              {selectedChat ? <ChatRoom /> : <ChatsList />}
-            </Paper>
-          </Popper>
-        </div>
-      )}
+      <Container component='div' maxWidth='xs'>
+        <ChatsMobileBar selectedChat={selectedChat} />
+        {selectedChat ? <ChatRoom /> : <ChatsList />}
+      </Container>
     </div>
   );
 };
@@ -198,11 +114,9 @@ const MapDispatchToProps = {
   setUnreadChats,
 };
 const MapStateToProps = (state: AppState) => ({
-  isAuthenticated: !!state.userInfo.user,
   user: state.userInfo.user,
-  open: state.userChats.open,
   chatsList: state.userChats.chats,
   selectedChat: state.userChats.selectedChat,
   unreadChats: state.userChats.unreadChats,
 });
-export default connect(MapStateToProps, MapDispatchToProps)(ChatButton);
+export default connect(MapStateToProps, MapDispatchToProps)(ChatMobile);

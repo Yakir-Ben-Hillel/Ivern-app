@@ -16,19 +16,20 @@ import {
   SetMessagesAction,
   SetNewChatText,
   DeleteChatAction,
-} from '../../../@types/action-types';
-import { AppState, Chat, Message } from '../../../@types/types';
+} from '../../../../@types/action-types';
+import { AppState, Chat, Message } from '../../../../@types/types';
 import {
   setMessages,
   handleChatOpen,
   setSelectedChat,
   setNewChatText,
   startDeleteChat,
-} from '../../../redux/actions/userChats';
+} from '../../../../redux/actions/userChats';
 
 interface Props {
   selectedChat: Chat | undefined;
   messages: Message[] | undefined;
+  loadingMessages: boolean;
   startDeleteChat: (cid: string) => Promise<DeleteChatAction>;
   setSelectedChat: (chat?: Chat) => SetSelectedChatAction;
   setNewChatText: (
@@ -42,6 +43,7 @@ const ChatsAppBar: React.FC<Props> = ({
   setNewChatText,
   startDeleteChat,
   setSelectedChat,
+  loadingMessages,
   messages,
   setMessages,
   handleChatOpen,
@@ -79,7 +81,7 @@ const ChatsAppBar: React.FC<Props> = ({
               <IconButton
                 edge='end'
                 onClick={async () => {
-                  if (!messages || messages.length === 0)
+                  if ((!messages || messages.length === 0) && !loadingMessages)
                     await startDeleteChat(selectedChat.cid);
                   setSelectedChat(undefined);
                   setNewChatText(undefined);
@@ -114,5 +116,6 @@ const MapDispatchToProps = {
 const MapStateToProps = (state: AppState) => ({
   open: state.userChats.open,
   messages: state.userChats.selectedChatMessages,
+  loadingMessages: state.userChats.loadingMessages,
 });
 export default connect(MapStateToProps, MapDispatchToProps)(ChatsAppBar);

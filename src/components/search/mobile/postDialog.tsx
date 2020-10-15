@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Button,
   createStyles,
   Dialog,
   Grid,
@@ -9,21 +10,37 @@ import {
   Typography,
 } from '@material-ui/core';
 import AccountBalanceWalletIcon from '@material-ui/icons/AccountBalanceWallet';
+import MessageIcon from '@material-ui/icons/Message';
 import DescriptionIcon from '@material-ui/icons/Description';
 import PersonIcon from '@material-ui/icons/Person';
 import PhoneIcon from '@material-ui/icons/Phone';
 import CloseIcon from '@material-ui/icons/Close';
 import { Skeleton } from '@material-ui/lab';
 import React from 'react';
-import { Post, User } from '../../../@types/types';
+import { AppState, Post, User, Chat } from '../../../@types/types';
+import {
+  AddChatAction,
+  SetSelectedChatAction,
+} from '../../../@types/action-types';
+
 import PostsCarousel from '../carousel';
+import { connect } from 'react-redux';
+import {
+  setSelectedChat,
+  startAddNewChat,
+} from '../../../redux/actions/userChats';
+import { useHistory } from 'react-router-dom';
 interface IProps {
   post: Post;
+  chats: Chat[];
   openedPost: Post | null;
   user: User | null;
+  clientUser: User;
   userPosts: Post[];
   loading: boolean;
   dialogOpen: boolean;
+  startAddNewChat: (interlocutorUID: string) => Promise<AddChatAction>;
+  setSelectedChat: (chat: Chat) => SetSelectedChatAction;
   setOpenedPost: React.Dispatch<React.SetStateAction<Post | null>>;
   handleClickClose: () => void;
   platformIcon: (
@@ -89,6 +106,10 @@ const PostDialog: React.FC<IProps> = ({
   post,
   openedPost,
   dialogOpen,
+  chats,
+  clientUser,
+  setSelectedChat,
+  startAddNewChat,
   setOpenedPost,
   loading,
   user,
@@ -96,7 +117,27 @@ const PostDialog: React.FC<IProps> = ({
   handleClickClose,
   platformIcon,
 }) => {
+  const handleChatMake = async () => {
+    try {
+      if (user) {
+        const chat = chats.find((chat) => {
+          return chat.interlocutor.uid === user.uid;
+        });
+        if (chat) {
+          setSelectedChat(chat);
+        } else {
+          const ChatRes = await startAddNewChat(user.uid);
+          setSelectedChat(ChatRes.chat);
+        }
+        history.push('/chat');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const classes = useStyles();
+  const history = useHistory();
   return (
     <div className={classes.root}>
       <Dialog
@@ -175,6 +216,16 @@ const PostDialog: React.FC<IProps> = ({
                       <PhoneIcon fontSize='small' />
                       {user?.phoneNumber}
                     </Typography>
+                    {user && user.uid !== clientUser.uid && (
+                      <Button
+                        color='inherit'
+                        startIcon={<MessageIcon />}
+                        size='small'
+                        onClick={handleChatMake}
+                      >
+                        Message
+                      </Button>
+                    )}
                   </Grid>
                   <Grid className={classes.userAvatarHelper} item>
                     <Avatar
@@ -200,4 +251,13 @@ const PostDialog: React.FC<IProps> = ({
     </div>
   );
 };
-export default PostDialog;
+const MapDispatchToProps = {
+  startAddNewChat,
+  setSelectedChat,
+};
+const MapStateToProps = (state: AppState) => ({
+  clientUser: state.userInfo.user,
+  chats: state.userChats.chats,
+});
+
+export default connect(MapStateToProps, MapDispatchToProps)(PostDialog);

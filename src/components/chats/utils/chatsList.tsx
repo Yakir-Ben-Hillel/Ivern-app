@@ -26,6 +26,7 @@ import {
   setUnreadChats,
   startResetUnreadMessages,
 } from '../../../redux/actions/userChats';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
 interface Props {
   chatsList: Chat[];
   unreadChats: number;
@@ -39,6 +40,9 @@ const useStyles = makeStyles((theme: Theme) =>
       width: '100%',
       maxWidth: '36ch',
       backgroundColor: theme.palette.background.paper,
+      [theme.breakpoints.down('sm')]: {
+        marginTop: theme.spacing(3),
+      },
     },
     avatar: {
       width: theme.spacing(6),
@@ -86,9 +90,11 @@ const ChatsList: React.FC<Props> = ({
     } else setSelectedChat(undefined);
   };
   const isMessageInEnglish = (text: string) => {
-    const char = text[0].toLocaleLowerCase();
-    if (char >= 'a' && char <= 'z') return true;
-    else return false;
+    if (text) {
+      const char = text[0].toLocaleLowerCase();
+      if (char >= 'a' && char <= 'z') return true;
+      else return false;
+    } else return false;
   };
 
   return (
@@ -120,7 +126,25 @@ const ChatsList: React.FC<Props> = ({
                         : 'rtl',
                   }}
                   primary={chat.interlocutor.displayName}
-                  secondary={chat.lastMessage?.text}
+                  secondary={
+                    <React.Fragment>
+                      {chat.lastMessage?.imageURL &&
+                        isMessageInEnglish(chat.lastMessage?.text) && (
+                          <PhotoCamera
+                            style={{ marginRight: '2px' }}
+                            fontSize='inherit'
+                          />
+                        )}
+                      {chat.lastMessage?.text}
+                      {chat.lastMessage?.imageURL &&
+                        !isMessageInEnglish(chat.lastMessage?.text) && (
+                          <PhotoCamera
+                            style={{ marginRight: '2px' }}
+                            fontSize='inherit'
+                          />
+                        )}
+                    </React.Fragment>
+                  }
                 />
                 <div className={classes.secondaryDetails}>
                   {chat.lastMessage && (
