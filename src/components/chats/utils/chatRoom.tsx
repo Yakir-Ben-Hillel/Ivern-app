@@ -1,39 +1,39 @@
 import {
-  makeStyles,
-  Theme,
+  CircularProgress,
   createStyles,
+  Divider,
+  IconButton,
+  InputBase,
   List,
   ListItem,
   ListItemText,
-  Divider,
-  IconButton,
-  CircularProgress,
-  InputBase,
+  makeStyles,
   Paper,
+  Theme,
   Typography,
 } from '@material-ui/core';
+import MoodIcon from '@material-ui/icons/Mood';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
+import SendIcon from '@material-ui/icons/Send';
+import axios from 'axios';
+import Picker from 'emoji-picker-react';
+import isMobile from 'is-mobile';
 import React from 'react';
 import { connect } from 'react-redux';
-import { AppState, User, Chat, Message } from '../../../@types/types';
-import SendIcon from '@material-ui/icons/Send';
-import Picker from 'emoji-picker-react';
-import PhotoCamera from '@material-ui/icons/PhotoCamera';
-import axios from 'axios';
-import MoodIcon from '@material-ui/icons/Mood';
-import {
-  startAddMessage,
-  startSetMessages,
-  setMessages,
-  addMessage,
-  loadingMessages,
-} from '../../../redux/actions/userChats';
 import {
   AddMessageAction,
   LoadingMessagesAction,
   SetMessagesAction,
 } from '../../../@types/action-types';
+import { AppState, Chat, Message, User } from '../../../@types/types';
 import { firebase } from '../../../firebase';
-import isMobile from 'is-mobile';
+import {
+  addMessage,
+  loadingMessages,
+  setMessages,
+  startAddMessage,
+  startSetMessages,
+} from '../../../redux/actions/userChats';
 interface Props {
   user: User;
   selectedChat: Chat | undefined;
@@ -162,8 +162,8 @@ const ChatRoom: React.FC<Props> = ({
   );
   const inputRef = React.useRef<HTMLInputElement | null>(null);
   const buttonRef = React.useRef<HTMLButtonElement | null>(null);
-  // eslint-disable-next-line
   const [position, setPosition] = React.useState(false);
+  // eslint-disable-next-line
   const [chosenEmoji, setChosenEmoji] = React.useState(null);
   const [emojiOpen, setEmojiOpen] = React.useState(false);
   const classes = useStyles();
@@ -267,7 +267,7 @@ const ChatRoom: React.FC<Props> = ({
             ref={(r) => {
               if (r) {
                 if (mobile) {
-                  setPosition(r.scrollHeight < window.screen.availHeight * 0.9);
+                  setPosition(r.scrollHeight < window.screen.availHeight * 0.85);
                 } else setPosition(!messages?.length || r.scrollHeight < 370);
               }
             }}

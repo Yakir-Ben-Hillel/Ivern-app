@@ -10,20 +10,9 @@ const Features: React.FC = () => {
           <div className='features-header text-center'>
             <div className='container-sm'>
               <h2 className='section-title mt-0'>Ivern</h2>
-              <p className='section-paragraph'>
-                Your video games thrift shop.
-              </p>
+              <p className='section-paragraph'>Your video games thrift shop.</p>
               {!isMobile() && (
                 <div className='features-image'>
-                  <Svg
-                    className='features-illustration asset-dark'
-                    src={require('./dist/images/features-illustration-dark.svg')}
-                  />
-                  <Svg
-                    className='features-illustration asset-dark'
-                    src={require('./dist/images/features-illustration-top-dark.svg')}
-                  />
-
                   <Svg
                     className='features-illustration asset-light'
                     src={require('./dist/images/features-illustration-light.svg')}
@@ -43,10 +32,6 @@ const Features: React.FC = () => {
                   <Svg
                     className='asset-light'
                     src={require('./dist/images/feature-02-light.svg')}
-                  />
-                  <Svg
-                    className='asset-dark'
-                    src={require('./dist/images/feature-02-dark.svg')}
                   />
                 </div>
                 <div className='feature-content'>

@@ -14,10 +14,6 @@ const Footer: React.FC = () => {
                 className='asset-light'
                 src={require('./dist/images/logo-light.svg')}
               />
-              <Svg
-                className='asset-dark'
-                src={require('./dist/images/logo-dark.svg')}
-              />
             </a>
           </div>
           <ul className='footer-social-links list-reset'>

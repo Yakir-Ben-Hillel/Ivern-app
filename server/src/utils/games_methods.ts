@@ -1,22 +1,31 @@
-import { IGDB_API_KEY } from '../firebase';
+import { TWITCH_CLIENT_ID, TWITCH_CLIENT_SECRET } from '../firebase';
 import admin = require('firebase-admin');
 const axios = require('axios');
 const database = admin.firestore();
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 export const postAllGames = async (req, res) => {
   try {
     let offset = 0;
     let stop = false;
     let counter = 0;
     let batch = database.batch();
+    const token = (
+      await database.doc('/token/mRboThUodVnbUostt7YA').get()
+    ).data()?.token;
+
     while (!stop) {
+      await sleep(500);
       const doc = await axios({
-        url: 'https://api-v3.igdb.com/games',
+        url: 'https://api.igdb.com/v4/games',
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'user-key': IGDB_API_KEY,
+          'Client-ID': TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${token}`,
         },
-        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
+        data: `fields name,cover,artworks,slug,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
       });
       if (doc.data.length !== 0) {
         // eslint-disable-next-line no-loop-func
@@ -36,7 +45,7 @@ export const postAllGames = async (req, res) => {
               id: game.id,
               name: game.name,
               slug: game.slug,
-              popularity: game.popularity,
+              popularity: 0,
               rating: game.rating,
               cover: game.cover,
               platforms,
@@ -105,14 +114,18 @@ export const getAllGames = async (req, res) => {
 };
 export const searchUnfoundGame = async (req, res) => {
   try {
+    const token = (
+      await database.doc('/token/mRboThUodVnbUostt7YA').get()
+    ).data()?.token;
     const doc = await axios({
-      url: 'https://api-v3.igdb.com/games',
+      url: 'https://api-v4.igdb.com/games',
       method: 'POST',
       headers: {
         Accept: 'application/json',
-        'user-key': IGDB_API_KEY,
+        'Client-ID': TWITCH_CLIENT_ID,
+        Authorization: `Bearer ${token}`,
       },
-      data: `fields name,cover,artworks,slug,popularity,rating,platforms;search "${req.params.gameName}";where (category = 0)&((platforms = [48,6])|(platforms = 48));`,
+      data: `fields name,cover,artworks,slug,rating,platforms;search "${req.params.gameName}";where (category = 0)&((platforms = [48,6])|(platforms = 48));`,
     });
     if (doc.data) {
       const gameDoc = doc.data[0];
@@ -126,11 +139,12 @@ export const searchUnfoundGame = async (req, res) => {
       if (gameDoc.artworks) {
         artwork = gameDoc.artworks[gameDoc.artworks.length - 1];
         const artworkDoc = await axios({
-          url: 'https://api-v3.igdb.com/artworks',
+          url: 'https://api.igdb.com/v4/artworks',
           method: 'POST',
           headers: {
             Accept: 'application/json',
-            'user-key': IGDB_API_KEY,
+            'Client-ID': TWITCH_CLIENT_ID,
+            Authorization: `Bearer ${token}`,
           },
           data: `fields image_id;where id=${artwork};`,
         });
@@ -139,11 +153,12 @@ export const searchUnfoundGame = async (req, res) => {
 
       const image = await axios({
         //Getting cover url and making it logo_med.
-        url: 'https://api-v3.igdb.com/covers',
+        url: 'https://api.igdb.com/v4/covers',
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'user-key': IGDB_API_KEY,
+          'Client-ID': TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${token}`,
         },
         data: `fields url;where id=${gameDoc.cover};`,
       });
@@ -155,7 +170,7 @@ export const searchUnfoundGame = async (req, res) => {
         id: gameDoc.id,
         name: gameDoc.name,
         slug: gameDoc.slug,
-        popularity: gameDoc.popularity ? gameDoc.popularity : 0,
+        popularity: 0,
         rating: gameDoc.rating ? gameDoc.rating : 0,
         artwork,
         cover,
@@ -180,9 +195,9 @@ export const addGameToDatabase = async (req, res) => {
       id: req.body.id,
       cover: req.body.cover,
       name: req.body.name,
-      popularity: req.body.popularity,
       rating: req.body.rating,
       slug: req.body.slug,
+      popularity: 0,
     };
     const doc = await database.doc(`/games/${game.id}`).get();
     if (doc.exists)
@@ -200,21 +215,44 @@ export const addGameToDatabase = async (req, res) => {
     return res.status(500).json(error);
   }
 };
+export const updateToken = async (context) => {
+  try {
+    const token = await axios({
+      url: `https://id.twitch.tv/oauth2/token?
+      ?client_id=${TWITCH_CLIENT_ID}
+      &client_secret=${TWITCH_CLIENT_SECRET}
+      &grant_type=client_credentials`,
+      method: 'POST',
+    });
+    await database
+      .doc('/token/mRboThUodVnbUostt7YA')
+      .update({ token: token.access_token });
+    return `access token: ${token.access_token}`;
+  } catch (error) {
+    console.log(error);
+    return new Error(error);
+  }
+};
 export const updateGames = async (context) => {
   try {
+    const token = (
+      await database.doc('/token/mRboThUodVnbUostt7YA').get()
+    ).data()?.token;
     let offset = 0;
     let stop = false;
     let counter = 0;
     let batch = database.batch();
     while (!stop) {
+      await sleep(500);
       const doc = await axios({
-        url: 'https://api-v3.igdb.com/games',
+        url: 'https://api.igdb.com/v4/games',
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'user-key': IGDB_API_KEY,
+          'Client-ID': TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${token}`,
         },
-        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
+        data: `fields name,cover,artworks,slug,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=20)& (platforms = (48,49,130));`,
       });
       if (doc.data.length > 0) {
         // eslint-disable-next-line no-loop-func
@@ -234,7 +272,7 @@ export const updateGames = async (context) => {
             id: game.id,
             name: game.name,
             slug: game.slug,
-            popularity: game.popularity ? game.popularity : 0,
+            popularity: 0,
             rating: game.rating,
             cover: game.cover,
             artwork,
@@ -279,17 +317,22 @@ export const updateGames = async (context) => {
 };
 export const updateArtworks = async (req, res) => {
   try {
+    const token = (
+      await database.doc('/token/mRboThUodVnbUostt7YA').get()
+    ).data()?.token;
     const games = await database.collection('/games').get();
     const docs = games.docs.map(async (game) => {
       try {
         const gameData = game.data();
         if (gameData.artwork && typeof gameData.artwork === 'number') {
+          await sleep(500);
           const artworkDoc = await axios({
-            url: 'https://api-v3.igdb.com/artworks',
+            url: 'https://api.igdb.com/v4/artworks',
             method: 'POST',
             headers: {
               Accept: 'application/json',
-              'user-key': IGDB_API_KEY,
+              'Client-ID': TWITCH_CLIENT_ID,
+              Authorization: `Bearer ${token}`,
             },
             data: `fields image_id;where id=${gameData.artwork};`,
           });
@@ -310,18 +353,23 @@ export const updateArtworks = async (req, res) => {
 };
 export const updateCovers = async (req, res) => {
   try {
+    const token = (
+      await database.doc('/token/mRboThUodVnbUostt7YA').get()
+    ).data()?.token;
     const games = await database.collection('/games').get();
     const docs = games.docs.map(async (game) => {
       try {
         const gameData = game.data();
         if (typeof gameData.cover === 'number') {
+          await sleep(500);
           const image = await axios({
             //Getting cover url and making it logo_med.
-            url: 'https://api-v3.igdb.com/covers',
+            url: 'https://api.igdb.com/v4/covers',
             method: 'POST',
             headers: {
               Accept: 'application/json',
-              'user-key': IGDB_API_KEY,
+              'Client-ID': TWITCH_CLIENT_ID,
+              Authorization: `Bearer ${token}`,
             },
             data: `fields url;where id=${gameData.cover};`,
           });
@@ -345,18 +393,23 @@ export const updateCovers = async (req, res) => {
 
 export const manualUpdateGames = async (req, res) => {
   try {
+    const token = (
+      await database.doc('/token/mRboThUodVnbUostt7YA').get()
+    ).data()?.token;
     let offset = 0;
     let stop = false;
     let batch = database.batch();
     while (!stop) {
+      await sleep(500);
       const doc = await axios({
-        url: 'https://api-v3.igdb.com/games',
+        url: 'https://api.igdb.com/v4/games',
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'user-key': IGDB_API_KEY,
+          'Client-ID': TWITCH_CLIENT_ID,
+          Authorization: `Bearer ${token}`,
         },
-        data: `fields name,cover,artworks,slug,popularity,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=10)& (platforms = (48,49,130));`,
+        data: `fields name,cover,artworks,slug,rating,platforms;sort rating_count desc;offset ${offset};limit 250;where (category = 0)&(rating_count>=10)& (platforms = (48,49,130));`,
       });
       if (doc.data.length > 0) {
         // eslint-disable-next-line no-loop-func
@@ -375,7 +428,7 @@ export const manualUpdateGames = async (req, res) => {
             id: game.id,
             name: game.name,
             slug: game.slug,
-            popularity: game.popularity ? game.popularity : 0,
+            popularity: 0,
             rating: game.rating,
             cover: game.cover,
             artwork,

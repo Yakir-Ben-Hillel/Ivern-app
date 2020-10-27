@@ -35,7 +35,7 @@ interface IProps {
   chats: Chat[];
   openedPost: Post | null;
   user: User | null;
-  clientUser: User;
+  clientUser: User | undefined;
   userPosts: Post[];
   loading: boolean;
   dialogOpen: boolean;
@@ -216,7 +216,7 @@ const PostDialog: React.FC<IProps> = ({
                       <PhoneIcon fontSize='small' />
                       {user?.phoneNumber}
                     </Typography>
-                    {user && user.uid !== clientUser.uid && (
+                    {user && clientUser && user.uid !== clientUser.uid && (
                       <Button
                         color='inherit'
                         startIcon={<MessageIcon />}

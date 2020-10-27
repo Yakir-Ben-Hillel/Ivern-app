@@ -40,7 +40,7 @@ interface IProps {
   post: Post;
   openedPost: Post | null;
   user: User | null;
-  clientUser: User;
+  clientUser: User | undefined;
   userPosts: Post[];
   chats: Chat[];
   loading: boolean;
@@ -205,7 +205,7 @@ const PostsListDesktop: React.FC<IProps> = ({
                   {user?.phoneNumber}
                 </Typography>
               </Grid>
-              {user && clientUser.uid !== user.uid && (
+              {user && clientUser && clientUser.uid !== user.uid && (
                 <Grid item>
                   <Button
                     color='inherit'

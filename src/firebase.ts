@@ -1,5 +1,4 @@
 import firebase from 'firebase';
-const IGDB_API_KEY = '828450d3fb41b178bf9e7837550c4ae2';
 const firebaseConfig = {
   apiKey: 'AIzaSyBGuUVnrZYtv3Rmzzgn1M84vYdQu423MlU',
   authDomain: 'ivern-app.firebaseapp.com',
@@ -14,4 +13,4 @@ firebase.initializeApp(firebaseConfig);
 const googleAuthProvider = new firebase.auth.GoogleAuthProvider();
 const facebookAuthProvider = new firebase.auth.FacebookAuthProvider();
 firebase.auth().useDeviceLanguage();
-export { firebase, googleAuthProvider, facebookAuthProvider, IGDB_API_KEY };
+export { firebase, googleAuthProvider, facebookAuthProvider };

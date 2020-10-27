@@ -35,32 +35,27 @@ const HeroSection: React.FC = () => {
             </div>
           </div>
           <div className='hero-media'>
-            <div className='header-illustration'>
-              {!lights && (
-                <Svg
-                  className='header-illustration-image asset-dark'
-                  src={require('./dist/images/header-illustration-dark.svg')}
-                />
-              )}
-            </div>
+            <div className='header-illustration'></div>
             <div className='hero-media-illustration'>
-              {lights ? (
-                <Svg
-                  src={require('./dist/images/hero-media-illustration-light.svg')}
-                  className='hero-media-illustration-image asset-light'
-                />
-              ) : (
-                <Svg
-                  src={require('./dist/images/hero-media-illustration-dark.svg')}
-                  className='hero-media-illustration-image asset-dark'
-                />
-              )}
+              <Svg
+                src={require('./dist/images/hero-media-illustration-light.svg')}
+                className='hero-media-illustration-image asset-light'
+              />
             </div>
             <div className='hero-media-container'>
               {mobile() ? (
-                <MobilePic lights={lights} />
+                <Svg
+                  className='hero-media-image asset-light'
+                  src={require('./dist/images/box-pic-light.svg')}
+                />
               ) : (
-                <DesktopPic lights={lights} />
+                <img
+                  className='hero-media-image asset-light'
+                  height='380'
+                  width='538'
+                  src={require('./dist/images/box-pic-light.jpg')}
+                  alt='playing video games'
+                />
               )}
             </div>
           </div>
@@ -69,43 +64,4 @@ const HeroSection: React.FC = () => {
     </section>
   );
 };
-const MobilePic: React.FC<IProps> = ({ lights }) => {
-  if (lights)
-    return (
-      <Svg
-        className='hero-media-image asset-light'
-        src={require('./dist/images/box-pic-light.svg')}
-      />
-    );
-  else
-    return (
-      <Svg
-        className='hero-media-image asset-dark'
-        src={require('./dist/images/3773314.svg')}
-      />
-    );
-};
-const DesktopPic: React.FC<IProps> = ({ lights }) => {
-  if (lights)
-    return (
-      <img
-        className='hero-media-image asset-light'
-        height='380'
-        width='538'
-        src={require('./dist/images/box-pic-light.jpg')}
-        alt='playing video games'
-      />
-    );
-  else
-    return (
-      <img
-        className='hero-media-image asset-dark'
-        height='380'
-        width='538'
-        src={require('./dist/images/3773314.jpg')}
-        alt='playing video games'
-      />
-    );
-};
-
 export default HeroSection;

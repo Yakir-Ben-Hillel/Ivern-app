@@ -17,10 +17,6 @@
     height: 263px;
     width: 1440px;
     background-image: url('../../components/dashboard/dist/images/cta-illustration-light.svg');
-
-    .lights-off & {
-      background-image: url('../../components/dashboard/dist/images/cta-illustration-dark.svg');
-    }
   }
 }
 

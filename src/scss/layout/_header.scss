@@ -11,10 +11,6 @@
     width: 1440px;
     height: 324px;
     background-image: url('../../components/dashboard/dist/images/header-illustration-light.svg');
-
-    .lights-off & {
-      background-image: url('../../components/dashboard/dist/images/header-illustration-dark.svg');
-    }
   }
 }
 
@@ -49,7 +45,7 @@
 @include media('>medium') {
   .site-header {
     &::before {
-      display:none;
+      display: none;
     }
   }
 }

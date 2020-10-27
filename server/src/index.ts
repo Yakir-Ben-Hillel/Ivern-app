@@ -10,6 +10,7 @@ import {
   updateArtworks,
   updateCovers,
   manualUpdateGames,
+  updateToken,
 } from './utils/games_methods';
 import {
   addPost,
@@ -91,3 +92,7 @@ exports.deleteEmptyChats = functions
   .region('europe-west3')
   .pubsub.schedule('0 * * * *')
   .onRun(deleteEmptyChats);
+exports.updateAccessToken = functions
+  .region('europe-west3')
+  .pubsub.schedule('0 0 1 * *')
+  .onRun(updateToken);
